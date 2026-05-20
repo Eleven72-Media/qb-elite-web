@@ -2,26 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * QB Elite brand tokens.
+ * Primary red = #B61F26 → hsl(357, 70%, 41%)
+ * Foreground = #161C24 → hsl(213, 25%, 12%)
+ * Background = #ffffff → hsl(0, 0%, 100%)
+ *
+ * Values are space-separated HSL triplets so Tailwind's
+ * `hsl(var(--token) / <alpha-value>)` expansion works.
+ */
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 213 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 213 25% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 25% 12%;
+    --primary: 357 70% 41%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 20% 96%;
+    --secondary-foreground: 213 25% 12%;
+    --muted: 213 20% 96%;
+    --muted-foreground: 213 10% 45%;
+    --accent: 213 20% 96%;
+    --accent-foreground: 213 25% 12%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 213 15% 90%;
+    --input: 213 15% 90%;
+    --ring: 357 70% 41%;
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 213 25% 8%;
+    --foreground: 0 0% 98%;
+    --card: 213 25% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 213 25% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 357 70% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 25% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 213 25% 18%;
+    --muted-foreground: 213 10% 65%;
+    --accent: 213 25% 18%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 213 25% 22%;
+    --input: 213 25% 22%;
+    --ring: 357 70% 51%;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
