@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -41,9 +42,16 @@ export default async function ProfilePage() {
       </div>
 
       <div className="mt-6 flex flex-col gap-3">
-        <Button variant="outline" disabled>
-          Edit profile (Sprint 3)
-        </Button>
+        <Link href="/profile/edit">
+          <Button variant="outline" className="w-full">
+            Edit profile
+          </Button>
+        </Link>
+        <Link href="/profile/notifications">
+          <Button variant="outline" className="w-full">
+            Notifications
+          </Button>
+        </Link>
         <Button variant="outline" disabled>
           Manage subscription (Sprint 4)
         </Button>
