@@ -1,8 +1,10 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
-// Temporary placeholder landing page so the smoke test in Sprint 1 has
-// something to render. Sprint 2 replaces this with the real marketing
-// surface and the (auth) flow.
+// Temporary marketing landing page. Sprint 5 replaces this with the
+// real public marketing surface. For now it gives users a way into
+// the auth flow.
 export default function Home() {
   return (
     <main className="container flex min-h-screen flex-col items-center justify-center gap-6 py-16 text-center">
@@ -10,17 +12,21 @@ export default function Home() {
         #becomeelite
       </span>
       <h1 className="text-4xl font-extrabold uppercase tracking-tight md:text-5xl">
-        QB Elite is moving to the web
+        Become Elite
       </h1>
       <p className="max-w-prose text-base text-muted-foreground">
-        We&apos;re rebuilding QB Elite as a full Progressive Web App so you get
-        the same training, plans, and Huddles on iPhone, Android, and desktop —
-        with a free 7-day trial.
+        Full quarterback training on iPhone, Android, and desktop — workouts,
+        meal plans, live Huddles with college and pro QBs. 7-day free trial.
       </p>
-      <div className="flex gap-3">
-        <Button size="lg" disabled>
-          Coming soon
-        </Button>
+      <div className="flex flex-col items-center gap-3 sm:flex-row">
+        <Link href="/register">
+          <Button size="lg">Start Free Trial</Button>
+        </Link>
+        <Link href="/login">
+          <Button size="lg" variant="outline">
+            Log In
+          </Button>
+        </Link>
       </div>
     </main>
   );
