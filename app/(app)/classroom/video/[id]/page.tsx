@@ -1,16 +1,13 @@
 import { notFound } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { VideoPlayer } from "@/components/video/video-player";
+import { FavoriteButton } from "@/features/favorites/components/favorite-button";
+import { CompleteVideoButton } from "@/features/video-completion/components/complete-video-button";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Training — QB Elite" };
 export const dynamic = "force-dynamic";
 
-/**
- * Sprint 2 stub. Resolves the training row so the page proves the
- * deep-link works end-to-end; the actual Vimeo player wires up in
- * Sprint 3.
- */
 export default async function QbTrainingVideoPage({
   params,
 }: {
@@ -28,25 +25,56 @@ export default async function QbTrainingVideoPage({
     | null;
   if (!training) notFound();
 
+  // Pre-fetch completion + favorite state for SSR so the buttons render
+  // in their correct initial state with no flicker.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  let isCompleted = false;
+  let isFavorite = false;
+  if (user) {
+    const { data: completion } = await supabase
+      .from("video_completions")
+      .select("video_id")
+      .eq("user_id", user.id)
+      .eq("video_id", training.id)
+      .eq("video_type", "qb_training")
+      .maybeSingle();
+    isCompleted = !!completion;
+
+    const { data: fav } = await supabase
+      .from("favorite_videos")
+      .select("video_id")
+      .eq("user_id", user.id)
+      .eq("video_id", training.id)
+      .eq("video_type", "qb_training")
+      .maybeSingle();
+    isFavorite = !!fav;
+  }
+
   return (
     <div className="container max-w-3xl space-y-6 py-6">
       <header>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
           {training.week_of_release}
         </p>
-        <h1 className="mt-1 text-3xl font-extrabold uppercase tracking-tight">
-          {training.title}
-        </h1>
+        <div className="mt-1 flex items-start justify-between gap-3">
+          <h1 className="text-3xl font-extrabold uppercase tracking-tight">
+            {training.title}
+          </h1>
+          <FavoriteButton
+            videoId={training.id}
+            videoType="qb_training"
+            initialFavorite={isFavorite}
+          />
+        </div>
       </header>
-      <div className="grid place-items-center rounded-2xl border bg-card p-12 text-center text-sm text-muted-foreground">
-        Video player ships in Sprint 3 — this is a routing stub. The video
-        URL on file: <span className="font-mono">{training.video_link}</span>
-      </div>
-      <div className="flex justify-center">
-        <Button variant="outline" disabled>
-          Mark Complete (Sprint 3)
-        </Button>
-      </div>
+      <VideoPlayer src={training.video_link} autoplay />
+      <CompleteVideoButton
+        videoId={training.id}
+        videoType="qb_training"
+        initialCompleted={isCompleted}
+      />
     </div>
   );
 }
