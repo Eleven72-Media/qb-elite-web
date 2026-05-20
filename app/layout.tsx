@@ -18,6 +18,15 @@ export const metadata: Metadata = {
   title: "QB Elite",
   description: "Become Elite. Quarterback training, mechanics, mindset.",
   manifest: "/manifest.webmanifest",
+  // iOS Safari uses apple-touch-icon when the user taps Share → Add to
+  // Home Screen. Without it, the home-screen tile is a generic screenshot.
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
+  // apple-mobile-web-app-capable + apple-mobile-web-app-status-bar-style.
+  // Together with `display: standalone` in the manifest, this is what
+  // makes the home-screen launch hide the Safari URL bar + bottom toolbar.
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
