@@ -123,7 +123,7 @@ export function PaywallClient({
           href="mailto:eleven72media@gmail.com?subject=QB%20Elite%20GOAT%20Tier%20%E2%80%94%20pricing%20inquiry"
           className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:underline"
         >
-          Email Coach Miller →
+          Contact Coach Miller →
         </a>
       </section>
 
