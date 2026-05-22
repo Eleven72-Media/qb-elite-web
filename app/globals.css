@@ -22,18 +22,18 @@
     --popover-foreground: 213 25% 12%;
     --primary: 357 70% 41%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 213 20% 96%;
+    --secondary: 240 7% 97%;
     --secondary-foreground: 213 25% 12%;
-    --muted: 213 20% 96%;
-    --muted-foreground: 213 10% 45%;
-    --accent: 213 20% 96%;
+    --muted: 0 0% 97%;
+    --muted-foreground: 215 13% 45%;
+    --accent: 240 7% 97%;
     --accent-foreground: 213 25% 12%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 213 15% 90%;
-    --input: 213 15% 90%;
+    --border: 0 0% 93%;
+    --input: 0 0% 96%;
     --ring: 357 70% 41%;
-    --radius: 0.625rem;
+    --radius: 1.25rem;
   }
 
   .dark {

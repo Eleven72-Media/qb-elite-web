@@ -1,71 +1,80 @@
+import { Bell } from "lucide-react";
 import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { tierDisplayName } from "@/lib/tier";
-import type { SubscriptionTier } from "@/types/db";
+import { createClient } from "@/lib/supabase/server";
 
 /**
- * Top bar shown on every authenticated screen.
- * Mobile keeps it minimal (logo + avatar); desktop expands to include
- * a horizontal nav rail. The TabBar at the bottom handles mobile nav.
+ * Top bar that mirrors Flutter's HomeAppBar:
+ *   [avatar(50)] [Hi, name (red bold) / "Welcome to quarterback experience"]   [bell-with-badge]
+ *
+ * Avatar tap → /profile (Flutter taps avatar → menuScreen which is profile).
+ * Bell tap → /profile/notifications. Red dot when unread > 0.
+ *
+ * Renders on every authenticated page. Hidden on the auth screens
+ * because (auth) routes use their own layout.
  */
-export function TopBar({
+export async function TopBar({
   displayName,
-  tier,
   avatarUrl,
 }: {
   displayName: string | null;
-  tier: SubscriptionTier;
   avatarUrl: string | null;
 }) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let unreadCount = 0;
+  if (user) {
+    const { count } = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .is("read_at", null);
+    unreadCount = count ?? 0;
+  }
+
   const initials = (displayName ?? "QB").slice(0, 2).toUpperCase();
+  const firstName = (displayName ?? "Athlete").split(" ")[0];
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur">
-      <div className="container flex h-14 items-center justify-between gap-4">
-        <Link
-          href="/home"
-          className="text-base font-extrabold uppercase tracking-tight"
-        >
-          QB Elite
-        </Link>
-        <nav className="hidden gap-1 md:flex">
-          <DesktopLink href="/home">Home</DesktopLink>
-          <DesktopLink href="/weight-room">Weight Room</DesktopLink>
-          <DesktopLink href="/classroom">Classroom</DesktopLink>
-          <DesktopLink href="/nutrition">Nutrition</DesktopLink>
-          <DesktopLink href="/huddle">Huddle</DesktopLink>
-        </nav>
-        <Link href="/profile" className="flex items-center gap-2">
-          {tier !== "free" && (
-            <Badge variant="outline" className="border-primary/40 text-primary">
-              {tierDisplayName(tier)}
-            </Badge>
-          )}
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={avatarUrl ?? undefined} alt={displayName ?? "Profile"} />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-        </Link>
+    <header className="sticky top-0 z-30 bg-white">
+      <div className="px-4 pb-3 pt-[max(env(safe-area-inset-top),0.25rem)] md:px-6">
+        <div className="mx-auto flex w-full max-w-[1200px] items-start gap-3">
+          <Link
+            href="/profile"
+            aria-label="Profile"
+            className="shrink-0 active:opacity-80"
+          >
+            <Avatar className="h-[50px] w-[50px]">
+              <AvatarImage src={avatarUrl ?? undefined} alt={displayName ?? "Profile"} />
+              <AvatarFallback className="bg-primary/15 text-primary">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
+          <Link href="/profile" className="min-w-0 flex-1">
+            <p className="truncate text-base font-bold text-primary">
+              Hi, {firstName}
+            </p>
+            <p className="mt-0.5 truncate text-sm text-muted-foreground">
+              Welcome to quarterback experience
+            </p>
+          </Link>
+          <Link
+            href="/profile/notifications"
+            aria-label="Notifications"
+            className="relative -m-2 inline-flex h-10 w-10 items-center justify-center rounded-full"
+          >
+            <Bell className="h-[22px] w-[22px] text-foreground" strokeWidth={1.75} />
+            {unreadCount > 0 && (
+              <span className="absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full bg-[#E50000] ring-2 ring-white" />
+            )}
+          </Link>
+        </div>
       </div>
     </header>
-  );
-}
-
-function DesktopLink({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-    >
-      {children}
-    </Link>
   );
 }

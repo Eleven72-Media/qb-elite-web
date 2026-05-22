@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { TabBar } from "@/components/app/tab-bar";
 import { TopBar } from "@/components/app/top-bar";
+import { InstallPrompt } from "@/components/install-prompt";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -36,11 +37,11 @@ export default async function AppLayout({
     <div className="flex min-h-screen flex-col">
       <TopBar
         displayName={profile?.display_name ?? null}
-        tier={profile?.subscription_tier ?? "free"}
         avatarUrl={profile?.avatar_url ?? null}
       />
       <main className="flex-1 pb-24 md:pb-12">{children}</main>
       <TabBar />
+      <InstallPrompt />
     </div>
   );
 }
