@@ -1,4 +1,4 @@
-import { CalendarDays, Coffee, Cookie, Drumstick, ListChecks, Salad, Utensils } from "lucide-react";
+import { CalendarDays, ChevronRight, Coffee, Cookie, Drumstick, ListChecks, Salad, Utensils } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { PlanWeekPicker } from "@/features/weight-room/components/plan-week-picker";
 import {
   getAllMealPlans,
+  getRecipesByTitles,
   getUserMealPlan,
   getUserMealPlanWeek,
   type MealPlanDay,
@@ -82,6 +83,34 @@ export default async function MealPlanPage({
   const isViewingPast = explicitWeek !== null && explicitWeek !== currentWeek;
 
   const mealPlan = await getUserMealPlan(supabase, selectedWeek);
+
+  // Collect every meal-text string used across the week (for the
+  // recipe-by-title fallback when the day doesn't have an explicit
+  // *_recipe_id FK set).
+  const titleSet = new Set<string>();
+  if (mealPlan) {
+    for (const d of mealPlan.days) {
+      for (const t of [d.breakfast, d.snack, d.proteinShake, d.mainCourse, d.side]) {
+        if (t && t.trim()) titleSet.add(t.trim());
+      }
+    }
+  }
+  const matched = titleSet.size > 0
+    ? await getRecipesByTitles(supabase, Array.from(titleSet))
+    : [];
+  const recipeIdByTitle = new Map(
+    matched.map((r) => [r.title.toLowerCase(), r.id])
+  );
+
+  function recipeHrefFor(
+    text: string | null,
+    explicitId: string | null
+  ): string | null {
+    if (explicitId) return `/nutrition/recipe/${explicitId}`;
+    if (!text) return null;
+    const id = recipeIdByTitle.get(text.trim().toLowerCase());
+    return id ? `/nutrition/recipe/${id}` : null;
+  }
 
   const header = (
     <PageHeader
@@ -174,7 +203,11 @@ export default async function MealPlanPage({
 
         <div className="space-y-4">
           {orderedDays.map((d) => (
-            <DayCard key={d.id} day={d} />
+            <DayCard
+              key={d.id}
+              day={d}
+              recipeHrefFor={recipeHrefFor}
+            />
           ))}
         </div>
       </div>
@@ -182,35 +215,47 @@ export default async function MealPlanPage({
   );
 }
 
-function DayCard({ day }: { day: MealPlanDay }) {
+function DayCard({
+  day,
+  recipeHrefFor,
+}: {
+  day: MealPlanDay;
+  recipeHrefFor: (text: string | null, explicitId: string | null) => string | null;
+}) {
   const slots: Array<{
     label: string;
     value: string | null;
+    href: string | null;
     icon: React.ReactNode;
   }> = [
     {
       label: "Breakfast",
       value: day.breakfast,
+      href: recipeHrefFor(day.breakfast, day.breakfastRecipeId),
       icon: <Coffee className="h-4 w-4" strokeWidth={1.75} />,
     },
     {
       label: "Snack",
       value: day.snack,
+      href: recipeHrefFor(day.snack, day.snackRecipeId),
       icon: <Cookie className="h-4 w-4" strokeWidth={1.75} />,
     },
     {
       label: "Protein Shake",
       value: day.proteinShake,
+      href: recipeHrefFor(day.proteinShake, day.proteinShakeRecipeId),
       icon: <Drumstick className="h-4 w-4" strokeWidth={1.75} />,
     },
     {
       label: "Main",
       value: day.mainCourse,
+      href: recipeHrefFor(day.mainCourse, day.mainCourseRecipeId),
       icon: <Utensils className="h-4 w-4" strokeWidth={1.75} />,
     },
     {
       label: "Side",
       value: day.side,
+      href: recipeHrefFor(day.side, day.sideRecipeId),
       icon: <Salad className="h-4 w-4" strokeWidth={1.75} />,
     },
   ];
@@ -230,19 +275,38 @@ function DayCard({ day }: { day: MealPlanDay }) {
         </p>
       ) : (
         <ul className="divide-y divide-border/40 px-5">
-          {populated.map((s) => (
-            <li key={s.label} className="flex items-start gap-3 py-3.5">
-              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                {s.icon}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
-                  {s.label}
-                </p>
-                <p className="mt-0.5 text-[14px] leading-snug">{s.value}</p>
+          {populated.map((s) => {
+            const inner = (
+              <div className="flex items-center gap-3 py-3.5">
+                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  {s.icon}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                    {s.label}
+                  </p>
+                  <p className="mt-0.5 text-[14px] leading-snug">{s.value}</p>
+                </div>
+                {s.href && (
+                  <ChevronRight
+                    className="h-4 w-4 shrink-0 text-muted-foreground"
+                    strokeWidth={2.25}
+                  />
+                )}
               </div>
-            </li>
-          ))}
+            );
+            return (
+              <li key={s.label}>
+                {s.href ? (
+                  <Link href={s.href} className="block active:bg-muted/50">
+                    {inner}
+                  </Link>
+                ) : (
+                  inner
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

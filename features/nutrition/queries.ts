@@ -17,6 +17,13 @@ export interface MealPlanDay {
   proteinShake: string | null;
   mainCourse: string | null;
   side: string | null;
+  // Optional FK to a recipes row, set by admin when a meal slot is
+  // pinned to a specific recipe. Null → fall back to title matching.
+  breakfastRecipeId: string | null;
+  snackRecipeId: string | null;
+  proteinShakeRecipeId: string | null;
+  mainCourseRecipeId: string | null;
+  sideRecipeId: string | null;
   sortOrder: number;
 }
 
@@ -57,6 +64,11 @@ const mapDay = (db: any): MealPlanDay => ({
   proteinShake: db.protein_shake ?? null,
   mainCourse: db.main_course ?? null,
   side: db.side ?? null,
+  breakfastRecipeId: db.breakfast_recipe_id ?? null,
+  snackRecipeId: db.snack_recipe_id ?? null,
+  proteinShakeRecipeId: db.protein_shake_recipe_id ?? null,
+  mainCourseRecipeId: db.main_course_recipe_id ?? null,
+  sideRecipeId: db.side_recipe_id ?? null,
   sortOrder: db.sort_order ?? 0,
 });
 
