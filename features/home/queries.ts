@@ -56,7 +56,10 @@ const mapWidget = (db: any): HomeWidget => ({
   subtitle: db.subtitle ?? null,
   ctaText: db.cta_text ?? null,
   redirectUrl: db.redirect_url ?? null,
-  imageUrl: db.image_url ?? null,
+  // Admin/Flutter use `image` on home_widget (not `image_url` — that's only
+  // on home_slider). Fall back to image_url just in case some rows got
+  // written with the wrong column name during dev.
+  imageUrl: db.image ?? db.image_url ?? null,
   isActive: db.is_active ?? true,
 });
 
