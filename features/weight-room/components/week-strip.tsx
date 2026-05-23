@@ -1,8 +1,4 @@
-"use client";
-
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -15,55 +11,35 @@ import {
 } from "../week-helpers";
 
 /**
- * Flutter-parity week strip: bordered white card, chevron arrows on
- * left + right shift the visible week, day pills with red selected
- * state, green dot under days that have a workout (white when selected).
+ * Mon-Sun pill strip. The currently-selected day fills with primary
+ * red and renders a small green dot under any day that has a workout.
+ * Tapping a date navigates the page to `/weight-room?day=<iso>` so the
+ * workout preview card below updates to that day.
  */
 export function WeekStrip({
   initialDates,
   days,
-  selectedIso: selectedIsoProp,
-  onSelect,
+  selectedIso,
+  basePath = "/weight-room",
+  weekParam,
 }: {
   initialDates: Date[];
   days: WorkoutPlanDay[];
-  selectedIso?: string;
-  onSelect?: (iso: string) => void;
+  selectedIso: string;
+  basePath?: string;
+  /** Pass-through so the chosen week chip stays selected across day taps. */
+  weekParam?: string | null;
 }) {
-  // The strip is a controlled component for the parent's selected day,
-  // but it manages its own "anchor" so the user can scrub through weeks
-  // without ever leaving the home screen.
   const todayIso = isoDate(new Date());
-  const anchor = initialDates[0] ?? new Date();
-  const [weekStart, setWeekStart] = useState<Date>(anchor);
-
-  const visible: Date[] = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date(weekStart);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
-
-  function shiftWeek(deltaDays: number) {
-    const next = new Date(weekStart);
-    next.setDate(next.getDate() + deltaDays);
-    setWeekStart(next);
-  }
-
   return (
     <div className="flex items-center gap-1 rounded-2xl border border-[#E8E6E3] bg-white px-1 py-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.03)]">
-      <Arrow
-        dir="left"
-        onClick={() => shiftWeek(-7)}
-        ariaLabel="Previous week"
-      />
+      <Arrow dir="left" disabled />
       <ol className="grid flex-1 grid-cols-7 gap-1">
-        {visible.map((d) => {
+        {initialDates.map((d) => {
           const matched = matchDay(d, days);
           const iso = isoDate(d);
+          const isSelected = iso === selectedIso;
           const isToday = iso === todayIso;
-          const isSelected = selectedIsoProp
-            ? iso === selectedIsoProp
-            : isToday;
           const hasWorkout = matched !== null;
 
           const inner = (
@@ -106,65 +82,52 @@ export function WeekStrip({
             </div>
           );
 
-          if (onSelect) {
-            return (
-              <li key={iso} className="flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => onSelect(iso)}
-                  className="block"
-                >
-                  {inner}
-                </button>
-              </li>
-            );
-          }
+          const params = new URLSearchParams();
+          params.set("day", iso);
+          if (weekParam) params.set("week", weekParam);
+          const href = `${basePath}?${params.toString()}`;
+
           return (
             <li key={iso} className="flex justify-center">
-              {hasWorkout ? (
-                <Link
-                  href={`/weight-room/workout/${iso}`}
-                  className="block"
-                >
-                  {inner}
-                </Link>
-              ) : (
-                inner
-              )}
+              <Link href={href} scroll={false} className="block">
+                {inner}
+              </Link>
             </li>
           );
         })}
       </ol>
-      <Arrow
-        dir="right"
-        onClick={() => shiftWeek(7)}
-        ariaLabel="Next week"
-      />
+      <Arrow dir="right" disabled />
     </div>
   );
 }
 
 function Arrow({
   dir,
-  onClick,
-  ariaLabel,
+  disabled,
 }: {
   dir: "left" | "right";
-  onClick: () => void;
-  ariaLabel: string;
+  disabled: boolean;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={ariaLabel}
-      className="flex h-11 w-7 items-center justify-center text-muted-foreground active:opacity-60"
-    >
-      {dir === "left" ? (
-        <ChevronLeft className="h-[22px] w-[22px]" strokeWidth={1.75} />
-      ) : (
-        <ChevronRight className="h-[22px] w-[22px]" strokeWidth={1.75} />
+    <span
+      aria-hidden
+      className={cn(
+        "flex h-11 w-7 items-center justify-center",
+        disabled ? "text-muted-foreground/30" : "text-muted-foreground"
       )}
-    </button>
+    >
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {dir === "left" ? <polyline points="15 18 9 12 15 6" /> : <polyline points="9 18 15 12 9 6" />}
+      </svg>
+    </span>
   );
 }

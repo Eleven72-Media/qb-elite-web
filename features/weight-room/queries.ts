@@ -175,3 +175,79 @@ export async function getWorkoutPlanExercises(
   if (error) throw error;
   return (data ?? []).map(mapExercise);
 }
+
+// ───────────────────────────────────────────────────────────────────────
+// Training videos (workouts + categories) — matches Flutter weight room
+// ───────────────────────────────────────────────────────────────────────
+
+export interface WorkoutCategory {
+  id: string;
+  name: string;
+  imageUrl: string | null;
+  sortOrder: number;
+}
+
+export interface Workout {
+  id: string;
+  name: string;
+  videoUrl: string;
+  imageUrl: string | null;
+  description: string | null;
+}
+
+const mapCategory = (db: any): WorkoutCategory => ({
+  id: db.id,
+  name: db.name ?? db.title ?? "",
+  imageUrl: db.image ?? db.image_url ?? null,
+  sortOrder: db.sort_order ?? 0,
+});
+
+const mapWorkout = (db: any): Workout => ({
+  id: db.id,
+  name: db.name ?? db.title ?? "",
+  videoUrl: db.video_url ?? "",
+  imageUrl: db.image ?? db.image_url ?? null,
+  description: db.description ?? null,
+});
+
+export async function getWorkoutCategories(
+  supabase: SupabaseClient
+): Promise<WorkoutCategory[]> {
+  const { data, error } = await supabase
+    .from("workout_categories")
+    .select("*")
+    .order("sort_order", { ascending: true });
+  if (error) {
+    console.warn("workout_categories fetch failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapCategory);
+}
+
+export async function getWorkoutsByCategory(
+  supabase: SupabaseClient,
+  categoryId: string
+): Promise<Workout[]> {
+  const { data: assignments, error: asnError } = await supabase
+    .from("workout_category_assignments")
+    .select("workout_id")
+    .eq("category_id", categoryId)
+    .limit(40);
+  if (asnError) {
+    console.warn("workout_category_assignments fetch failed:", asnError.message);
+    return [];
+  }
+  const ids = (assignments ?? [])
+    .map((r: any) => r.workout_id as string)
+    .filter(Boolean);
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("workouts")
+    .select("*")
+    .in("id", ids);
+  if (error) {
+    console.warn("workouts fetch failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapWorkout);
+}
