@@ -40,6 +40,12 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  // viewportFit: 'cover' lets the app extend under the iOS home-indicator
+  // area AND populates env(safe-area-inset-*) so our pb-[calc(env(...))]
+  // padding on the tab bar actually has a value to compute against.
+  // Without this, iOS reports safe-area-inset-bottom as 0 and the tab
+  // bar sits flush with the bottom edge under the home indicator.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
