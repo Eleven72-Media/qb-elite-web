@@ -4,7 +4,9 @@ import { PageHeader } from "@/components/app/page-header";
 import {
   getRecipesByTitles,
   getUserMealPlan,
+  getUserMealPlanWeek,
 } from "@/features/nutrition/queries";
+import { aggregateGroceryItems } from "@/features/nutrition/grocery-aggregate";
 import { createClient } from "@/lib/supabase/server";
 import { tierSatisfies } from "@/lib/tier";
 import type { SubscriptionTier } from "@/types/db";
@@ -24,7 +26,11 @@ const DAY_LABELS: Record<string, string> = {
   sunday: "Sun",
 };
 
-export default async function GroceryListPage() {
+export default async function GroceryListPage({
+  searchParams,
+}: {
+  searchParams: { week?: string };
+}) {
   const supabase = createClient();
   const {
     data: { user },
@@ -42,23 +48,32 @@ export default async function GroceryListPage() {
     redirect("/paywall");
   }
 
-  const mealPlan = await getUserMealPlan(supabase);
+  // Default to the user's cohort week; honor ?week= when present (and
+  // ≤ cohort, same rule as the meal planner picker). This is the fix
+  // for "why is it showing Week 12 when I'm on Week 1?"
+  const cohortWeek = await getUserMealPlanWeek(supabase);
+  const requested = searchParams.week
+    ? parseInt(searchParams.week.replace(/[^0-9]/g, ""), 10)
+    : NaN;
+  const explicitWeek =
+    !Number.isNaN(requested) && requested <= cohortWeek ? requested : null;
+  const selectedWeek = explicitWeek ?? Math.max(cohortWeek, 0);
+
+  const mealPlan = await getUserMealPlan(supabase, selectedWeek);
   if (!mealPlan) {
     return (
       <>
-        <PageHeader title="Grocery List" backHref="/nutrition/meal-plan" />
+        <PageHeader title="Grocery List" backHref={backHrefFor(explicitWeek)} />
         <div className="mx-auto w-full max-w-[820px] px-5 pt-10 md:px-6">
           <div className="rounded-3xl border border-dashed border-border bg-muted p-8 text-center text-sm text-muted-foreground">
-            No meal plan published for your week yet — nothing to shop for.
+            No meal plan published for Week {selectedWeek} — nothing to shop for.
           </div>
         </div>
       </>
     );
   }
 
-  // Collect every meal-text string used across the week, tagged with the
-  // day it appears so the source list at the bottom of the page can
-  // group by day for the user.
+  // Harvest every (meal_text, day) pair from the selected week's plan.
   type Mention = { meal: string; day: string };
   const mentions: Mention[] = [];
   for (const d of mealPlan.days) {
@@ -70,57 +85,43 @@ export default async function GroceryListPage() {
   }
   const distinctMeals = Array.from(new Set(mentions.map((m) => m.meal)));
 
-  // Match meal text → recipe rows. Anything that doesn't match shows up
-  // in the "Couldn't match" section so the athlete still sees it.
   const recipes = await getRecipesByTitles(supabase, distinctMeals);
   const byTitle = new Map(recipes.map((r) => [r.title.toLowerCase(), r]));
 
-  // Dedupe ingredients across the whole week (case-insensitive on first
-  // word so "2 eggs" + "1 egg" don't both appear — close enough for a
-  // grocery list).
-  const ingredientMap = new Map<
-    string,
-    { display: string; meals: Set<string> }
-  >();
+  // Build the raw (ingredient, usedFor) list. Each ingredient line
+  // gets paired with "Recipe (Day)" for the attribution row.
+  type RawSource = { ingredient: string; usedFor: string };
+  const rawSources: RawSource[] = [];
   const unmatchedMeals: { meal: string; days: string[] }[] = [];
 
   for (const m of distinctMeals) {
-    const r = byTitle.get(m.toLowerCase());
-    const daysWithThis = mentions
-      .filter((x) => x.meal === m)
-      .map((x) => DAY_LABELS[x.day] ?? x.day);
-    if (!r || r.ingredients.length === 0) {
-      unmatchedMeals.push({ meal: m, days: Array.from(new Set(daysWithThis)) });
+    const recipe = byTitle.get(m.toLowerCase());
+    const daysWithThis = Array.from(
+      new Set(
+        mentions.filter((x) => x.meal === m).map((x) => DAY_LABELS[x.day] ?? x.day)
+      )
+    );
+    if (!recipe || recipe.ingredients.length === 0) {
+      unmatchedMeals.push({ meal: m, days: daysWithThis });
       continue;
     }
-    for (const raw of r.ingredients) {
-      const key = raw.trim().toLowerCase();
-      if (!key) continue;
-      const existing = ingredientMap.get(key);
-      if (existing) {
-        for (const d of daysWithThis) existing.meals.add(`${m} (${d})`);
-      } else {
-        ingredientMap.set(key, {
-          display: raw.trim(),
-          meals: new Set(daysWithThis.map((d) => `${m} (${d})`)),
-        });
+    // Multiply ingredients by the number of distinct days this meal
+    // appears in (e.g. eaten Mon + Wed → need 2× ingredients).
+    for (const day of daysWithThis) {
+      for (const ing of recipe.ingredients) {
+        rawSources.push({ ingredient: ing, usedFor: `${m} (${day})` });
       }
     }
   }
 
-  const items = Array.from(ingredientMap.values())
-    .sort((a, b) => a.display.localeCompare(b.display))
-    .map((it) => ({
-      ingredient: it.display,
-      usedFor: Array.from(it.meals).sort(),
-    }));
+  const items = aggregateGroceryItems(rawSources);
 
   const weekLabel =
     mealPlan.plan.name ?? `Week ${mealPlan.plan.weekOfRelease} plan`;
 
   return (
     <>
-      <PageHeader title="Grocery List" backHref="/nutrition/meal-plan" />
+      <PageHeader title="Grocery List" backHref={backHrefFor(explicitWeek)} />
       <GroceryListClient
         weekLabel={weekLabel}
         items={items}
@@ -128,4 +129,11 @@ export default async function GroceryListPage() {
       />
     </>
   );
+}
+
+function backHrefFor(explicitWeek: number | null): string {
+  if (explicitWeek == null) return "/nutrition/meal-plan";
+  const p = new URLSearchParams();
+  p.set("week", String(explicitWeek));
+  return `/nutrition/meal-plan?${p.toString()}`;
 }

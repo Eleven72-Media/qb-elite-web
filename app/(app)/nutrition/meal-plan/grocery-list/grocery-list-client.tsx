@@ -6,7 +6,12 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export interface GroceryItem {
-  ingredient: string;
+  /** Render label: e.g. "2 cups chicken gravy" */
+  display: string;
+  /** Normalized lowercase ingredient name — used as a dedupe + storage key. */
+  baseName: string;
+  /** Optional raw lines that fed into this consolidated row (debug only). */
+  rawSources: string[];
   usedFor: string[];
 }
 
@@ -49,7 +54,7 @@ export function GroceryListClient({
     const lines = [
       `QB Elite Grocery List — ${weekLabel}`,
       "",
-      ...items.map((i) => `• ${i.ingredient}`),
+      ...items.map((i) => `• ${i.display}`),
       ...(unmatched.length > 0
         ? ["", "Meals without ingredient data:"]
         : []),
@@ -62,7 +67,7 @@ export function GroceryListClient({
     const lines = [
       `QB Elite Grocery List — ${weekLabel}`,
       "",
-      ...items.map((i) => `[ ] ${i.ingredient}`),
+      ...items.map((i) => `[ ] ${i.display}`),
       ...(unmatched.length > 0
         ? ["", "Meals without ingredient data:"]
         : []),
@@ -145,7 +150,7 @@ export function GroceryListClient({
         <section className="overflow-hidden rounded-3xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5 print:shadow-none print:ring-0">
           <ul className="divide-y divide-border/40 px-5">
             {items.map((it) => {
-              const key = it.ingredient.toLowerCase();
+              const key = it.baseName;
               const isOn = !!checked[key];
               return (
                 <li key={key} className="py-3">
@@ -164,7 +169,7 @@ export function GroceryListClient({
                             : "text-[15px] font-medium text-foreground"
                         }
                       >
-                        {it.ingredient}
+                        {it.display}
                       </p>
                       {it.usedFor.length > 0 && (
                         <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">

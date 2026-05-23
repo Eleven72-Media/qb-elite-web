@@ -112,13 +112,20 @@ export default async function MealPlanPage({
     return id ? `/nutrition/recipe/${id}` : null;
   }
 
+  // Forward ?week=N to the grocery list so it shops the same week the
+  // user is currently viewing on the meal planner.
+  const groceryHref =
+    explicitWeek != null
+      ? `/nutrition/meal-plan/grocery-list?week=${explicitWeek}`
+      : "/nutrition/meal-plan/grocery-list";
+
   const header = (
     <PageHeader
       title="Meal Planner"
       backHref="/nutrition"
       action={
         <Link
-          href="/nutrition/meal-plan/grocery-list"
+          href={groceryHref}
           aria-label="Grocery list"
           className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary active:opacity-80"
         >
