@@ -19,7 +19,7 @@ import {
   type WorkoutPlanExercise,
 } from "@/features/weight-room/queries";
 import {
-  currentWeekDates,
+  dateWindow,
   isoDate,
   matchDay,
   parseIsoDate,
@@ -138,7 +138,8 @@ export default async function WeightRoomPage({
     });
   }
 
-  const weekDates = currentWeekDates();
+  // 28 days = this week + 3 weeks ahead, horizontally scrollable.
+  const weekDates = dateWindow(new Date(), 28);
 
   return (
     <div className="mx-auto w-full max-w-[820px] pb-6">
