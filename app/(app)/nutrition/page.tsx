@@ -1,37 +1,44 @@
-import { ChevronRight, Flame, Utensils } from "lucide-react";
+import { ArrowRight, BadgeCheck, ExternalLink, Flame, Lock, Search, Utensils, Video } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { NutritionTabs } from "@/features/nutrition/components/nutrition-tabs";
 import {
   getNutritionVideos,
   getRecipes,
   getUserMealPlan,
-  type MealPlanDay,
+  type NutritionVideo,
   type Recipe,
 } from "@/features/nutrition/queries";
 import { createClient } from "@/lib/supabase/server";
+import { tierSatisfies } from "@/lib/tier";
+import { vimeoThumbnailUrl } from "@/lib/vimeo";
+import type { SubscriptionTier } from "@/types/db";
 
 export const metadata = { title: "Nutrition — QB Elite" };
 export const dynamic = "force-dynamic";
 
-const DAY_LABELS: Record<string, string> = {
-  monday: "Mon",
-  tuesday: "Tue",
-  wednesday: "Wed",
-  thursday: "Thu",
-  friday: "Fri",
-  saturday: "Sat",
-  sunday: "Sun",
-};
-
 export default async function NutritionPage() {
   const supabase = createClient();
-  const [mealPlan, recipes, videos] = await Promise.all([
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [mealPlan, recipes, videos, profileRes] = await Promise.all([
     getUserMealPlan(supabase),
     getRecipes(supabase),
     getNutritionVideos(supabase),
+    user
+      ? supabase
+          .from("profiles")
+          .select("subscription_tier")
+          .eq("id", user.id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
+  const tier = (profileRes.data as { subscription_tier: SubscriptionTier } | null)
+    ?.subscription_tier;
+  const mealPlannerLocked = !tierSatisfies(tier, "starter");
 
   return (
     <div className="mx-auto w-full max-w-[820px] pb-2">
@@ -40,175 +47,231 @@ export default async function NutritionPage() {
           Nutrition
         </h1>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Eat to perform — meal plans and recipes
+          Daily recipes and training sessions
         </p>
       </header>
 
-      <div className="px-5 md:px-6">
-        {mealPlan ? (
-          <ThisWeekMeals
-            name={mealPlan.plan.name ?? `Week ${mealPlan.plan.weekOfRelease} plan`}
-            days={mealPlan.days}
-          />
-        ) : (
-          <PaywallCard />
-        )}
+      <div className="px-4 md:px-6">
+        <MealPlannerHeader locked={mealPlannerLocked} hasPlan={!!mealPlan} />
       </div>
 
-      <section className="px-5 pt-7 md:px-6">
-        <div className="mb-3.5 flex items-center gap-2">
-          <h2 className="text-[18px] font-bold tracking-tight">Recipes</h2>
-        </div>
-        {recipes.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border bg-muted p-6 text-center text-sm text-muted-foreground">
-            No recipes available yet.
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3">
-            {recipes.map((r) => (
-              <RecipeCard key={r.id} recipe={r} />
-            ))}
-          </div>
-        )}
-      </section>
+      <div className="px-4 pb-1 pt-2 md:px-6">
+        <ReferencesCard />
+      </div>
 
-      {videos.length > 0 && (
-        <section className="px-5 pt-7 md:px-6">
-          <div className="mb-3.5 flex items-center gap-2">
-            <h2 className="text-[18px] font-bold tracking-tight">
-              Nutrition Videos
-            </h2>
+      <NutritionTabs
+        daily={<DailyRecipesTab recipes={recipes} />}
+        training={<TrainingTab videos={videos} />}
+      />
+    </div>
+  );
+}
+
+function MealPlannerHeader({
+  locked,
+  hasPlan,
+}: {
+  locked: boolean;
+  hasPlan: boolean;
+}) {
+  const href = locked ? "/paywall" : "/nutrition";
+  return (
+    <Link
+      href={href}
+      className="block rounded-2xl bg-gradient-to-br from-primary/[0.06] to-[#DD5354]/[0.04] p-3 active:opacity-95"
+    >
+      <div className="flex items-center gap-3.5">
+        <div className="overflow-hidden rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+          <Image
+            src="/img_nutrition.png"
+            alt=""
+            width={52}
+            height={52}
+            className="h-[52px] w-[52px] object-cover"
+          />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-bold leading-tight">Meal Planner</p>
+          <p className="mt-0.5 text-[12px] text-muted-foreground">
+            {hasPlan
+              ? "Plan your breakfast, lunch & dinner"
+              : "Plan your breakfast, lunch & dinner"}
+          </p>
+        </div>
+        <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary/12 text-primary">
+          {locked ? (
+            <Lock className="h-[18px] w-[18px]" strokeWidth={2} />
+          ) : (
+            <ArrowRight className="h-[18px] w-[18px]" strokeWidth={2.25} />
+          )}
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function ReferencesCard() {
+  return (
+    <a
+      href="https://www.dietaryguidelines.gov/"
+      target="_blank"
+      rel="noreferrer"
+      className="flex items-start gap-2.5 rounded-2xl border border-primary/20 bg-white px-3 py-2.5 active:opacity-90"
+    >
+      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/12 text-primary">
+        <BadgeCheck className="h-4 w-4" strokeWidth={2} />
+      </span>
+      <p className="flex-1 text-[12px] leading-snug text-muted-foreground">
+        Nutrition recommendations are supported by public health sources. Tap
+        to view citations.
+      </p>
+      <ExternalLink className="h-4 w-4 shrink-0 self-center text-primary" strokeWidth={2} />
+    </a>
+  );
+}
+
+function DailyRecipesTab({ recipes }: { recipes: Recipe[] }) {
+  return (
+    <>
+      <div className="px-4 pb-2 pt-2 md:px-6">
+        <div className="flex items-center gap-2 rounded-2xl bg-white px-3.5 py-3 ring-1 ring-[#D9D9D9]">
+          <Search className="h-5 w-5 text-muted-foreground" strokeWidth={2} />
+          <input
+            type="search"
+            placeholder="Search recipes…"
+            disabled
+            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+      </div>
+      <div className="px-4 pt-3 md:px-6">
+        {recipes.length === 0 ? (
+          <div className="flex flex-col items-center px-10 py-12 text-center">
+            <Utensils className="h-16 w-16 text-muted-foreground/40" strokeWidth={1.5} />
+            <p className="mt-4 text-[15px] font-medium text-muted-foreground">
+              No daily recipe found
+            </p>
           </div>
-          <div className="space-y-3">
-            {videos.map((v) => (
-              <div
-                key={v.id}
-                className="flex items-center gap-3.5 rounded-2xl border border-border/60 bg-white p-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
-              >
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Utensils className="h-5 w-5" strokeWidth={1.75} />
-                </span>
-                <p className="flex-1 text-[15px] font-semibold leading-tight">
-                  {v.title}
-                </p>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" strokeWidth={2} />
-              </div>
+        ) : (
+          <ul className="space-y-3">
+            {recipes.map((r) => (
+              <RecipeRow key={r.id} recipe={r} />
             ))}
-          </div>
-        </section>
+          </ul>
+        )}
+      </div>
+    </>
+  );
+}
+
+function TrainingTab({ videos }: { videos: NutritionVideo[] }) {
+  return (
+    <div className="px-4 pt-3 md:px-6">
+      {videos.length === 0 ? (
+        <div className="flex flex-col items-center px-10 py-12 text-center">
+          <Video className="h-16 w-16 text-muted-foreground/40" strokeWidth={1.5} />
+          <p className="mt-4 text-[15px] font-medium text-muted-foreground">
+            No nutrition video found
+          </p>
+        </div>
+      ) : (
+        <ul className="space-y-3">
+          {videos.map((v) => (
+            <VideoRow key={v.id} video={v} />
+          ))}
+        </ul>
       )}
     </div>
   );
 }
 
-function ThisWeekMeals({
-  name,
-  days,
-}: {
-  name: string;
-  days: MealPlanDay[];
-}) {
+function RecipeRow({ recipe }: { recipe: Recipe }) {
   return (
-    <section className="rounded-3xl border border-border/60 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
-      <div className="mb-3 flex items-center gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
-          This Week
-        </span>
-        <h2 className="text-[16px] font-bold tracking-tight">{name}</h2>
-      </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {days.map((d) => (
-          <div
-            key={d.id}
-            className="rounded-2xl border border-border/60 bg-muted/40 p-3"
-          >
-            <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
-              {DAY_LABELS[d.day] ?? d.day}
-            </p>
-            <ul className="mt-2 space-y-1 text-[13px] leading-snug text-foreground/85">
-              {d.breakfast && (
-                <li>
-                  <span className="font-semibold text-foreground">B:</span> {d.breakfast}
-                </li>
-              )}
-              {d.snack && (
-                <li>
-                  <span className="font-semibold text-foreground">S:</span> {d.snack}
-                </li>
-              )}
-              {d.proteinShake && (
-                <li>
-                  <span className="font-semibold text-foreground">P:</span> {d.proteinShake}
-                </li>
-              )}
-              {d.mainCourse && (
-                <li>
-                  <span className="font-semibold text-foreground">M:</span> {d.mainCourse}
-                </li>
-              )}
-              {d.side && (
-                <li>
-                  <span className="font-semibold text-foreground">Side:</span> {d.side}
-                </li>
-              )}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function RecipeCard({ recipe }: { recipe: Recipe }) {
-  return (
-    <Link href={`/nutrition/recipe/${recipe.id}`} className="block active:opacity-95">
-      <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5">
-        <div className="relative aspect-square w-full bg-muted">
+    <li>
+      <Link
+        href={`/nutrition/recipe/${recipe.id}`}
+        className="flex gap-3 overflow-hidden rounded-2xl bg-white p-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5 active:opacity-95"
+      >
+        <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-2xl bg-muted">
           {recipe.imageUrl ? (
             <Image
               src={recipe.imageUrl}
               alt={recipe.title}
               fill
               className="object-cover"
-              sizes="(min-width: 768px) 240px, 45vw"
+              sizes="88px"
             />
           ) : (
             <div className="flex h-full items-center justify-center text-muted-foreground">
-              <Utensils className="h-8 w-8" strokeWidth={1.5} />
+              <Utensils className="h-7 w-7" strokeWidth={1.5} />
             </div>
           )}
         </div>
-        <div className="flex flex-1 flex-col gap-1.5 p-3 pb-3.5">
-          <p className="line-clamp-2 text-[14px] font-bold leading-tight">
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+          <p className="line-clamp-2 text-[15px] font-bold leading-tight">
             {recipe.title}
           </p>
-          {(recipe.calories || recipe.protein) && (
-            <p className="mt-auto flex items-center gap-1 text-xs text-muted-foreground">
-              <Flame className="h-3 w-3" strokeWidth={2} />
-              {[recipe.calories, recipe.protein].filter(Boolean).join(" · ")}
-            </p>
+          {(recipe.calories || recipe.protein || recipe.preparationTime) && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {recipe.preparationTime && (
+                <Pill>{recipe.preparationTime}</Pill>
+              )}
+              {recipe.calories && (
+                <Pill icon={<Flame className="h-3 w-3" strokeWidth={2} />}>
+                  {recipe.calories}
+                </Pill>
+              )}
+              {recipe.protein && <Pill>{recipe.protein}g protein</Pill>}
+            </div>
           )}
         </div>
-      </article>
-    </Link>
+      </Link>
+    </li>
   );
 }
 
-function PaywallCard() {
+function VideoRow({ video }: { video: NutritionVideo }) {
+  const thumb = vimeoThumbnailUrl(video.videoLink);
   return (
-    <section className="rounded-3xl bg-gradient-to-br from-primary/12 to-primary/0 p-6 text-center ring-1 ring-primary/15">
-      <h2 className="mb-2 text-xl font-extrabold uppercase tracking-tight">
-        Unlock your meal plan
-      </h2>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Weekly meal plans built for QBs — breakfast, snack, protein shake,
-        main + side. Free during your 7-day trial.
-      </p>
-      <Link href="/paywall">
-        <Button size="lg" className="rounded-full px-7">
-          Start Free Trial
-        </Button>
-      </Link>
-    </section>
+    <li>
+      <div className="flex items-center gap-3.5 rounded-2xl border border-border/60 bg-white p-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
+        <div className="relative h-[70px] w-[100px] shrink-0 overflow-hidden rounded-2xl bg-[#E8EDF2]">
+          {thumb && (
+            <Image src={thumb} alt="" fill className="object-cover" sizes="100px" />
+          )}
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-primary">
+            Nutrition
+          </p>
+          <p className="mt-1 line-clamp-2 text-[15px] font-semibold leading-tight">
+            {video.title}
+          </p>
+        </div>
+      </div>
+    </li>
   );
 }
+
+function Pill({
+  icon,
+  children,
+}: {
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+      {icon}
+      {children}
+    </span>
+  );
+}
+
