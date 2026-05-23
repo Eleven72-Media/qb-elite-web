@@ -68,3 +68,17 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+/* Print mode — strip the app chrome (top bar, tab bar, install prompt,
+ * notification bell) so a grocery list / meal plan prints clean. */
+@media print {
+  header,
+  nav,
+  [data-print-hide],
+  .install-prompt {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+  }
+}

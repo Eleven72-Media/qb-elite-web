@@ -110,6 +110,30 @@ export async function getRecipe(
   return data ? mapRecipe(data) : null;
 }
 
+/**
+ * Pull recipe rows by title (case-insensitive). Used by the Grocery List
+ * generator: meal_plan_days stores meal names as free text strings, so we
+ * normalize + match titles back to the recipes table to harvest their
+ * ingredients arrays.
+ */
+export async function getRecipesByTitles(
+  supabase: SupabaseClient,
+  titles: string[]
+): Promise<Recipe[]> {
+  const normalized = Array.from(
+    new Set(
+      titles.map((t) => t.trim()).filter((t) => t.length > 0)
+    )
+  );
+  if (normalized.length === 0) return [];
+  const { data, error } = await supabase
+    .from("recipes")
+    .select("*")
+    .in("title", normalized);
+  if (error) throw error;
+  return (data ?? []).map(mapRecipe);
+}
+
 const mapNutritionVideo = (db: any): NutritionVideo => ({
   id: db.id,
   title: db.title ?? "",

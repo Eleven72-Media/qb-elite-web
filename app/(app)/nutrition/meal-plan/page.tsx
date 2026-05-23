@@ -1,4 +1,5 @@
-import { CalendarDays, Coffee, Cookie, Drumstick, Salad, Utensils } from "lucide-react";
+import { CalendarDays, Coffee, Cookie, Drumstick, ListChecks, Salad, Utensils } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { PageHeader } from "@/components/app/page-header";
@@ -53,7 +54,19 @@ export default async function MealPlanPage() {
   if (!mealPlan) {
     return (
       <>
-        <PageHeader title="Meal Planner" backHref="/nutrition" />
+        <PageHeader
+          title="Meal Planner"
+          backHref="/nutrition"
+          action={
+            <Link
+              href="/nutrition/meal-plan/grocery-list"
+              aria-label="Grocery list"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary active:opacity-80"
+            >
+              <ListChecks className="h-5 w-5" strokeWidth={2} />
+            </Link>
+          }
+        />
         <div className="mx-auto w-full max-w-[820px] px-5 pt-10 md:px-6">
           <div className="rounded-3xl border border-dashed border-border bg-muted p-8 text-center text-sm text-muted-foreground">
             No meal plan published for your week yet. Check back soon — the
