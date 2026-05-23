@@ -1,7 +1,8 @@
-import { CalendarDays, Lock, Play } from "lucide-react";
+import { Lock, Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { WeekPicker } from "@/features/classroom/components/week-picker";
 import {
   getQbTrainings,
   getUserQbTrainingWeek,
@@ -15,7 +16,11 @@ import type { SubscriptionTier } from "@/types/db";
 export const metadata = { title: "Classroom — QB Elite" };
 export const dynamic = "force-dynamic";
 
-export default async function ClassroomPage() {
+export default async function ClassroomPage({
+  searchParams,
+}: {
+  searchParams: { week?: string };
+}) {
   const supabase = createClient();
   const {
     data: { user },
@@ -36,7 +41,30 @@ export default async function ClassroomPage() {
   const tier = (profileRes.data as { subscription_tier: SubscriptionTier } | null)
     ?.subscription_tier;
   const isFree = !tierSatisfies(tier, "starter");
-  const effectiveWeek = isFree ? 0 : userWeek;
+  const currentWeek = isFree ? 0 : userWeek;
+
+  // Pick the focused week: ?week=N (if present + accessible) or fall back
+  // to the user's current week.
+  const requested = searchParams.week
+    ? parseInt(searchParams.week.replace(/[^0-9]/g, ""), 10)
+    : NaN;
+  const explicitWeek =
+    !Number.isNaN(requested) && requested <= currentWeek ? requested : null;
+  const selectedWeek = explicitWeek ?? currentWeek;
+  const isViewingPast = explicitWeek != null && explicitWeek !== currentWeek;
+
+  // Build the dropdown's week list from the data — distinct sorted ints.
+  const allWeeks = Array.from(
+    new Set(
+      trainings
+        .map((t) => t.weekNumber)
+        .filter((w): w is number => w != null)
+    )
+  ).sort((a, b) => a - b);
+  if (!allWeeks.includes(currentWeek)) {
+    allWeeks.push(currentWeek);
+    allWeeks.sort((a, b) => a - b);
+  }
 
   const sorted = [...trainings].sort((a, b) => {
     const aw = a.weekNumber ?? 999;
@@ -44,22 +72,41 @@ export default async function ClassroomPage() {
     if (aw !== bw) return aw - bw;
     return a.title.localeCompare(b.title);
   });
-  const available = sorted.filter(
-    (t) => t.weekNumber != null && t.weekNumber <= effectiveWeek
+
+  const selectedWeekTrainings = sorted.filter(
+    (t) => t.weekNumber === selectedWeek
   );
-  const locked = sorted.filter(
-    (t) => t.weekNumber == null || t.weekNumber > effectiveWeek
+  const futureLocked = sorted.filter(
+    (t) => t.weekNumber != null && t.weekNumber > currentWeek
   );
 
-  const featured = available[0] ?? locked[0] ?? null;
-  const featuredLocked = available.length === 0 && !!featured;
-  const restAvailable = available.slice(1);
+  const featured = selectedWeekTrainings[0] ?? futureLocked[0] ?? null;
+  const featuredLocked = selectedWeekTrainings.length === 0 && !!featured;
+  const restAvailable = selectedWeekTrainings.slice(1);
 
   return (
     <div className="mx-auto w-full max-w-[820px] pb-2">
-      <ClassroomHeader effectiveWeek={effectiveWeek} />
+      <ClassroomHeader
+        selectedWeek={selectedWeek}
+        currentWeek={currentWeek}
+        allWeeks={allWeeks}
+      />
 
-      {isFree && (
+      {isViewingPast && (
+        <div className="mx-5 mt-1 flex items-center justify-between gap-3 rounded-2xl bg-primary/10 px-4 py-2.5 md:mx-6">
+          <p className="text-xs font-semibold text-primary">
+            Viewing past week — Week {selectedWeek}
+          </p>
+          <Link
+            href="/classroom"
+            className="text-xs font-bold text-primary underline-offset-2 hover:underline"
+          >
+            Back to current
+          </Link>
+        </div>
+      )}
+
+      {isFree && !isViewingPast && (
         <Link
           href="/paywall"
           className="mx-5 mt-1 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-primary to-primary/85 px-4 py-3 shadow-sm active:opacity-95 md:mx-6"
@@ -76,41 +123,46 @@ export default async function ClassroomPage() {
         <FeaturedCard
           training={featured}
           locked={featuredLocked}
-          availableCount={available.length}
+          availableCount={selectedWeekTrainings.length}
         />
       )}
 
       {restAvailable.length > 0 && (
-        <Section
-          title="This Week"
-          trailing={`${restAvailable.length} more`}
-        >
+        <Section title="This Week" trailing={`${restAvailable.length} more`}>
           {restAvailable.map((t) => (
             <VideoTile key={t.id} training={t} locked={false} />
           ))}
         </Section>
       )}
 
-      {locked.length > 0 && (
+      {!isViewingPast && futureLocked.length > 0 && (
         <Section
           title="Upcoming"
-          trailing={`${locked.length} video${locked.length === 1 ? "" : "s"}`}
+          trailing={`${futureLocked.length} video${futureLocked.length === 1 ? "" : "s"}`}
           locked
         >
-          {locked.slice(0, available.length === 0 ? locked.length - 1 : locked.length).map((t) => (
+          {futureLocked.map((t) => (
             <VideoTile key={t.id} training={t} locked />
           ))}
         </Section>
       )}
 
-      {available.length === 0 && locked.length === 0 && (
-        <EmptyState />
+      {selectedWeekTrainings.length === 0 && futureLocked.length === 0 && (
+        <EmptyState selectedWeek={selectedWeek} />
       )}
     </div>
   );
 }
 
-function ClassroomHeader({ effectiveWeek }: { effectiveWeek: number }) {
+function ClassroomHeader({
+  selectedWeek,
+  currentWeek,
+  allWeeks,
+}: {
+  selectedWeek: number;
+  currentWeek: number;
+  allWeeks: number[];
+}) {
   return (
     <header className="px-5 pb-3 pt-1 md:px-6">
       <div className="flex items-start gap-3">
@@ -122,10 +174,11 @@ function ClassroomHeader({ effectiveWeek }: { effectiveWeek: number }) {
             Your weekly training sessions
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
-          <CalendarDays className="h-3.5 w-3.5" strokeWidth={2} />
-          {effectiveWeek === 0 ? "Intro" : `Week ${effectiveWeek}`}
-        </span>
+        <WeekPicker
+          selectedWeek={selectedWeek}
+          currentWeek={currentWeek}
+          allWeeks={allWeeks}
+        />
       </div>
     </header>
   );
@@ -314,7 +367,7 @@ function VideoTile({
   );
 }
 
-function EmptyState() {
+function EmptyState({ selectedWeek }: { selectedWeek: number }) {
   return (
     <div className="flex flex-col items-center justify-center px-10 pt-16 text-center">
       <div className="flex h-[110px] w-[110px] items-center justify-center rounded-full bg-gradient-radial from-primary/15 to-primary/5">
@@ -331,7 +384,11 @@ function EmptyState() {
           <path d="M7 12v4.5c0 1 2.5 2.5 5 2.5s5-1.5 5-2.5V12" />
         </svg>
       </div>
-      <h2 className="mt-7 text-[22px] font-bold">No Videos Available</h2>
+      <h2 className="mt-7 text-[22px] font-bold">
+        {selectedWeek === 0
+          ? "No Intro Videos Available"
+          : `No Videos for Week ${selectedWeek}`}
+      </h2>
       <p className="mt-3.5 text-sm leading-relaxed text-muted-foreground">
         New content unlocks each week.
         <br />
