@@ -1,7 +1,7 @@
+import { Calendar, Play, Video } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getHuddles, type Huddle } from "@/features/huddle/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -33,53 +33,53 @@ export default async function HuddlePage() {
   const regularPast = past.filter((h) => h.type === "huddle");
   const filmStudyPast = past.filter((h) => h.type === "film_study");
 
-  if (huddles.length === 0) {
-    return (
-      <div className="container py-6">
-        <h1 className="text-3xl font-extrabold uppercase tracking-tight">
-          The Huddle
-        </h1>
-        <PaywallCard />
-      </div>
-    );
-  }
-
   return (
-    <div className="container space-y-8 py-6">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Live + recorded sessions
-        </p>
-        <h1 className="mt-1 text-3xl font-extrabold uppercase tracking-tight">
+    <div className="mx-auto w-full max-w-[820px] pb-2">
+      <header className="px-5 pb-3 pt-1 md:px-6">
+        <h1 className="text-[18px] font-bold leading-tight tracking-tight">
           The Huddle
         </h1>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Live group sessions + recordings
+        </p>
       </header>
 
-      {regularUpcoming.length > 0 && (
-        <Section title="Upcoming">
-          {regularUpcoming.map((h) => (
-            <HuddleCard key={h.id} huddle={h} />
-          ))}
-        </Section>
-      )}
+      {huddles.length === 0 ? (
+        <div className="px-5 md:px-6">
+          <PaywallCard />
+        </div>
+      ) : (
+        <>
+          {regularUpcoming.length > 0 && (
+            <Section title="Upcoming" icon={<Calendar className="h-[18px] w-[18px]" strokeWidth={2} />}>
+              {regularUpcoming.map((h) => (
+                <HuddleCard key={h.id} huddle={h} />
+              ))}
+            </Section>
+          )}
 
-      {regularPast.length > 0 && (
-        <Section title="Past Huddles">
-          {regularPast.map((h) => (
-            <HuddleCard key={h.id} huddle={h} compact />
-          ))}
-        </Section>
-      )}
+          {regularPast.length > 0 && (
+            <Section
+              title="Past Huddles"
+              trailing={`${regularPast.length} recording${regularPast.length === 1 ? "" : "s"}`}
+            >
+              {regularPast.map((h) => (
+                <HuddleCard key={h.id} huddle={h} />
+              ))}
+            </Section>
+          )}
 
-      {(filmStudyUpcoming.length > 0 || filmStudyPast.length > 0) && (
-        <Section title="Film Study">
-          {filmStudyUpcoming.map((h) => (
-            <HuddleCard key={h.id} huddle={h} />
-          ))}
-          {filmStudyPast.map((h) => (
-            <HuddleCard key={h.id} huddle={h} compact />
-          ))}
-        </Section>
+          {(filmStudyUpcoming.length > 0 || filmStudyPast.length > 0) && (
+            <Section title="Film Study">
+              {filmStudyUpcoming.map((h) => (
+                <HuddleCard key={h.id} huddle={h} />
+              ))}
+              {filmStudyPast.map((h) => (
+                <HuddleCard key={h.id} huddle={h} />
+              ))}
+            </Section>
+          )}
+        </>
       )}
     </div>
   );
@@ -87,68 +87,86 @@ export default async function HuddlePage() {
 
 function Section({
   title,
+  trailing,
+  icon,
   children,
 }: {
   title: string;
+  trailing?: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section>
-      <h2 className="mb-3 text-lg font-bold uppercase tracking-tight">
-        {title}
-      </h2>
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">{children}</div>
+    <section className="px-5 pt-5 md:px-6">
+      <div className="mb-3 flex items-center gap-2">
+        {icon && <span className="text-foreground/70">{icon}</span>}
+        <h2 className="text-[18px] font-bold tracking-tight">{title}</h2>
+        {trailing && (
+          <span className="ml-auto rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+            {trailing}
+          </span>
+        )}
+      </div>
+      <div className="space-y-3">{children}</div>
     </section>
   );
 }
 
-function HuddleCard({
-  huddle,
-  compact,
-}: {
-  huddle: Huddle;
-  compact?: boolean;
-}) {
+function HuddleCard({ huddle }: { huddle: Huddle }) {
   const scheduled = huddle.scheduledAt ? new Date(huddle.scheduledAt) : null;
   const dateLabel = scheduled
     ? scheduled.toLocaleDateString(undefined, {
+        weekday: "short",
         month: "short",
         day: "numeric",
-        year: "numeric",
       })
     : null;
-  return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
-      <div className="relative aspect-video w-full bg-foreground/5">
+  const isRecording = !!huddle.videoUrl;
+  const href = isRecording && huddle.videoUrl ? huddle.videoUrl : null;
+
+  const inner = (
+    <article className="overflow-hidden rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5">
+      <div className="relative h-[160px] w-full bg-muted">
         {huddle.imageUrl ? (
           <Image
             src={huddle.imageUrl}
             alt={huddle.title}
             fill
-            className="object-cover transition-transform group-hover:scale-105"
-            sizes="(min-width: 640px) 33vw, 100vw"
+            className="object-cover"
+            sizes="(min-width: 768px) 600px, 100vw"
           />
-        ) : null}
-        {huddle.videoUrl ? (
-          <Badge
-            variant="outline"
-            className="absolute left-2 top-2 border-white/40 bg-black/60 text-white"
-          >
-            Recording
-          </Badge>
         ) : (
-          <Badge className="absolute left-2 top-2">Upcoming</Badge>
+          <div className="flex h-full items-center justify-center text-primary/40">
+            <Video className="h-12 w-12" strokeWidth={1.5} />
+          </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+        <span
+          className={`absolute left-3 top-3 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white ${
+            isRecording ? "bg-black/60" : "bg-primary"
+          }`}
+        >
+          {isRecording ? "Recording" : "Upcoming"}
+        </span>
+        {isRecording && (
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-[0_0_20px_3px_rgba(182,31,38,0.35)]">
+              <Play className="h-6 w-6 text-white" fill="white" strokeWidth={0} />
+            </span>
+          </span>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-3">
-        <p className="text-sm font-semibold leading-tight">{huddle.title}</p>
-        {!compact && huddle.description && (
-          <p className="text-xs text-muted-foreground line-clamp-2">
+      <div className="p-3.5">
+        <p className="line-clamp-2 text-[15px] font-bold leading-tight">
+          {huddle.title}
+        </p>
+        {huddle.description && (
+          <p className="mt-1 line-clamp-2 text-[13px] text-muted-foreground">
             {huddle.description}
           </p>
         )}
         {dateLabel && (
-          <p className="mt-auto text-[10px] font-semibold uppercase tracking-widest text-primary">
+          <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-primary">
             {dateLabel}
             {huddle.duration ? ` · ${huddle.duration} min` : ""}
           </p>
@@ -156,20 +174,36 @@ function HuddleCard({
       </div>
     </article>
   );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer"
+        className="block active:opacity-95"
+      >
+        {inner}
+      </a>
+    );
+  }
+  return inner;
 }
 
 function PaywallCard() {
   return (
-    <section className="mt-6 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/0 p-6 text-center">
+    <section className="mt-2 rounded-3xl bg-gradient-to-br from-primary/12 to-primary/0 p-6 text-center ring-1 ring-primary/15">
       <h2 className="mb-2 text-xl font-extrabold uppercase tracking-tight">
         Join The Huddle
       </h2>
       <p className="mb-4 text-sm text-muted-foreground">
         Live group sessions with coaches and pro QBs. Recorded film studies
-        and Q&A. Free during your 7-day trial.
+        and Q&amp;A. Free during your 7-day trial.
       </p>
       <Link href="/paywall">
-        <Button size="lg">Start Free Trial</Button>
+        <Button size="lg" className="rounded-full px-7">
+          Start Free Trial
+        </Button>
       </Link>
     </section>
   );

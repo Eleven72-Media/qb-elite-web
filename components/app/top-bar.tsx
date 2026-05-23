@@ -1,41 +1,26 @@
-import { Bell } from "lucide-react";
 import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { createClient } from "@/lib/supabase/server";
+
+import { NotificationBell } from "./notification-bell";
 
 /**
  * Top bar that mirrors Flutter's HomeAppBar:
- *   [avatar(50)] [Hi, name (red bold) / "Welcome to quarterback experience"]   [bell-with-badge]
+ *   [avatar(50)] [Hi, name (red bold) / "Welcome to quarterback experience"]   [bell]
  *
- * Avatar tap → /profile (Flutter taps avatar → menuScreen which is profile).
- * Bell tap → /profile/notifications. Red dot when unread > 0.
+ * Avatar tap → /profile. Bell tap → /profile/notifications.
  *
- * Renders on every authenticated page. Hidden on the auth screens
- * because (auth) routes use their own layout.
+ * Pure server component: no Supabase round-trip. Layout passes name +
+ * avatar already, and the unread badge defers to a client component so
+ * the bar renders in the same micro-task as the page shell.
  */
-export async function TopBar({
+export function TopBar({
   displayName,
   avatarUrl,
 }: {
   displayName: string | null;
   avatarUrl: string | null;
 }) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  let unreadCount = 0;
-  if (user) {
-    const { count } = await supabase
-      .from("notifications")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .is("read_at", null);
-    unreadCount = count ?? 0;
-  }
-
   const initials = (displayName ?? "QB").slice(0, 2).toUpperCase();
   const firstName = (displayName ?? "Athlete").split(" ")[0];
 
@@ -63,16 +48,7 @@ export async function TopBar({
               Welcome to quarterback experience
             </p>
           </Link>
-          <Link
-            href="/profile/notifications"
-            aria-label="Notifications"
-            className="relative -m-2 inline-flex h-10 w-10 items-center justify-center rounded-full"
-          >
-            <Bell className="h-[22px] w-[22px] text-foreground" strokeWidth={1.75} />
-            {unreadCount > 0 && (
-              <span className="absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full bg-[#E50000] ring-2 ring-white" />
-            )}
-          </Link>
+          <NotificationBell />
         </div>
       </div>
     </header>
