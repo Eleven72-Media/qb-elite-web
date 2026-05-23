@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { PageHeader } from "@/components/app/page-header";
 import { VideoPlayer } from "@/components/video/video-player";
 import { FavoriteButton } from "@/features/favorites/components/favorite-button";
 import { CompleteVideoButton } from "@/features/video-completion/components/complete-video-button";
@@ -25,8 +26,6 @@ export default async function QbTrainingVideoPage({
     | null;
   if (!training) notFound();
 
-  // Pre-fetch completion + favorite state for SSR so the buttons render
-  // in their correct initial state with no flicker.
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -53,28 +52,35 @@ export default async function QbTrainingVideoPage({
   }
 
   return (
-    <div className="container max-w-3xl space-y-6 py-6">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-          {training.week_of_release}
-        </p>
-        <div className="mt-1 flex items-start justify-between gap-3">
-          <h1 className="text-3xl font-extrabold uppercase tracking-tight">
-            {training.title}
-          </h1>
+    <>
+      <PageHeader title={training.week_of_release} backHref="/classroom" />
+      <div className="mx-auto w-full max-w-[820px] space-y-5 px-5 pb-6 md:px-6">
+        <div className="overflow-hidden rounded-3xl bg-black shadow-[0_10px_28px_rgba(0,0,0,0.18)]">
+          <VideoPlayer src={training.video_link} autoplay />
+        </div>
+
+        <header className="flex items-start justify-between gap-3">
+          <div className="flex-1">
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
+              {training.week_of_release}
+            </p>
+            <h1 className="mt-1 text-[22px] font-extrabold leading-tight tracking-tight">
+              {training.title}
+            </h1>
+          </div>
           <FavoriteButton
             videoId={training.id}
             videoType="qb_training"
             initialFavorite={isFavorite}
           />
-        </div>
-      </header>
-      <VideoPlayer src={training.video_link} autoplay />
-      <CompleteVideoButton
-        videoId={training.id}
-        videoType="qb_training"
-        initialCompleted={isCompleted}
-      />
-    </div>
+        </header>
+
+        <CompleteVideoButton
+          videoId={training.id}
+          videoType="qb_training"
+          initialCompleted={isCompleted}
+        />
+      </div>
+    </>
   );
 }

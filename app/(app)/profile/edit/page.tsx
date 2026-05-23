@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { PageHeader } from "@/components/app/page-header";
 import { createClient } from "@/lib/supabase/server";
 
 import { EditProfileForm } from "./edit-profile-form";
@@ -23,26 +24,21 @@ export default async function EditProfilePage() {
     .maybeSingle();
 
   return (
-    <div className="container max-w-xl py-6">
-      <header className="mb-6">
-        <h1 className="text-3xl font-extrabold uppercase tracking-tight">
-          Edit Profile
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Update your name, photo, and stats.
-        </p>
-      </header>
-      <EditProfileForm
-        userId={user.id}
-        initial={{
-          displayName: profile?.display_name ?? "",
-          avatarUrl: profile?.avatar_url ?? "",
-          height: profile?.height ?? "",
-          weight: profile?.weight ?? "",
-          recipePreference: profile?.recipe_preference ?? "",
-          birthDate: profile?.birth_date ?? null,
-        }}
-      />
-    </div>
+    <>
+      <PageHeader title="Edit Profile" backHref="/profile" />
+      <div className="mx-auto w-full max-w-[640px] px-5 pb-6 md:px-6">
+        <EditProfileForm
+          userId={user.id}
+          initial={{
+            displayName: profile?.display_name ?? "",
+            avatarUrl: profile?.avatar_url ?? "",
+            height: profile?.height ?? "",
+            weight: profile?.weight ?? "",
+            recipePreference: profile?.recipe_preference ?? "",
+            birthDate: profile?.birth_date ?? null,
+          }}
+        />
+      </div>
+    </>
   );
 }

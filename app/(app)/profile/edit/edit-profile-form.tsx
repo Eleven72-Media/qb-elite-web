@@ -1,5 +1,6 @@
 "use client";
 
+import { Camera } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -97,16 +98,19 @@ export function EditProfileForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
-      <section className="flex items-center gap-4">
-        <Avatar className="h-16 w-16">
-          <AvatarImage src={avatarUrl || undefined} alt={displayName} />
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="avatar" className="cursor-pointer">
-            <span className="inline-flex items-center rounded-md border bg-card px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-accent">
-              {avatarUrl ? "Replace photo" : "Upload photo"}
-            </span>
+      <section className="flex flex-col items-center pt-2">
+        <div className="relative">
+          <Avatar className="h-[100px] w-[100px] ring-4 ring-white shadow-[0_4px_18px_rgba(0,0,0,0.08)]">
+            <AvatarImage src={avatarUrl || undefined} alt={displayName} />
+            <AvatarFallback className="bg-primary/15 text-2xl text-primary">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+          <Label
+            htmlFor="avatar"
+            className="absolute -bottom-1 -right-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-md ring-2 ring-white"
+          >
+            <Camera className="h-4 w-4" strokeWidth={2} />
           </Label>
           <input
             id="avatar"
@@ -117,10 +121,15 @@ export function EditProfileForm({
             disabled={busy}
           />
         </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          {avatarUrl ? "Tap the camera to replace" : "Tap to upload a photo"}
+        </p>
       </section>
 
-      <div className="space-y-2">
-        <Label htmlFor="display-name">Display name</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="display-name" className="text-sm font-semibold">
+          Display Name
+        </Label>
         <Input
           id="display-name"
           value={displayName}
@@ -131,18 +140,22 @@ export function EditProfileForm({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="height">Height</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="height" className="text-sm font-semibold">
+            Height
+          </Label>
           <Input
             id="height"
             value={height}
             onChange={(e) => setHeight(e.target.value)}
-            placeholder="e.g. 6'1&quot;"
+            placeholder={`e.g. 6'1"`}
             disabled={busy}
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="weight">Weight</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="weight" className="text-sm font-semibold">
+            Weight
+          </Label>
           <Input
             id="weight"
             value={weight}
@@ -153,8 +166,10 @@ export function EditProfileForm({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="recipe-pref">Recipe preference</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="recipe-pref" className="text-sm font-semibold">
+          Recipe Preference
+        </Label>
         <Input
           id="recipe-pref"
           value={recipePref}
@@ -168,9 +183,9 @@ export function EditProfileForm({
       </div>
 
       {formattedDob && (
-        <div className="space-y-2">
-          <Label>Date of birth</Label>
-          <p className="rounded-md border bg-muted/40 px-3 py-2 text-sm">
+        <div className="space-y-1.5">
+          <Label className="text-sm font-semibold">Date of Birth</Label>
+          <p className="rounded-xl bg-muted px-3.5 py-3 text-sm">
             {formattedDob}
           </p>
           <p className="text-xs text-muted-foreground">
@@ -179,9 +194,13 @@ export function EditProfileForm({
         </div>
       )}
 
-      <div className="flex gap-3 pt-2">
-        <Button type="submit" className="flex-1" disabled={busy}>
-          {busy ? "Saving…" : "Save changes"}
+      <div className="pt-3">
+        <Button
+          type="submit"
+          disabled={busy}
+          className="h-14 w-full gap-2 rounded-2xl text-base"
+        >
+          {busy ? "Saving…" : "Save Changes"}
         </Button>
       </div>
     </form>

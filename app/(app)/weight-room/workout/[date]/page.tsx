@@ -1,7 +1,7 @@
+import { Flame, PlayCircle } from "lucide-react";
 import { notFound } from "next/navigation";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/app/page-header";
 import {
   getUserWorkoutPlans,
   getWorkoutPlanBlocks,
@@ -24,7 +24,7 @@ export default async function WorkoutDetailPage({
 
   const supabase = createClient();
   const plans = await getUserWorkoutPlans(supabase);
-  const activePlan = plans[plans.length - 1]; // most recent (highest week)
+  const activePlan = plans[plans.length - 1];
 
   if (!activePlan) notFound();
 
@@ -37,8 +37,6 @@ export default async function WorkoutDetailPage({
     getWorkoutPlanExercises(supabase, day.id),
   ]);
 
-  // Group exercises by block. Exercises with block_id=null go in a
-  // synthetic "Main" bucket so they still render.
   const blocksWithExercises = blocks.map((b) => ({
     ...b,
     exercises: exercises
@@ -48,64 +46,77 @@ export default async function WorkoutDetailPage({
   const orphanExercises = exercises.filter((e) => e.blockId === null);
 
   return (
-    <div className="container max-w-2xl space-y-6 py-6">
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-          {longDateLabel(date)}
-        </p>
-        <h1 className="mt-1 text-3xl font-extrabold uppercase tracking-tight">
-          {day.label ?? "Today's Workout"}
-        </h1>
-      </header>
+    <>
+      <PageHeader
+        title={day.label ?? "Today's Workout"}
+        backHref="/weight-room"
+      />
+      <div className="mx-auto w-full max-w-[820px] space-y-5 px-5 pb-6 md:px-6">
+        <div className="rounded-2xl bg-muted px-4 py-3">
+          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
+            {longDateLabel(date)}
+          </p>
+          <p className="mt-0.5 text-sm text-foreground/80">
+            {activePlan.name ?? `Week ${activePlan.weekOfRelease} plan`}
+          </p>
+        </div>
 
-      {blocksWithExercises.map((block) => (
-        <section key={block.id} className="rounded-2xl border bg-card p-5 shadow-sm">
-          <div className="mb-4 flex items-baseline gap-3">
-            <span
-              className={
-                block.label === "burnout"
-                  ? "rounded-md bg-destructive/15 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-destructive"
-                  : "rounded-md bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary"
-              }
+        {blocksWithExercises.map((block) => {
+          const isBurnout = block.label?.toLowerCase() === "burnout";
+          return (
+            <section
+              key={block.id}
+              className="overflow-hidden rounded-3xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5"
             >
-              {block.label === "burnout"
-                ? "Burnout"
-                : `Block ${block.label.toUpperCase()}`}
-            </span>
-            <span className="text-sm text-muted-foreground">{block.rounds}</span>
-          </div>
-          <ol className="space-y-3">
-            {block.exercises.map((ex) => (
-              <ExerciseRow key={ex.id} exercise={ex} />
-            ))}
-            {block.exercises.length === 0 && (
-              <li className="text-sm italic text-muted-foreground">
-                No exercises in this block yet.
-              </li>
-            )}
-          </ol>
-        </section>
-      ))}
+              <div
+                className={`flex items-center gap-2 px-5 py-3 ${
+                  isBurnout ? "bg-destructive/10" : "bg-primary/8"
+                }`}
+              >
+                {isBurnout ? (
+                  <Flame className="h-4 w-4 text-destructive" strokeWidth={2.25} />
+                ) : null}
+                <span
+                  className={`text-[11px] font-bold uppercase tracking-[0.12em] ${
+                    isBurnout ? "text-destructive" : "text-primary"
+                  }`}
+                >
+                  {isBurnout ? "Burnout" : `Block ${block.label.toUpperCase()}`}
+                </span>
+                <span className="ml-auto text-xs text-muted-foreground">
+                  {block.rounds}
+                </span>
+              </div>
+              <ol className="divide-y divide-border/40 px-5">
+                {block.exercises.map((ex) => (
+                  <ExerciseRow key={ex.id} exercise={ex} />
+                ))}
+                {block.exercises.length === 0 && (
+                  <li className="py-4 text-sm italic text-muted-foreground">
+                    No exercises in this block yet.
+                  </li>
+                )}
+              </ol>
+            </section>
+          );
+        })}
 
-      {orphanExercises.length > 0 && (
-        <section className="rounded-2xl border bg-card p-5 shadow-sm">
-          <h2 className="mb-3 text-sm font-bold uppercase tracking-widest text-muted-foreground">
-            Other
-          </h2>
-          <ol className="space-y-3">
-            {orphanExercises.map((ex) => (
-              <ExerciseRow key={ex.id} exercise={ex} />
-            ))}
-          </ol>
-        </section>
-      )}
-
-      <div className="flex justify-center">
-        <Button variant="outline" disabled>
-          Mark Day Complete (Sprint 3)
-        </Button>
+        {orphanExercises.length > 0 && (
+          <section className="overflow-hidden rounded-3xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5">
+            <div className="bg-muted/60 px-5 py-3">
+              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                Other
+              </span>
+            </div>
+            <ol className="divide-y divide-border/40 px-5">
+              {orphanExercises.map((ex) => (
+                <ExerciseRow key={ex.id} exercise={ex} />
+              ))}
+            </ol>
+          </section>
+        )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -121,24 +132,26 @@ function ExerciseRow({
   if (exercise.weight) metaParts.push(exercise.weight);
 
   return (
-    <li className="flex items-start justify-between gap-3 border-b pb-3 last:border-0 last:pb-0">
-      <div className="flex-1">
-        <p className="text-sm font-semibold">{exercise.exerciseName}</p>
+    <li className="flex items-start gap-3 py-3.5">
+      <div className="min-w-0 flex-1">
+        <p className="text-[15px] font-semibold leading-tight">
+          {exercise.exerciseName}
+        </p>
         {metaParts.length > 0 && (
-          <p className="mt-0.5 text-xs text-muted-foreground">
+          <p className="mt-1 text-[12px] text-muted-foreground">
             {metaParts.join(" · ")}
           </p>
         )}
         {exercise.notes && (
-          <p className="mt-1 text-xs italic text-muted-foreground">
+          <p className="mt-1 text-[12px] italic text-muted-foreground">
             {exercise.notes}
           </p>
         )}
       </div>
       {exercise.videoId && (
-        <Badge variant="outline" className="text-[10px]">
-          Video
-        </Badge>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <PlayCircle className="h-5 w-5" strokeWidth={1.75} />
+        </span>
       )}
     </li>
   );
