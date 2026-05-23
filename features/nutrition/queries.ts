@@ -64,7 +64,10 @@ const mapRecipe = (db: any): Recipe => ({
   id: db.id,
   title: db.title ?? "",
   description: db.description ?? null,
-  imageUrl: db.image_url ?? null,
+  // Flutter/admin write to `image` on recipes (not image_url — that lives on
+  // home_slider). Fall back to image_url just in case some rows got the wrong
+  // column during dev.
+  imageUrl: db.image ?? db.image_url ?? null,
   preparationTime: db.preparation_time ?? null,
   calories: db.calories ?? null,
   protein: db.protein ?? null,
@@ -72,6 +75,27 @@ const mapRecipe = (db: any): Recipe => ({
   instructions: Array.isArray(db.instructions) ? db.instructions : [],
   meal: db.meal ?? null,
 });
+
+export async function getRecipeCategories(
+  supabase: SupabaseClient
+): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("recipes")
+    .select("meal")
+    .not("meal", "is", null)
+    .limit(500);
+  if (error) throw error;
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const r of (data ?? []) as Array<{ meal: string | null }>) {
+    const v = (r.meal ?? "").trim();
+    if (v && !seen.has(v.toLowerCase())) {
+      seen.add(v.toLowerCase());
+      out.push(v);
+    }
+  }
+  return out.sort((a, b) => a.localeCompare(b));
+}
 
 export async function getRecipe(
   supabase: SupabaseClient,

@@ -1,14 +1,15 @@
-import { ArrowRight, BadgeCheck, ExternalLink, Flame, Lock, Search, Utensils, Video } from "lucide-react";
+import { ArrowRight, BadgeCheck, ExternalLink, Lock, Video } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { NutritionTabs } from "@/features/nutrition/components/nutrition-tabs";
+import { RecipesWithCategories } from "@/features/nutrition/components/recipes-with-categories";
 import {
   getNutritionVideos,
+  getRecipeCategories,
   getRecipes,
   getUserMealPlan,
   type NutritionVideo,
-  type Recipe,
 } from "@/features/nutrition/queries";
 import { createClient } from "@/lib/supabase/server";
 import { tierSatisfies } from "@/lib/tier";
@@ -24,9 +25,10 @@ export default async function NutritionPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [mealPlan, recipes, videos, profileRes] = await Promise.all([
+  const [, recipes, categories, videos, profileRes] = await Promise.all([
     getUserMealPlan(supabase),
     getRecipes(supabase),
+    getRecipeCategories(supabase),
     getNutritionVideos(supabase),
     user
       ? supabase
@@ -52,7 +54,7 @@ export default async function NutritionPage() {
       </header>
 
       <div className="px-4 md:px-6">
-        <MealPlannerHeader locked={mealPlannerLocked} hasPlan={!!mealPlan} />
+        <MealPlannerHeader locked={mealPlannerLocked} />
       </div>
 
       <div className="px-4 pb-1 pt-2 md:px-6">
@@ -60,21 +62,17 @@ export default async function NutritionPage() {
       </div>
 
       <NutritionTabs
-        daily={<DailyRecipesTab recipes={recipes} />}
+        daily={
+          <RecipesWithCategories recipes={recipes} categories={categories} />
+        }
         training={<TrainingTab videos={videos} />}
       />
     </div>
   );
 }
 
-function MealPlannerHeader({
-  locked,
-  hasPlan,
-}: {
-  locked: boolean;
-  hasPlan: boolean;
-}) {
-  const href = locked ? "/paywall" : "/nutrition";
+function MealPlannerHeader({ locked }: { locked: boolean }) {
+  const href = locked ? "/paywall" : "/nutrition/meal-plan";
   return (
     <Link
       href={href}
@@ -93,9 +91,7 @@ function MealPlannerHeader({
         <div className="min-w-0 flex-1">
           <p className="text-[14px] font-bold leading-tight">Meal Planner</p>
           <p className="mt-0.5 text-[12px] text-muted-foreground">
-            {hasPlan
-              ? "Plan your breakfast, lunch & dinner"
-              : "Plan your breakfast, lunch & dinner"}
+            Plan your breakfast, lunch &amp; dinner
           </p>
         </div>
         <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-primary/12 text-primary">
@@ -130,40 +126,6 @@ function ReferencesCard() {
   );
 }
 
-function DailyRecipesTab({ recipes }: { recipes: Recipe[] }) {
-  return (
-    <>
-      <div className="px-4 pb-2 pt-2 md:px-6">
-        <div className="flex items-center gap-2 rounded-2xl bg-white px-3.5 py-3 ring-1 ring-[#D9D9D9]">
-          <Search className="h-5 w-5 text-muted-foreground" strokeWidth={2} />
-          <input
-            type="search"
-            placeholder="Search recipes…"
-            disabled
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </div>
-      </div>
-      <div className="px-4 pt-3 md:px-6">
-        {recipes.length === 0 ? (
-          <div className="flex flex-col items-center px-10 py-12 text-center">
-            <Utensils className="h-16 w-16 text-muted-foreground/40" strokeWidth={1.5} />
-            <p className="mt-4 text-[15px] font-medium text-muted-foreground">
-              No daily recipe found
-            </p>
-          </div>
-        ) : (
-          <ul className="space-y-3">
-            {recipes.map((r) => (
-              <RecipeRow key={r.id} recipe={r} />
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
-  );
-}
-
 function TrainingTab({ videos }: { videos: NutritionVideo[] }) {
   return (
     <div className="px-4 pt-3 md:px-6">
@@ -182,51 +144,6 @@ function TrainingTab({ videos }: { videos: NutritionVideo[] }) {
         </ul>
       )}
     </div>
-  );
-}
-
-function RecipeRow({ recipe }: { recipe: Recipe }) {
-  return (
-    <li>
-      <Link
-        href={`/nutrition/recipe/${recipe.id}`}
-        className="flex gap-3 overflow-hidden rounded-2xl bg-white p-2.5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5 active:opacity-95"
-      >
-        <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-2xl bg-muted">
-          {recipe.imageUrl ? (
-            <Image
-              src={recipe.imageUrl}
-              alt={recipe.title}
-              fill
-              className="object-cover"
-              sizes="88px"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-muted-foreground">
-              <Utensils className="h-7 w-7" strokeWidth={1.5} />
-            </div>
-          )}
-        </div>
-        <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-          <p className="line-clamp-2 text-[15px] font-bold leading-tight">
-            {recipe.title}
-          </p>
-          {(recipe.calories || recipe.protein || recipe.preparationTime) && (
-            <div className="flex flex-wrap items-center gap-1.5">
-              {recipe.preparationTime && (
-                <Pill>{recipe.preparationTime}</Pill>
-              )}
-              {recipe.calories && (
-                <Pill icon={<Flame className="h-3 w-3" strokeWidth={2} />}>
-                  {recipe.calories}
-                </Pill>
-              )}
-              {recipe.protein && <Pill>{recipe.protein}g protein</Pill>}
-            </div>
-          )}
-        </div>
-      </Link>
-    </li>
   );
 }
 
@@ -259,19 +176,3 @@ function VideoRow({ video }: { video: NutritionVideo }) {
     </li>
   );
 }
-
-function Pill({
-  icon,
-  children,
-}: {
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
-      {icon}
-      {children}
-    </span>
-  );
-}
-
