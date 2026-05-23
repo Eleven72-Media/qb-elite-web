@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 export function TabBar() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-white pb-[calc(env(safe-area-inset-bottom)+14px)] md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-white pb-[calc(env(safe-area-inset-bottom)+12px)] md:hidden">
       <ul className="flex items-stretch justify-around px-1 pt-3">
         <Tab
           href="/home"
