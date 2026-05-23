@@ -3,7 +3,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { PageHeader } from "@/components/app/page-header";
-import { getUserMealPlan, type MealPlanDay } from "@/features/nutrition/queries";
+import { PlanWeekPicker } from "@/features/weight-room/components/plan-week-picker";
+import {
+  getAllMealPlans,
+  getUserMealPlan,
+  getUserMealPlanWeek,
+  type MealPlanDay,
+} from "@/features/nutrition/queries";
 import { createClient } from "@/lib/supabase/server";
 import { tierSatisfies } from "@/lib/tier";
 import type { SubscriptionTier } from "@/types/db";
@@ -31,7 +37,11 @@ const DAY_ORDER = [
   "sunday",
 ];
 
-export default async function MealPlanPage() {
+export default async function MealPlanPage({
+  searchParams,
+}: {
+  searchParams: { week?: string };
+}) {
   const supabase = createClient();
   const {
     data: { user },
@@ -49,28 +59,64 @@ export default async function MealPlanPage() {
     redirect("/paywall");
   }
 
-  const mealPlan = await getUserMealPlan(supabase);
+  const [allPlans, planWeek] = await Promise.all([
+    getAllMealPlans(supabase),
+    getUserMealPlanWeek(supabase),
+  ]);
+
+  const currentWeek = Math.max(planWeek, 0);
+  const allWeeks = Array.from(new Set(allPlans.map((p) => p.weekOfRelease))).sort(
+    (a, b) => a - b
+  );
+  if (!allWeeks.includes(currentWeek)) {
+    allWeeks.push(currentWeek);
+    allWeeks.sort((a, b) => a - b);
+  }
+
+  const requested = searchParams.week
+    ? parseInt(searchParams.week.replace(/[^0-9]/g, ""), 10)
+    : NaN;
+  const explicitWeek =
+    !Number.isNaN(requested) && requested <= currentWeek ? requested : null;
+  const selectedWeek = explicitWeek ?? currentWeek;
+  const isViewingPast = explicitWeek !== null && explicitWeek !== currentWeek;
+
+  const mealPlan = await getUserMealPlan(supabase, selectedWeek);
+
+  const header = (
+    <PageHeader
+      title="Meal Planner"
+      backHref="/nutrition"
+      action={
+        <Link
+          href="/nutrition/meal-plan/grocery-list"
+          aria-label="Grocery list"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary active:opacity-80"
+        >
+          <ListChecks className="h-5 w-5" strokeWidth={2} />
+        </Link>
+      }
+    />
+  );
 
   if (!mealPlan) {
     return (
       <>
-        <PageHeader
-          title="Meal Planner"
-          backHref="/nutrition"
-          action={
-            <Link
-              href="/nutrition/meal-plan/grocery-list"
-              aria-label="Grocery list"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary active:opacity-80"
-            >
-              <ListChecks className="h-5 w-5" strokeWidth={2} />
-            </Link>
-          }
-        />
-        <div className="mx-auto w-full max-w-[820px] px-5 pt-10 md:px-6">
+        {header}
+        <div className="mx-auto w-full max-w-[820px] space-y-3 px-5 pt-2 md:px-6">
+          {allWeeks.length > 0 && (
+            <div className="flex justify-end">
+              <PlanWeekPicker
+                selectedWeek={selectedWeek}
+                currentWeek={currentWeek}
+                allWeeks={allWeeks}
+                basePath="/nutrition/meal-plan"
+              />
+            </div>
+          )}
           <div className="rounded-3xl border border-dashed border-border bg-muted p-8 text-center text-sm text-muted-foreground">
-            No meal plan published for your week yet. Check back soon — the
-            coach drops a fresh week regularly.
+            No meal plan published for Week {selectedWeek}. Try another week or
+            check back soon.
           </div>
         </div>
       </>
@@ -83,24 +129,48 @@ export default async function MealPlanPage() {
 
   return (
     <>
-      <PageHeader title="Meal Planner" backHref="/nutrition" />
+      {header}
       <div className="mx-auto w-full max-w-[820px] space-y-5 px-5 pb-6 md:px-6">
         <section className="rounded-3xl bg-gradient-to-br from-primary/12 to-primary/0 p-5 ring-1 ring-primary/15">
-          <div className="flex items-center gap-2">
-            <CalendarDays className="h-4 w-4 text-primary" strokeWidth={2.25} />
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
-              This Week
-            </p>
+          <div className="flex items-start gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-primary" strokeWidth={2.25} />
+                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
+                  {isViewingPast ? `Week ${selectedWeek}` : "This Week"}
+                </p>
+              </div>
+              <h2 className="mt-1 text-[20px] font-bold leading-tight">
+                {mealPlan.plan.name ?? `Week ${mealPlan.plan.weekOfRelease} plan`}
+              </h2>
+              {mealPlan.plan.description && (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {mealPlan.plan.description}
+                </p>
+              )}
+            </div>
+            <PlanWeekPicker
+              selectedWeek={selectedWeek}
+              currentWeek={currentWeek}
+              allWeeks={allWeeks}
+              basePath="/nutrition/meal-plan"
+            />
           </div>
-          <h2 className="mt-1 text-[20px] font-bold leading-tight">
-            {mealPlan.plan.name ?? `Week ${mealPlan.plan.weekOfRelease} plan`}
-          </h2>
-          {mealPlan.plan.description && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              {mealPlan.plan.description}
-            </p>
-          )}
         </section>
+
+        {isViewingPast && (
+          <div className="flex items-center justify-between gap-3 rounded-2xl bg-primary/10 px-4 py-2.5">
+            <p className="text-xs font-semibold text-primary">
+              Viewing past week — Week {selectedWeek}
+            </p>
+            <Link
+              href="/nutrition/meal-plan"
+              className="text-xs font-bold text-primary underline-offset-2 hover:underline"
+            >
+              Back to current
+            </Link>
+          </div>
+        )}
 
         <div className="space-y-4">
           {orderedDays.map((d) => (

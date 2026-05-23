@@ -142,11 +142,14 @@ const mapNutritionVideo = (db: any): NutritionVideo => ({
 });
 
 export async function getUserMealPlan(
-  supabase: SupabaseClient
+  supabase: SupabaseClient,
+  forWeek?: number
 ): Promise<{ plan: MealPlan; days: MealPlanDay[] } | null> {
-  const { data: plans, error } = await supabase
-    .from("meal_plans")
-    .select("*")
+  let query = supabase.from("meal_plans").select("*");
+  if (typeof forWeek === "number") {
+    query = query.eq("week_of_release", forWeek);
+  }
+  const { data: plans, error } = await query
     .order("week_of_release", { ascending: false })
     .limit(1);
   if (error) throw error;
@@ -158,6 +161,30 @@ export async function getUserMealPlan(
     .eq("plan_id", plan.id)
     .order("sort_order", { ascending: true });
   return { plan: mapPlan(plan), days: (days ?? []).map(mapDay) };
+}
+
+/** All meal plans the user can see, used for the week picker. */
+export async function getAllMealPlans(
+  supabase: SupabaseClient
+): Promise<MealPlan[]> {
+  const { data, error } = await supabase
+    .from("meal_plans")
+    .select("*")
+    .order("week_of_release", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(mapPlan);
+}
+
+/** Cohort week from the SECURITY DEFINER RPC. */
+export async function getUserMealPlanWeek(
+  supabase: SupabaseClient
+): Promise<number> {
+  const { data, error } = await supabase.rpc("user_plan_week");
+  if (error) {
+    console.warn("user_plan_week rpc failed:", error.message);
+    return 0;
+  }
+  return (data as number) ?? 0;
 }
 
 export async function getRecipes(supabase: SupabaseClient): Promise<Recipe[]> {

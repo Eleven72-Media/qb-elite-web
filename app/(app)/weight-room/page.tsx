@@ -2,6 +2,7 @@ import { ChevronRight, Dumbbell } from "lucide-react";
 import Link from "next/link";
 
 import { PaywallCard } from "@/features/weight-room/components/paywall-card";
+import { PlanWeekPicker } from "@/features/weight-room/components/plan-week-picker";
 import { WeekStrip } from "@/features/weight-room/components/week-strip";
 import {
   getUserPlanWeek,
@@ -20,17 +21,44 @@ import { createClient } from "@/lib/supabase/server";
 export const metadata = { title: "Weight Room — QB Elite" };
 export const dynamic = "force-dynamic";
 
-export default async function WeightRoomPage() {
+export default async function WeightRoomPage({
+  searchParams,
+}: {
+  searchParams: { week?: string };
+}) {
   const supabase = createClient();
   const [plans, planWeek] = await Promise.all([
     getUserWorkoutPlans(supabase),
     getUserPlanWeek(supabase),
   ]);
 
+  const currentWeek = Math.max(planWeek, 0);
+  const allWeeks = Array.from(
+    new Set(plans.map((p) => p.weekOfRelease))
+  ).sort((a, b) => a - b);
+  if (!allWeeks.includes(currentWeek)) {
+    allWeeks.push(currentWeek);
+    allWeeks.sort((a, b) => a - b);
+  }
+
+  const requested = searchParams.week
+    ? parseInt(searchParams.week.replace(/[^0-9]/g, ""), 10)
+    : NaN;
+  const explicitWeek =
+    !Number.isNaN(requested) && requested <= currentWeek ? requested : null;
+  const selectedWeek = explicitWeek ?? currentWeek;
+
+  // Pick the plan matching the selected week. Ties: prefer the user's
+  // tier-matching plan (multiple plans may exist for different age bands).
   const activePlan =
     plans
-      .filter((p) => p.weekOfRelease <= Math.max(planWeek, 0))
-      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0] ?? null;
+      .filter((p) => p.weekOfRelease === selectedWeek)
+      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
+    // fall back to the latest plan ≤ selectedWeek if no exact match
+    ?? plans
+      .filter((p) => p.weekOfRelease <= selectedWeek)
+      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
+    ?? null;
 
   const days = activePlan ? await getWorkoutPlanDays(supabase, activePlan.id) : [];
 
@@ -44,7 +72,6 @@ export default async function WeightRoomPage() {
     day: "numeric",
   });
 
-  // For the workout card we want a block/exercise count, like Flutter.
   let blockCount = 0;
   let exerciseCount = 0;
   if (todayWorkout) {
@@ -64,16 +91,44 @@ export default async function WeightRoomPage() {
       `${exerciseCount} exercise${exerciseCount === 1 ? "" : "s"}`
     );
 
+  const isViewingPast = explicitWeek !== null && explicitWeek !== currentWeek;
+
   return (
     <div className="mx-auto w-full max-w-[820px] pb-4">
       <header className="px-5 pb-3 pt-1 md:px-6">
-        <h1 className="text-[18px] font-bold leading-tight tracking-tight">
-          Weight Room
-        </h1>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Your workout planner and training videos
-        </p>
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <h1 className="text-[18px] font-bold leading-tight tracking-tight">
+              Weight Room
+            </h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Your workout planner and training videos
+            </p>
+          </div>
+          {plans.length > 0 && (
+            <PlanWeekPicker
+              selectedWeek={selectedWeek}
+              currentWeek={currentWeek}
+              allWeeks={allWeeks}
+              basePath="/weight-room"
+            />
+          )}
+        </div>
       </header>
+
+      {isViewingPast && (
+        <div className="mx-5 mb-3 flex items-center justify-between gap-3 rounded-2xl bg-primary/10 px-4 py-2.5 md:mx-6">
+          <p className="text-xs font-semibold text-primary">
+            Viewing past week — Week {selectedWeek}
+          </p>
+          <Link
+            href="/weight-room"
+            className="text-xs font-bold text-primary underline-offset-2 hover:underline"
+          >
+            Back to current
+          </Link>
+        </div>
+      )}
 
       <div className="px-4 md:px-6">
         <WeekStrip initialDates={weekDates} days={days} />
@@ -82,9 +137,11 @@ export default async function WeightRoomPage() {
       <div className="mt-3 flex items-center gap-2.5 px-5 md:px-6">
         <span className="inline-block h-6 w-1 rounded-full bg-primary" />
         <p className="text-[15px] font-bold text-foreground">{todayLabel}</p>
-        <span className="rounded-md bg-primary px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.06em] text-white">
-          Today
-        </span>
+        {!isViewingPast && (
+          <span className="rounded-md bg-primary px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.06em] text-white">
+            Today
+          </span>
+        )}
       </div>
 
       <div className="px-4 pt-2 md:px-6">
