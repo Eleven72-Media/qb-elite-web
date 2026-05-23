@@ -33,7 +33,7 @@ export function PaywallClient({
   canceled: boolean;
 }) {
   const { toast } = useToast();
-  const [interval, setInterval] = useState<SubscriptionInterval>("yearly");
+  const [interval, setInterval] = useState<SubscriptionInterval>("monthly");
   const [busy, setBusy] = useState<null | "starter" | "legend">(null);
 
   async function startCheckout(tier: "starter" | "legend") {
