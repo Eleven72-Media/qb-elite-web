@@ -5,15 +5,18 @@ import { PaywallCard } from "@/features/weight-room/components/paywall-card";
 import { PlanWeekPicker } from "@/features/weight-room/components/plan-week-picker";
 import { CategoryPicker } from "@/features/weight-room/components/category-picker";
 import { WeekStrip } from "@/features/weight-room/components/week-strip";
+import { WeeklyProgress } from "@/features/weight-room/components/weekly-progress";
 import {
+  getCompletedExerciseIds,
   getUserPlanWeek,
   getUserWorkoutPlans,
   getWorkoutCategories,
   getWorkoutPlanBlocks,
   getWorkoutPlanDays,
-  getWorkoutPlanExercises,
+  getWorkoutPlanExercisesForDays,
   getWorkoutsByCategory,
   type Workout,
+  type WorkoutPlanExercise,
 } from "@/features/weight-room/queries";
 import {
   currentWeekDates,
@@ -83,15 +86,31 @@ export default async function WeightRoomPage({
   const days = activePlan ? await getWorkoutPlanDays(supabase, activePlan.id) : [];
   const selectedDayWorkout = matchDay(selectedDate, days);
 
+  // For the Weekly Progress widget, harvest all exercises across the
+  // active plan's days in one shot + read the caller's completion set.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [allExercises, completedExerciseIds] = await Promise.all([
+    days.length > 0
+      ? getWorkoutPlanExercisesForDays(supabase, days.map((d) => d.id))
+      : Promise.resolve([] as WorkoutPlanExercise[]),
+    user ? getCompletedExerciseIds(supabase, user.id) : Promise.resolve(new Set<string>()),
+  ]);
+  const exercisesByDay = allExercises.reduce<
+    Record<string, WorkoutPlanExercise[]>
+  >((acc, ex) => {
+    (acc[ex.dayId] ??= []).push(ex);
+    return acc;
+  }, {});
+
   // Block + exercise count for the selected day's preview card.
   let blockCount = 0;
   let exerciseCount = 0;
   let previewExerciseNames: string[] = [];
   if (selectedDayWorkout) {
-    const [blocks, exercises] = await Promise.all([
-      getWorkoutPlanBlocks(supabase, selectedDayWorkout.id),
-      getWorkoutPlanExercises(supabase, selectedDayWorkout.id),
-    ]);
+    const blocks = await getWorkoutPlanBlocks(supabase, selectedDayWorkout.id);
+    const exercises = exercisesByDay[selectedDayWorkout.id] ?? [];
     blockCount = blocks.length;
     exerciseCount = exercises.length;
     previewExerciseNames = exercises
@@ -240,6 +259,16 @@ export default async function WeightRoomPage({
           <PaywallCard />
         )}
       </div>
+
+      {days.length > 0 && (
+        <div className="px-4 pt-5 md:px-6">
+          <WeeklyProgress
+            days={days}
+            exercisesByDay={exercisesByDay}
+            completedExerciseIds={completedExerciseIds}
+          />
+        </div>
+      )}
 
       {categories.length > 0 && (
         <section className="pt-7">

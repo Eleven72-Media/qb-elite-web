@@ -148,6 +148,40 @@ export async function getWorkoutPlanDays(
   return (data ?? []).map(mapDay);
 }
 
+/** All exercises across a list of days (one shot). Used for the
+ *  Weekly Progress widget so we don't N+1 per day. */
+export async function getWorkoutPlanExercisesForDays(
+  supabase: SupabaseClient,
+  dayIds: string[]
+): Promise<WorkoutPlanExercise[]> {
+  if (dayIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from("workout_plan_exercises")
+    .select("*")
+    .in("day_id", dayIds)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map(mapExercise);
+}
+
+/** IDs of `workout_plan_exercises` the user has marked complete. */
+export async function getCompletedExerciseIds(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<Set<string>> {
+  const { data, error } = await supabase
+    .from("workout_plan_exercise_completions")
+    .select("exercise_id")
+    .eq("user_id", userId);
+  if (error) {
+    console.warn("workout_plan_exercise_completions read failed:", error.message);
+    return new Set();
+  }
+  return new Set(
+    (data ?? []).map((r: any) => r.exercise_id as string).filter(Boolean)
+  );
+}
+
 /** Returns blocks for a specific day, ordered by sort_order. */
 export async function getWorkoutPlanBlocks(
   supabase: SupabaseClient,
