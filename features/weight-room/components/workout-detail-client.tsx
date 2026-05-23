@@ -26,15 +26,60 @@ export function WorkoutDetailClient({
   orphanExercises,
   initialCompleted,
   returnHref = "/weight-room",
+  mode = "plan",
 }: {
   blocks: BlockWithExercises[];
   orphanExercises: WorkoutPlanExercise[];
   initialCompleted: string[];
   returnHref?: string;
+  /**
+   * "plan"      → completions write to workout_plan_exercise_completions
+   *               keyed by (user_id, exercise_id)
+   * "scheduled" → completions write to user_scheduled_exercises.completed_at
+   *               keyed by the row id (the synthetic "exercise id" is the
+   *               user_scheduled_exercises.id from the page wrapper)
+   */
+  mode?: "plan" | "scheduled";
 }) {
   const supabase = createClient();
   const router = useRouter();
   const { toast } = useToast();
+
+  // ── persistence shims ──────────────────────────────────────────────
+  async function dbInsert(userId: string, ids: string[]) {
+    if (ids.length === 0) return null;
+    if (mode === "scheduled") {
+      const nowIso = new Date().toISOString();
+      const { error } = await supabase
+        .from("user_scheduled_exercises")
+        .update({ completed_at: nowIso })
+        .eq("user_id", userId)
+        .in("id", ids);
+      return error;
+    }
+    const rows = ids.map((id) => ({ user_id: userId, exercise_id: id }));
+    const { error } = await supabase
+      .from("workout_plan_exercise_completions")
+      .upsert(rows, { onConflict: "user_id,exercise_id" });
+    return error;
+  }
+
+  async function dbDelete(userId: string, id: string) {
+    if (mode === "scheduled") {
+      const { error } = await supabase
+        .from("user_scheduled_exercises")
+        .update({ completed_at: null })
+        .eq("user_id", userId)
+        .eq("id", id);
+      return error;
+    }
+    const { error } = await supabase
+      .from("workout_plan_exercise_completions")
+      .delete()
+      .eq("user_id", userId)
+      .eq("exercise_id", id);
+    return error;
+  }
 
   const [completed, setCompleted] = useState<Set<string>>(
     () => new Set(initialCompleted)
@@ -78,11 +123,7 @@ export function WorkoutDetailClient({
         return;
       }
       if (isCurrentlyOn) {
-        const { error } = await supabase
-          .from("workout_plan_exercise_completions")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("exercise_id", id);
+        const error = await dbDelete(user.id, id);
         if (error) {
           toast({
             title: "Couldn't update",
@@ -92,12 +133,7 @@ export function WorkoutDetailClient({
           setCompleted((prev) => new Set(prev).add(id));
         }
       } else {
-        const { error } = await supabase
-          .from("workout_plan_exercise_completions")
-          .upsert(
-            { user_id: user.id, exercise_id: id },
-            { onConflict: "user_id,exercise_id" }
-          );
+        const error = await dbInsert(user.id, [id]);
         if (error) {
           toast({
             title: "Couldn't save",
@@ -122,22 +158,18 @@ export function WorkoutDetailClient({
       toast({ title: "Please log in.", variant: "destructive" });
       return;
     }
-    const remaining = allExercises
+    const remainingIds = allExercises
       .filter((e) => !completed.has(e.id))
-      .map((e) => ({ user_id: user.id, exercise_id: e.id }));
+      .map((e) => e.id);
     setCompleted(new Set(allExercises.map((e) => e.id)));
-    if (remaining.length > 0) {
-      const { error } = await supabase
-        .from("workout_plan_exercise_completions")
-        .upsert(remaining, { onConflict: "user_id,exercise_id" });
-      if (error) {
-        toast({
-          title: "Couldn't finish workout",
-          description: error.message,
-          variant: "destructive",
-        });
-        return;
-      }
+    const error = await dbInsert(user.id, remainingIds);
+    if (error) {
+      toast({
+        title: "Couldn't finish workout",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
     }
     toast({
       title: "Workout complete",

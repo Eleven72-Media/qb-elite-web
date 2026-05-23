@@ -4,20 +4,24 @@ import Image from "next/image";
 import { vimeoThumbnailUrl } from "@/lib/vimeo";
 
 import type { Workout } from "../queries";
+import { ScheduleWorkoutButton } from "./schedule-workout-button";
 
 /**
- * Card for a single training-video row. Uses the workout's image when
- * present, otherwise pulls a Vimeo thumbnail from its video URL.
+ * Card for a single training-video row. Thumbnail (image or Vimeo
+ * fallback) on the left, title on the right, plus a "+" affordance
+ * to schedule the workout into a custom day. Tapping the body opens
+ * the source video in a new tab; the "+" stops propagation so the
+ * two actions don't collide.
  */
 export function TrainingVideoTile({ workout }: { workout: Workout }) {
   const thumb = workout.imageUrl ?? vimeoThumbnailUrl(workout.videoUrl);
   return (
-    <li>
+    <li className="flex items-center gap-3.5 rounded-2xl border border-border/60 bg-white p-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
       <a
         href={workout.videoUrl || "#"}
         target={workout.videoUrl ? "_blank" : undefined}
         rel="noreferrer"
-        className="flex items-center gap-3.5 rounded-2xl border border-border/60 bg-white p-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)] active:opacity-95"
+        className="flex min-w-0 flex-1 items-center gap-3.5 active:opacity-95"
       >
         <div className="relative h-[70px] w-[100px] shrink-0 overflow-hidden rounded-2xl bg-[#E8EDF2]">
           {thumb && (
@@ -38,6 +42,7 @@ export function TrainingVideoTile({ workout }: { workout: Workout }) {
           </p>
         </div>
       </a>
+      <ScheduleWorkoutButton workoutId={workout.id} />
     </li>
   );
 }

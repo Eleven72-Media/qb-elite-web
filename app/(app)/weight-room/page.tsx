@@ -1,4 +1,4 @@
-import { ChevronRight, Dumbbell, PlayCircle } from "lucide-react";
+import { ChevronRight, Dumbbell, ListPlus, PlayCircle } from "lucide-react";
 import Link from "next/link";
 
 import { PaywallCard } from "@/features/weight-room/components/paywall-card";
@@ -8,6 +8,7 @@ import { WeekStrip } from "@/features/weight-room/components/week-strip";
 import { WeeklyProgress } from "@/features/weight-room/components/weekly-progress";
 import {
   getCompletedExerciseIds,
+  getScheduledExercisesForDay,
   getUserPlanWeek,
   getUserWorkoutPlans,
   getWorkoutCategories,
@@ -25,6 +26,8 @@ import {
   parseIsoDate,
 } from "@/features/weight-room/week-helpers";
 import { createClient } from "@/lib/supabase/server";
+import { tierSatisfies } from "@/lib/tier";
+import type { SubscriptionTier } from "@/types/db";
 
 export const metadata = { title: "Weight Room — QB Elite" };
 export const dynamic = "force-dynamic";
@@ -35,11 +38,29 @@ export default async function WeightRoomPage({
   searchParams: { week?: string; day?: string };
 }) {
   const supabase = createClient();
-  const [plans, planWeek, categories] = await Promise.all([
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [plans, planWeek, categories, profileRes] = await Promise.all([
     getUserWorkoutPlans(supabase),
     getUserPlanWeek(supabase),
     getWorkoutCategories(supabase),
+    user
+      ? supabase
+          .from("profiles")
+          .select("subscription_tier")
+          .eq("id", user.id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
+  const tier = (profileRes.data as { subscription_tier: SubscriptionTier } | null)
+    ?.subscription_tier;
+  // "Custom workout" empty state is for users without admin plan days
+  // for this date. Starter is the primary audience (no admin plan past
+  // Week 1), but Legend/GOAT also see the CTA on a rest day if they
+  // want to bolt on extra work.
+  const showAddExercisesCta = tierSatisfies(tier, "starter");
 
   const currentWeek = Math.max(planWeek, 0);
   const allWeeks = Array.from(
@@ -86,17 +107,18 @@ export default async function WeightRoomPage({
   const days = activePlan ? await getWorkoutPlanDays(supabase, activePlan.id) : [];
   const selectedDayWorkout = matchDay(selectedDate, days);
 
-  // For the Weekly Progress widget, harvest all exercises across the
-  // active plan's days in one shot + read the caller's completion set.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const [allExercises, completedExerciseIds] = await Promise.all([
-    days.length > 0
-      ? getWorkoutPlanExercisesForDays(supabase, days.map((d) => d.id))
-      : Promise.resolve([] as WorkoutPlanExercise[]),
-    user ? getCompletedExerciseIds(supabase, user.id) : Promise.resolve(new Set<string>()),
-  ]);
+  const [allExercises, completedExerciseIds, scheduledForDay] =
+    await Promise.all([
+      days.length > 0
+        ? getWorkoutPlanExercisesForDays(supabase, days.map((d) => d.id))
+        : Promise.resolve([] as WorkoutPlanExercise[]),
+      user
+        ? getCompletedExerciseIds(supabase, user.id)
+        : Promise.resolve(new Set<string>()),
+      user
+        ? getScheduledExercisesForDay(supabase, user.id, selectedIso)
+        : Promise.resolve([]),
+    ]);
   const exercisesByDay = allExercises.reduce<
     Record<string, WorkoutPlanExercise[]>
   >((acc, ex) => {
@@ -140,6 +162,13 @@ export default async function WeightRoomPage({
 
   // 28 days = this week + 3 weeks ahead, horizontally scrollable.
   const weekDates = dateWindow(new Date(), 28);
+
+  const detailHref = (() => {
+    const p = new URLSearchParams();
+    if (explicitWeek != null) p.set("week", String(explicitWeek));
+    const qs = p.toString();
+    return `/weight-room/workout/${selectedIso}${qs ? `?${qs}` : ""}`;
+  })();
 
   return (
     <div className="mx-auto w-full max-w-[820px] pb-6">
@@ -198,55 +227,113 @@ export default async function WeightRoomPage({
       </div>
 
       <div className="px-4 pt-2 md:px-6">
-        {activePlan ? (
-          selectedDayWorkout ? (
-            <Link
-              href={(() => {
-                const p = new URLSearchParams();
-                if (explicitWeek != null) p.set("week", String(explicitWeek));
-                const qs = p.toString();
-                return `/weight-room/workout/${selectedIso}${qs ? `?${qs}` : ""}`;
-              })()}
-              className="block rounded-3xl border border-[#E8E6E3] bg-white p-4 active:opacity-95"
-            >
-              <div className="flex items-center gap-3.5">
-                <span className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-gradient-to-br from-primary/22 to-primary/6 text-primary">
-                  <Dumbbell className="h-[22px] w-[22px]" strokeWidth={2} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="line-clamp-1 text-[15px] font-bold leading-tight">
-                    {selectedDayWorkout.label ?? "Workout"}
+        {selectedDayWorkout && activePlan ? (
+          // Admin-authored workout for this day
+          <Link
+            href={detailHref}
+            className="block rounded-3xl border border-[#E8E6E3] bg-white p-4 active:opacity-95"
+          >
+            <div className="flex items-center gap-3.5">
+              <span className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-gradient-to-br from-primary/22 to-primary/6 text-primary">
+                <Dumbbell className="h-[22px] w-[22px]" strokeWidth={2} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-1 text-[15px] font-bold leading-tight">
+                  {selectedDayWorkout.label ?? "Workout"}
+                </p>
+                {subtitleParts.length > 0 && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {subtitleParts.join(" · ")}
                   </p>
-                  {subtitleParts.length > 0 && (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {subtitleParts.join(" · ")}
-                    </p>
-                  )}
-                </div>
-                <ChevronRight
-                  className="h-[14px] w-[14px] text-muted-foreground"
-                  strokeWidth={2.5}
-                />
+                )}
               </div>
-              {previewExerciseNames.length > 0 && (
-                <ul className="mt-3.5 space-y-1.5 border-t border-border/40 pt-3">
-                  {previewExerciseNames.map((name) => (
-                    <li
-                      key={name}
-                      className="flex items-center gap-2 text-[13px] text-foreground/80"
-                    >
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-                      <span className="line-clamp-1">{name}</span>
-                    </li>
-                  ))}
-                  {exerciseCount > previewExerciseNames.length && (
-                    <li className="text-[12px] text-muted-foreground">
-                      +{exerciseCount - previewExerciseNames.length} more
-                    </li>
-                  )}
-                </ul>
+              <ChevronRight
+                className="h-[14px] w-[14px] text-muted-foreground"
+                strokeWidth={2.5}
+              />
+            </div>
+            {previewExerciseNames.length > 0 && (
+              <ul className="mt-3.5 space-y-1.5 border-t border-border/40 pt-3">
+                {previewExerciseNames.map((name) => (
+                  <li
+                    key={name}
+                    className="flex items-center gap-2 text-[13px] text-foreground/80"
+                  >
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                    <span className="line-clamp-1">{name}</span>
+                  </li>
+                ))}
+                {exerciseCount > previewExerciseNames.length && (
+                  <li className="text-[12px] text-muted-foreground">
+                    +{exerciseCount - previewExerciseNames.length} more
+                  </li>
+                )}
+              </ul>
+            )}
+          </Link>
+        ) : scheduledForDay.length > 0 ? (
+          // User-scheduled custom workout
+          <Link
+            href={detailHref}
+            className="block rounded-3xl border border-[#E8E6E3] bg-white p-4 active:opacity-95"
+          >
+            <div className="flex items-center gap-3.5">
+              <span className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-gradient-to-br from-primary/22 to-primary/6 text-primary">
+                <ListPlus className="h-[22px] w-[22px]" strokeWidth={2} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-1 text-[15px] font-bold leading-tight">
+                  Your custom workout
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {scheduledForDay.length} exercise
+                  {scheduledForDay.length === 1 ? "" : "s"}
+                </p>
+              </div>
+              <ChevronRight
+                className="h-[14px] w-[14px] text-muted-foreground"
+                strokeWidth={2.5}
+              />
+            </div>
+            <ul className="mt-3.5 space-y-1.5 border-t border-border/40 pt-3">
+              {scheduledForDay.slice(0, 3).map((ex) => (
+                <li
+                  key={ex.id}
+                  className="flex items-center gap-2 text-[13px] text-foreground/80"
+                >
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span className="line-clamp-1">{ex.exerciseName}</span>
+                </li>
+              ))}
+              {scheduledForDay.length > 3 && (
+                <li className="text-[12px] text-muted-foreground">
+                  +{scheduledForDay.length - 3} more
+                </li>
               )}
-            </Link>
+            </ul>
+          </Link>
+        ) : activePlan ? (
+          // Admin plan exists but no workout for this day
+          showAddExercisesCta ? (
+            <div className="rounded-3xl border border-[#E8E6E3] bg-white px-5 py-6 text-center">
+              <div className="mx-auto mb-2 flex h-[26px] w-[26px] items-center justify-center text-muted-foreground">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <path d="M16 2v4M8 2v4M3 10h18" />
+                </svg>
+              </div>
+              <p className="text-[15px] font-bold">No workout scheduled</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Add exercises below to build one for this day
+              </p>
+              <a
+                href="#training-videos"
+                className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary px-3.5 py-1.5 text-[12px] font-semibold text-white"
+              >
+                <ListPlus className="h-3.5 w-3.5" strokeWidth={2.25} />
+                Browse Training Videos
+              </a>
+            </div>
           ) : (
             <div className="rounded-3xl border border-[#E8E6E3] bg-white px-5 py-6 text-center">
               <div className="mx-auto mb-2 flex h-[26px] w-[26px] items-center justify-center text-muted-foreground">
@@ -277,7 +364,7 @@ export default async function WeightRoomPage({
       )}
 
       {categories.length > 0 && (
-        <section className="pt-7">
+        <section id="training-videos" className="pt-7 scroll-mt-4">
           <div className="px-5 pb-3 md:px-6">
             <div className="flex items-center gap-2">
               <PlayCircle
@@ -289,7 +376,7 @@ export default async function WeightRoomPage({
               </h2>
             </div>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Browse by category
+              Browse by category — tap + to add to a day
             </p>
           </div>
           <CategoryPicker
