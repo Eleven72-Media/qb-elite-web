@@ -1,11 +1,10 @@
 import {
+  Bell,
   ChevronRight,
   Heart,
   Info,
   LifeBuoy,
-  LogOut,
   Pencil,
-  Share2,
   Users,
   Utensils,
   Crown,
@@ -14,6 +13,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { PageHeader } from "@/components/app/page-header";
+import { ShareTile } from "@/components/app/share-tile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/lib/supabase/server";
 import { tierDisplayName } from "@/lib/tier";
@@ -102,15 +102,17 @@ export default async function ProfilePage() {
         </section>
 
         <div className="space-y-3 pt-2">
-          <TileLink
-            href="#share"
-            icon={<Share2 className="h-5 w-5 text-primary" strokeWidth={1.75} />}
-            label="Share QB Elite App"
-          />
+          <ShareTile />
           <TileLink
             href="/profile/favorites"
             icon={<Heart className="h-5 w-5 text-primary" strokeWidth={1.75} />}
             label="Favorites"
+            chevron
+          />
+          <TileLink
+            href="/profile/notifications"
+            icon={<Bell className="h-5 w-5 text-primary" strokeWidth={1.75} />}
+            label="Notifications"
             chevron
           />
           <TileLink
@@ -134,12 +136,6 @@ export default async function ProfilePage() {
             href="mailto:jmiller@qbelite.com?subject=QB%20Elite%20-%20Support%20Request"
             icon={<LifeBuoy className="h-5 w-5 text-primary" strokeWidth={1.75} />}
             label="Support"
-          />
-          <TileLink
-            href="/profile/notifications"
-            icon={<LogOut className="h-5 w-5 text-primary rotate-180" strokeWidth={1.75} />}
-            label="Notifications"
-            chevron
           />
         </div>
 
