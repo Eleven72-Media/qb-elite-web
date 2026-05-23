@@ -20,6 +20,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "i.ytimg.com",
       },
+      // vumbnail.com — free Vimeo thumbnail proxy (no oEmbed needed).
+      {
+        protocol: "https",
+        hostname: "vumbnail.com",
+      },
     ],
   },
 };

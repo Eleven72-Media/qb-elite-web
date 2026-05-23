@@ -1,3 +1,4 @@
+import { ChevronRight, Flame, Utensils } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -33,32 +34,37 @@ export default async function NutritionPage() {
   ]);
 
   return (
-    <div className="container space-y-8 py-6">
-      <header>
-        <h1 className="text-3xl font-extrabold uppercase tracking-tight">
+    <div className="mx-auto w-full max-w-[820px] pb-2">
+      <header className="px-5 pb-3 pt-1 md:px-6">
+        <h1 className="text-[18px] font-bold leading-tight tracking-tight">
           Nutrition
         </h1>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Eat to perform — meal plans and recipes
+        </p>
       </header>
 
-      {mealPlan ? (
-        <ThisWeekMeals
-          name={mealPlan.plan.name ?? `Week ${mealPlan.plan.weekOfRelease}`}
-          days={mealPlan.days}
-        />
-      ) : (
-        <PaywallCard />
-      )}
+      <div className="px-5 md:px-6">
+        {mealPlan ? (
+          <ThisWeekMeals
+            name={mealPlan.plan.name ?? `Week ${mealPlan.plan.weekOfRelease} plan`}
+            days={mealPlan.days}
+          />
+        ) : (
+          <PaywallCard />
+        )}
+      </div>
 
-      <section>
-        <h2 className="mb-3 text-lg font-bold uppercase tracking-tight">
-          Recipes
-        </h2>
+      <section className="px-5 pt-7 md:px-6">
+        <div className="mb-3.5 flex items-center gap-2">
+          <h2 className="text-[18px] font-bold tracking-tight">Recipes</h2>
+        </div>
         {recipes.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
+          <p className="rounded-2xl border border-dashed border-border bg-muted p-6 text-center text-sm text-muted-foreground">
             No recipes available yet.
           </p>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3">
             {recipes.map((r) => (
               <RecipeCard key={r.id} recipe={r} />
             ))}
@@ -67,17 +73,25 @@ export default async function NutritionPage() {
       </section>
 
       {videos.length > 0 && (
-        <section>
-          <h2 className="mb-3 text-lg font-bold uppercase tracking-tight">
-            Nutrition Videos
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+        <section className="px-5 pt-7 md:px-6">
+          <div className="mb-3.5 flex items-center gap-2">
+            <h2 className="text-[18px] font-bold tracking-tight">
+              Nutrition Videos
+            </h2>
+          </div>
+          <div className="space-y-3">
             {videos.map((v) => (
               <div
                 key={v.id}
-                className="overflow-hidden rounded-xl border bg-card p-4 shadow-sm"
+                className="flex items-center gap-3.5 rounded-2xl border border-border/60 bg-white p-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)]"
               >
-                <p className="text-sm font-semibold">{v.title}</p>
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Utensils className="h-5 w-5" strokeWidth={1.75} />
+                </span>
+                <p className="flex-1 text-[15px] font-semibold leading-tight">
+                  {v.title}
+                </p>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" strokeWidth={2} />
               </div>
             ))}
           </div>
@@ -95,43 +109,46 @@ function ThisWeekMeals({
   days: MealPlanDay[];
 }) {
   return (
-    <section className="rounded-2xl border bg-card p-5 shadow-sm">
-      <div className="mb-4 flex items-baseline gap-3">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+    <section className="rounded-3xl border border-border/60 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
           This Week
-        </p>
-        <h2 className="text-lg font-bold uppercase tracking-tight">{name}</h2>
+        </span>
+        <h2 className="text-[16px] font-bold tracking-tight">{name}</h2>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {days.map((d) => (
-          <div key={d.id} className="rounded-lg border bg-background p-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-primary">
+          <div
+            key={d.id}
+            className="rounded-2xl border border-border/60 bg-muted/40 p-3"
+          >
+            <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
               {DAY_LABELS[d.day] ?? d.day}
             </p>
-            <ul className="mt-2 space-y-1 text-xs">
+            <ul className="mt-2 space-y-1 text-[13px] leading-snug text-foreground/85">
               {d.breakfast && (
                 <li>
-                  <span className="font-semibold">B:</span> {d.breakfast}
+                  <span className="font-semibold text-foreground">B:</span> {d.breakfast}
                 </li>
               )}
               {d.snack && (
                 <li>
-                  <span className="font-semibold">S:</span> {d.snack}
+                  <span className="font-semibold text-foreground">S:</span> {d.snack}
                 </li>
               )}
               {d.proteinShake && (
                 <li>
-                  <span className="font-semibold">P:</span> {d.proteinShake}
+                  <span className="font-semibold text-foreground">P:</span> {d.proteinShake}
                 </li>
               )}
               {d.mainCourse && (
                 <li>
-                  <span className="font-semibold">M:</span> {d.mainCourse}
+                  <span className="font-semibold text-foreground">M:</span> {d.mainCourse}
                 </li>
               )}
               {d.side && (
                 <li>
-                  <span className="font-semibold">Side:</span> {d.side}
+                  <span className="font-semibold text-foreground">Side:</span> {d.side}
                 </li>
               )}
             </ul>
@@ -144,23 +161,30 @@ function ThisWeekMeals({
 
 function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
-    <Link href={`/nutrition/recipe/${recipe.id}`}>
-      <article className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
-        <div className="relative aspect-video w-full bg-foreground/5">
+    <Link href={`/nutrition/recipe/${recipe.id}`} className="block active:opacity-95">
+      <article className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5">
+        <div className="relative aspect-square w-full bg-muted">
           {recipe.imageUrl ? (
             <Image
               src={recipe.imageUrl}
               alt={recipe.title}
               fill
-              className="object-cover transition-transform group-hover:scale-105"
-              sizes="(min-width: 640px) 33vw, 100vw"
+              className="object-cover"
+              sizes="(min-width: 768px) 240px, 45vw"
             />
-          ) : null}
+          ) : (
+            <div className="flex h-full items-center justify-center text-muted-foreground">
+              <Utensils className="h-8 w-8" strokeWidth={1.5} />
+            </div>
+          )}
         </div>
-        <div className="flex flex-1 flex-col gap-1 p-3">
-          <p className="text-sm font-semibold leading-tight">{recipe.title}</p>
+        <div className="flex flex-1 flex-col gap-1.5 p-3 pb-3.5">
+          <p className="line-clamp-2 text-[14px] font-bold leading-tight">
+            {recipe.title}
+          </p>
           {(recipe.calories || recipe.protein) && (
-            <p className="mt-auto text-xs text-muted-foreground">
+            <p className="mt-auto flex items-center gap-1 text-xs text-muted-foreground">
+              <Flame className="h-3 w-3" strokeWidth={2} />
               {[recipe.calories, recipe.protein].filter(Boolean).join(" · ")}
             </p>
           )}
@@ -172,7 +196,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
 
 function PaywallCard() {
   return (
-    <section className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/0 p-6 text-center">
+    <section className="rounded-3xl bg-gradient-to-br from-primary/12 to-primary/0 p-6 text-center ring-1 ring-primary/15">
       <h2 className="mb-2 text-xl font-extrabold uppercase tracking-tight">
         Unlock your meal plan
       </h2>
@@ -181,7 +205,9 @@ function PaywallCard() {
         main + side. Free during your 7-day trial.
       </p>
       <Link href="/paywall">
-        <Button size="lg">Start Free Trial</Button>
+        <Button size="lg" className="rounded-full px-7">
+          Start Free Trial
+        </Button>
       </Link>
     </section>
   );
