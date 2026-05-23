@@ -164,6 +164,60 @@ export async function getWorkoutPlanExercisesForDays(
   return (data ?? []).map(mapExercise);
 }
 
+// ───────────────────────────────────────────────────────────────────────
+// User-scheduled exercises (F-006) — Starter-tier custom workout days.
+// ───────────────────────────────────────────────────────────────────────
+
+export interface ScheduledExercise {
+  id: string;
+  userId: string;
+  scheduledDate: string; // yyyy-mm-dd
+  workoutId: string;
+  exerciseName: string;
+  videoUrl: string | null;
+  imageUrl: string | null;
+  sets: number | null;
+  reps: string | null;
+  weight: string | null;
+  notes: string | null;
+  sortOrder: number;
+  completedAt: string | null;
+}
+
+const mapScheduled = (db: any): ScheduledExercise => ({
+  id: db.id,
+  userId: db.user_id,
+  scheduledDate: db.scheduled_date,
+  workoutId: db.workout_id,
+  exerciseName: db.workouts?.name ?? db.workouts?.title ?? "",
+  videoUrl: db.workouts?.video_url ?? null,
+  imageUrl: db.workouts?.image ?? db.workouts?.image_url ?? null,
+  sets: db.sets ?? null,
+  reps: db.reps ?? null,
+  weight: db.weight ?? null,
+  notes: db.notes ?? null,
+  sortOrder: db.sort_order ?? 0,
+  completedAt: db.completed_at ?? null,
+});
+
+export async function getScheduledExercisesForDay(
+  supabase: SupabaseClient,
+  userId: string,
+  isoDay: string
+): Promise<ScheduledExercise[]> {
+  const { data, error } = await supabase
+    .from("user_scheduled_exercises")
+    .select("*, workouts(id, name, title, video_url, image, image_url)")
+    .eq("user_id", userId)
+    .eq("scheduled_date", isoDay)
+    .order("sort_order", { ascending: true });
+  if (error) {
+    console.warn("scheduled exercises read failed:", error.message);
+    return [];
+  }
+  return (data ?? []).map(mapScheduled);
+}
+
 /** IDs of `workout_plan_exercises` the user has marked complete. */
 export async function getCompletedExerciseIds(
   supabase: SupabaseClient,
