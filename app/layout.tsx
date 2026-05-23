@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 
 import { Providers } from "@/components/providers";
+import { SplashOverlay } from "@/components/splash-overlay";
 
 // Outfit matches the QB Elite mobile app's bundled font family (see
 // qb_elite_source/pubspec.yaml). Google Fonts → CSS variable consumed
@@ -57,6 +58,7 @@ export default function RootLayout({
     <html lang="en" className={outfit.variable}>
       <body className="min-h-screen antialiased">
         <Providers>{children}</Providers>
+        <SplashOverlay />
       </body>
     </html>
   );
