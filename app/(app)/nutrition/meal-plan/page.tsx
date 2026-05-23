@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronRight, Coffee, Cookie, Drumstick, ListChecks, Salad, Utensils } from "lucide-react";
+import { CalendarDays, ChevronRight, Coffee, Cookie, Drumstick, Salad, Utensils } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -112,28 +112,7 @@ export default async function MealPlanPage({
     return id ? `/nutrition/recipe/${id}` : null;
   }
 
-  // Forward ?week=N to the grocery list so it shops the same week the
-  // user is currently viewing on the meal planner.
-  const groceryHref =
-    explicitWeek != null
-      ? `/nutrition/meal-plan/grocery-list?week=${explicitWeek}`
-      : "/nutrition/meal-plan/grocery-list";
-
-  const header = (
-    <PageHeader
-      title="Meal Planner"
-      backHref="/nutrition"
-      action={
-        <Link
-          href={groceryHref}
-          aria-label="Grocery list"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary active:opacity-80"
-        >
-          <ListChecks className="h-5 w-5" strokeWidth={2} />
-        </Link>
-      }
-    />
-  );
+  const header = <PageHeader title="Meal Planner" backHref="/nutrition" />;
 
   if (!mealPlan) {
     return (
