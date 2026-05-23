@@ -55,9 +55,14 @@ export function SubmitFilmForm({ userId }: { userId: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 rounded-xl border bg-card p-5 shadow-sm">
-      <div className="space-y-2">
-        <Label htmlFor="film-link">Video link</Label>
+    <form
+      onSubmit={onSubmit}
+      className="space-y-4 rounded-3xl bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5"
+    >
+      <div className="space-y-1.5">
+        <Label htmlFor="film-link" className="text-sm font-semibold">
+          Video link
+        </Label>
         <Input
           id="film-link"
           type="url"
@@ -68,12 +73,14 @@ export function SubmitFilmForm({ userId }: { userId: string }) {
           required
         />
         <p className="text-xs text-muted-foreground">
-          Make sure the link is public or unlisted (not private) so the
-          coach can open it.
+          Make sure the link is public or unlisted (not private) so the coach
+          can open it.
         </p>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="film-notes">What do you want feedback on?</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="film-notes" className="text-sm font-semibold">
+          What do you want feedback on?
+        </Label>
         <Textarea
           id="film-notes"
           rows={4}
@@ -83,8 +90,12 @@ export function SubmitFilmForm({ userId }: { userId: string }) {
           disabled={busy}
         />
       </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Submitting…" : "Send for review"}
+      <Button
+        type="submit"
+        disabled={busy}
+        className="h-12 w-full rounded-2xl text-base"
+      >
+        {busy ? "Submitting…" : "Send for Review"}
       </Button>
     </form>
   );

@@ -31,7 +31,6 @@ export function BookSessionForm({
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
 
-  // Minimum date = tomorrow (no same-day bookings without coach OK).
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const minDate = tomorrow.toISOString().split("T")[0];
@@ -77,10 +76,15 @@ export function BookSessionForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 rounded-xl border bg-card p-5 shadow-sm">
+    <form
+      onSubmit={onSubmit}
+      className="space-y-4 rounded-3xl bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1 ring-black/5"
+    >
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="session-date">Date</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="session-date" className="text-sm font-semibold">
+            Date
+          </Label>
           <Input
             id="session-date"
             type="date"
@@ -91,8 +95,10 @@ export function BookSessionForm({
             required
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="session-time">Preferred time</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="session-time" className="text-sm font-semibold">
+            Preferred time
+          </Label>
           <Input
             id="session-time"
             type="time"
@@ -104,8 +110,10 @@ export function BookSessionForm({
         </div>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="client-name">Athlete name</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="client-name" className="text-sm font-semibold">
+            Athlete name
+          </Label>
           <Input
             id="client-name"
             value={name}
@@ -114,8 +122,10 @@ export function BookSessionForm({
             required
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="client-phone">Phone (optional)</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="client-phone" className="text-sm font-semibold">
+            Phone <span className="font-normal text-muted-foreground">(optional)</span>
+          </Label>
           <Input
             id="client-phone"
             type="tel"
@@ -125,8 +135,10 @@ export function BookSessionForm({
           />
         </div>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="client-email">Email</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="client-email" className="text-sm font-semibold">
+          Email
+        </Label>
         <Input
           id="client-email"
           type="email"
@@ -136,8 +148,11 @@ export function BookSessionForm({
           required
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="session-notes">Anything we should know? (optional)</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="session-notes" className="text-sm font-semibold">
+          Anything we should know?{" "}
+          <span className="font-normal text-muted-foreground">(optional)</span>
+        </Label>
         <Textarea
           id="session-notes"
           rows={3}
@@ -147,8 +162,12 @@ export function BookSessionForm({
           placeholder="What do you want to work on? Mechanics, decision-making, film review…"
         />
       </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Submitting…" : "Request session"}
+      <Button
+        type="submit"
+        disabled={busy}
+        className="h-12 w-full rounded-2xl text-base"
+      >
+        {busy ? "Submitting…" : "Request Session"}
       </Button>
       <p className="text-center text-xs text-muted-foreground">
         Coach will confirm by email or in-app within 24 hours.

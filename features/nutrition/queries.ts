@@ -28,6 +28,9 @@ export interface Recipe {
   preparationTime: string | null;
   calories: string | null;
   protein: string | null;
+  ingredients: string[];
+  instructions: string[];
+  meal: string | null;
 }
 
 export interface NutritionVideo {
@@ -65,7 +68,23 @@ const mapRecipe = (db: any): Recipe => ({
   preparationTime: db.preparation_time ?? null,
   calories: db.calories ?? null,
   protein: db.protein ?? null,
+  ingredients: Array.isArray(db.ingredients) ? db.ingredients : [],
+  instructions: Array.isArray(db.instructions) ? db.instructions : [],
+  meal: db.meal ?? null,
 });
+
+export async function getRecipe(
+  supabase: SupabaseClient,
+  id: string
+): Promise<Recipe | null> {
+  const { data, error } = await supabase
+    .from("recipes")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? mapRecipe(data) : null;
+}
 
 const mapNutritionVideo = (db: any): NutritionVideo => ({
   id: db.id,
