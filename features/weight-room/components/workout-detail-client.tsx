@@ -25,10 +25,12 @@ export function WorkoutDetailClient({
   blocks,
   orphanExercises,
   initialCompleted,
+  returnHref = "/weight-room",
 }: {
   blocks: BlockWithExercises[];
   orphanExercises: WorkoutPlanExercise[];
   initialCompleted: string[];
+  returnHref?: string;
 }) {
   const supabase = createClient();
   const router = useRouter();
@@ -141,9 +143,11 @@ export function WorkoutDetailClient({
       title: "Workout complete",
       description: "Nice work — your progress is updated.",
     });
-    // Refresh data + route to progress tracker
-    router.push("/weight-room");
+    // Refresh so /weight-room re-fetches with the new completion rows,
+    // then navigate. Order matters: refresh first means push lands on
+    // a freshly-rendered tree (no stale Track Your Progress card).
     router.refresh();
+    router.push(returnHref);
   }
 
   return (

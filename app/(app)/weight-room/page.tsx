@@ -182,7 +182,7 @@ export default async function WeightRoomPage({
           initialDates={weekDates}
           days={days}
           selectedIso={selectedIso}
-          weekParam={explicitWeek?.toString()}
+          weekParam={explicitWeek != null ? String(explicitWeek) : null}
         />
       </div>
 
@@ -200,7 +200,12 @@ export default async function WeightRoomPage({
         {activePlan ? (
           selectedDayWorkout ? (
             <Link
-              href={`/weight-room/workout/${selectedIso}`}
+              href={(() => {
+                const p = new URLSearchParams();
+                if (explicitWeek != null) p.set("week", String(explicitWeek));
+                const qs = p.toString();
+                return `/weight-room/workout/${selectedIso}${qs ? `?${qs}` : ""}`;
+              })()}
               className="block rounded-3xl border border-[#E8E6E3] bg-white p-4 active:opacity-95"
             >
               <div className="flex items-center gap-3.5">

@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { WorkoutDetailClient } from "@/features/weight-room/components/workout-detail-client";
 import {
   getCompletedExerciseIds,
+  getUserPlanWeek,
   getUserWorkoutPlans,
   getWorkoutPlanBlocks,
   getWorkoutPlanDays,
@@ -17,8 +18,10 @@ export const dynamic = "force-dynamic";
 
 export default async function WorkoutDetailPage({
   params,
+  searchParams,
 }: {
   params: { date: string };
+  searchParams: { week?: string };
 }) {
   const date = parseIsoDate(params.date);
   if (Number.isNaN(date.getTime())) notFound();
@@ -29,9 +32,30 @@ export default async function WorkoutDetailPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/weight-room");
 
-  const plans = await getUserWorkoutPlans(supabase);
-  const activePlan = plans[plans.length - 1];
-  if (!activePlan) notFound();
+  const [plans, planWeek] = await Promise.all([
+    getUserWorkoutPlans(supabase),
+    getUserPlanWeek(supabase),
+  ]);
+  if (plans.length === 0) notFound();
+
+  // CRITICAL: pick the same plan the /weight-room page picks for the
+  // same week, otherwise the completed exercises live on a different
+  // plan's day rows and the Track Your Progress widget never moves.
+  const currentWeek = Math.max(planWeek, 0);
+  const requested = searchParams.week
+    ? parseInt(searchParams.week.replace(/[^0-9]/g, ""), 10)
+    : NaN;
+  const explicitWeek =
+    !Number.isNaN(requested) && requested <= currentWeek ? requested : null;
+  const selectedWeek = explicitWeek ?? currentWeek;
+  const activePlan =
+    plans
+      .filter((p) => p.weekOfRelease === selectedWeek)
+      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
+    ?? plans
+      .filter((p) => p.weekOfRelease <= selectedWeek)
+      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
+    ?? plans[plans.length - 1];
 
   const days = await getWorkoutPlanDays(supabase, activePlan.id);
   const day = matchDay(date, days);
@@ -51,18 +75,24 @@ export default async function WorkoutDetailPage({
   }));
   const orphanExercises = exercises.filter((e) => e.blockId === null);
 
-  // Hydrate only completions for exercises that exist on this day so the
-  // client component doesn't carry the rest of the user's history.
   const dayExerciseIds = new Set(exercises.map((e) => e.id));
   const initialCompleted = Array.from(completedSet).filter((id) =>
     dayExerciseIds.has(id)
   );
 
+  // The slider routes back to /weight-room — preserve the week + day so
+  // the user lands on the same view they came from, with the freshly
+  // updated progress card.
+  const returnParams = new URLSearchParams();
+  returnParams.set("day", params.date);
+  if (explicitWeek != null) returnParams.set("week", String(explicitWeek));
+  const returnHref = `/weight-room?${returnParams.toString()}`;
+
   return (
     <>
       <PageHeader
         title={day.label ?? "Today's Workout"}
-        backHref="/weight-room"
+        backHref={returnHref}
       />
       <div className="mx-auto w-full max-w-[820px] px-5 pb-6 md:px-6">
         <div className="mb-5 rounded-2xl bg-muted px-4 py-3">
@@ -78,6 +108,7 @@ export default async function WorkoutDetailPage({
           blocks={blocksWithExercises}
           orphanExercises={orphanExercises}
           initialCompleted={initialCompleted}
+          returnHref={returnHref}
         />
       </div>
     </>
