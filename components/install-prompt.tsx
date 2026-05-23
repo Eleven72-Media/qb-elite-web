@@ -79,35 +79,40 @@ export function InstallPrompt() {
   if (mode === "hidden") return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-20 z-50 mx-auto max-w-md px-4 md:bottom-6">
-      <div className="relative rounded-2xl border bg-card p-4 pr-10 shadow-lg">
+    <div className="fixed inset-x-0 bottom-24 z-50 mx-auto max-w-md px-4 md:bottom-6">
+      <div className="relative rounded-3xl bg-white p-4 pr-10 shadow-[0_12px_32px_rgba(0,0,0,0.18)] ring-1 ring-black/5">
         <button
           type="button"
           aria-label="Dismiss"
           onClick={dismiss}
-          className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+          className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
         >
           <X className="h-4 w-4" />
         </button>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-primary">
-          Add to Home Screen
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
+          Install QB Elite
         </p>
         {mode === "ios" ? (
-          <p className="mt-1 flex items-center gap-1 text-sm">
-            Tap <Share className="inline h-4 w-4" /> then{" "}
-            <span className="font-semibold">Add to Home Screen</span> to install
-            QB Elite.
+          <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-foreground/85">
+            Tap <Share className="inline h-4 w-4 text-primary" /> in Safari, then{" "}
+            <span className="font-semibold">Add to Home Screen</span> for the
+            full app experience.
           </p>
         ) : (
           <>
-            <p className="mt-1 text-sm">
-              Install QB Elite for fullscreen mode and faster launches.
+            <p className="mt-1 text-sm text-foreground/85">
+              Install for fullscreen mode and faster launches.
             </p>
             <div className="mt-3 flex gap-2">
-              <Button size="sm" onClick={install}>
+              <Button size="sm" onClick={install} className="rounded-full">
                 Install
               </Button>
-              <Button size="sm" variant="outline" onClick={dismiss}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={dismiss}
+                className="rounded-full"
+              >
                 Not now
               </Button>
             </div>

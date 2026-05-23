@@ -7,14 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
 
-/**
- * Writes a row to `video_completions` keyed on (user_id, video_id, video_type).
- * Mirrors the mobile completion-tracking flow.
- *
- * Idempotent: re-clicking is a no-op (RLS + unique constraint handle dedup).
- * Sprint 4 may wire this to fire automatically off Vimeo Player.js `ended`
- * events instead of a manual button.
- */
 export function CompleteVideoButton({
   videoId,
   videoType,
@@ -52,23 +44,21 @@ export function CompleteVideoButton({
   }
 
   return (
-    <div className="flex justify-center">
-      <Button
-        variant={completed ? "outline" : "default"}
-        size="lg"
-        onClick={onClick}
-        disabled={completed || pending}
-      >
-        {completed ? (
-          <>
-            <CheckCircle2 className="mr-2 h-5 w-5" /> Completed
-          </>
-        ) : (
-          <>
-            <Check className="mr-2 h-5 w-5" /> Mark Complete
-          </>
-        )}
-      </Button>
-    </div>
+    <Button
+      variant={completed ? "outline" : "default"}
+      onClick={onClick}
+      disabled={completed || pending}
+      className="h-14 w-full gap-2 rounded-2xl text-base"
+    >
+      {completed ? (
+        <>
+          <CheckCircle2 className="h-5 w-5" strokeWidth={2} /> Completed
+        </>
+      ) : (
+        <>
+          <Check className="h-5 w-5" strokeWidth={2.25} /> Mark Complete
+        </>
+      )}
+    </Button>
   );
 }

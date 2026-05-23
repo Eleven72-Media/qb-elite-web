@@ -56,12 +56,13 @@ export function parseVideoUrl(url: string | null | undefined): ParsedVideo {
 export function vimeoEmbedUrl(
   id: string,
   hash: string | null | undefined,
-  opts: { autoplay?: boolean; loop?: boolean } = {}
+  opts: { autoplay?: boolean; loop?: boolean; muted?: boolean } = {}
 ): string {
   const params = new URLSearchParams();
   if (hash) params.set("h", hash);
   if (opts.autoplay) params.set("autoplay", "1");
   if (opts.loop) params.set("loop", "1");
+  if (opts.muted) params.set("muted", "1");
   params.set("title", "0");
   params.set("byline", "0");
   params.set("portrait", "0");
@@ -72,10 +73,11 @@ export function vimeoEmbedUrl(
 /** Builds the canonical `youtube.com/embed` URL. */
 export function youtubeEmbedUrl(
   id: string,
-  opts: { autoplay?: boolean; loop?: boolean } = {}
+  opts: { autoplay?: boolean; loop?: boolean; muted?: boolean } = {}
 ): string {
   const params = new URLSearchParams();
   if (opts.autoplay) params.set("autoplay", "1");
+  if (opts.muted) params.set("mute", "1");
   if (opts.loop) {
     params.set("loop", "1");
     params.set("playlist", id); // YT requires this for loop to work

@@ -4,14 +4,11 @@ import { parseVideoUrl, vimeoEmbedUrl, youtubeEmbedUrl } from "@/lib/video";
  * Shared video player. Supports Vimeo (incl. privacy-hash links) +
  * YouTube. Renders a 16:9 responsive iframe sized to the parent.
  *
- * Usage:
- *   <VideoPlayer src={training.videoLink} autoplay />
- *
- * Sprint 4+ may add a custom controls overlay + completion-tracking
- * event listener (Vimeo Player.js / YouTube IFrame API). For Sprint 3
- * the bare iframe is sufficient — both providers ship native controls,
- * and tap-to-complete writes can be triggered from a separate "Mark
- * Complete" button below the player.
+ * Autoplay note: iOS Safari blocks autoplay unless the video is muted.
+ * When autoplay is requested we force muted=1 on the embed URL so the
+ * video actually starts; the user can tap to unmute via the native
+ * controls. This matches what the Flutter app does inside its in-app
+ * webview.
  */
 export function VideoPlayer({
   src,
@@ -30,7 +27,7 @@ export function VideoPlayer({
     return (
       <div
         className={
-          "flex aspect-video w-full items-center justify-center rounded-xl border bg-card text-sm text-muted-foreground " +
+          "flex aspect-video w-full items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground " +
           (className ?? "")
         }
       >
@@ -41,13 +38,13 @@ export function VideoPlayer({
 
   const embedUrl =
     parsed.source === "vimeo"
-      ? vimeoEmbedUrl(parsed.id, parsed.hash, { autoplay, loop })
-      : youtubeEmbedUrl(parsed.id, { autoplay, loop });
+      ? vimeoEmbedUrl(parsed.id, parsed.hash, { autoplay, loop, muted: autoplay })
+      : youtubeEmbedUrl(parsed.id, { autoplay, loop, muted: autoplay });
 
   return (
     <div
       className={
-        "relative aspect-video w-full overflow-hidden rounded-xl bg-black " +
+        "relative aspect-video w-full overflow-hidden bg-black " +
         (className ?? "")
       }
     >

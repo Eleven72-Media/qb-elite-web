@@ -8,14 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
-/**
- * Heart toggle that writes to `favorite_videos` (the catch-all
- * favorite table for both QB trainings + weight room videos +
- * nutrition videos, keyed by `video_type`).
- *
- * Mirrors the mobile favorite_videos pattern. RLS gates writes to the
- * caller's own user_id.
- */
 export function FavoriteButton({
   videoId,
   videoType,
@@ -34,7 +26,7 @@ export function FavoriteButton({
 
   function toggle() {
     const next = !favorite;
-    setFavorite(next); // optimistic flip
+    setFavorite(next);
     startTransition(async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -49,7 +41,6 @@ export function FavoriteButton({
           video_type: videoType,
         });
         if (error && error.code !== "23505") {
-          // 23505 = unique-violation (already favorited). Treat as success.
           setFavorite(!next);
           toast({ title: "Couldn't save", description: error.message, variant: "destructive" });
         }
@@ -85,13 +76,17 @@ export function FavoriteButton({
       onClick={toggle}
       disabled={pending}
       aria-label={favorite ? "Remove from favorites" : "Save to favorites"}
-      className="rounded-full border bg-card p-2 transition-colors hover:bg-accent disabled:opacity-50"
+      className={cn(
+        "flex h-11 w-11 items-center justify-center rounded-full transition-colors active:scale-95 disabled:opacity-50",
+        favorite ? "bg-primary/15" : "bg-muted"
+      )}
     >
       <Heart
         className={cn(
           "h-5 w-5 transition-colors",
-          favorite ? "fill-primary text-primary" : "text-muted-foreground"
+          favorite ? "fill-primary text-primary" : "text-foreground/60"
         )}
+        strokeWidth={favorite ? 0 : 1.75}
       />
     </button>
   );
