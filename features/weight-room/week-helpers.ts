@@ -6,12 +6,21 @@ import type { DayOfRelease, WorkoutPlanDay } from "./queries";
  * "current" weeks if they cross midnight. Matches mobile behavior.
  */
 export function currentWeekDates(now = new Date()): Date[] {
+  return dateWindow(now, 7);
+}
+
+/**
+ * Returns `count` consecutive dates beginning at this week's Monday,
+ * used by the Weight Room horizontally-scrollable strip so the user
+ * can preview future weeks. Default 28 days (4 weeks ahead).
+ */
+export function dateWindow(now = new Date(), count = 28): Date[] {
   const day = now.getDay(); // 0 = Sun, 1 = Mon, … 6 = Sat
   const offsetToMonday = day === 0 ? -6 : 1 - day;
   const monday = new Date(now);
   monday.setHours(0, 0, 0, 0);
   monday.setDate(now.getDate() + offsetToMonday);
-  return Array.from({ length: 7 }, (_, i) => {
+  return Array.from({ length: count }, (_, i) => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     return d;

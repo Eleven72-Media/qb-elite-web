@@ -225,7 +225,7 @@ export function aggregateGroceryItems(
   }
 
   const out: GroceryItem[] = [];
-  for (const [, group] of byName) {
+  for (const group of Array.from(byName.values())) {
     // If exactly one unit-bucket, emit one consolidated row.
     const entries = Array.from(group.byUnit.entries());
     if (entries.length === 1) {
@@ -252,9 +252,11 @@ export function aggregateGroceryItems(
         return [qtyLabel, unitLabel].filter(Boolean).join(" ");
       })
       .join(" + ");
-    const allRaws = entries.flatMap(([, b]) => b.raws);
+    const allRaws = entries.flatMap((e) => e[1].raws);
     const allUsedFor = new Set<string>();
-    for (const [, b] of entries) for (const u of b.usedFor) allUsedFor.add(u);
+    for (const e of entries) {
+      for (const u of Array.from(e[1].usedFor)) allUsedFor.add(u);
+    }
     out.push({
       display: `${qtyExpr} ${group.displayName}`.trim(),
       baseName: group.displayName.toLowerCase(),
