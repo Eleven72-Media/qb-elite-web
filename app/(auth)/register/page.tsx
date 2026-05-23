@@ -8,20 +8,22 @@ export const metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="rounded-2xl border bg-card p-8 shadow-sm">
-      <h1 className="mb-2 text-2xl font-extrabold uppercase tracking-tight">
+    <>
+      <h1 className="text-center text-[20px] font-bold tracking-tight">
         Become Elite
       </h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        Start your 7-day free trial. No charge until day 8 — cancel any time.
+      <p className="mt-1.5 text-center text-sm text-muted-foreground">
+        Start your 7-day free trial. Cancel any time.
       </p>
-      <RegisterForm />
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <div className="mt-5">
+        <RegisterForm />
+      </div>
+      <p className="mt-6 text-center text-sm text-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-primary hover:underline">
-          Log in
+        <Link href="/login" className="font-bold text-primary hover:underline">
+          Log In
         </Link>
       </p>
-    </div>
+    </>
   );
 }

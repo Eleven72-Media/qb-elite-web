@@ -37,7 +37,7 @@ export function ForgotForm() {
 
   if (sent) {
     return (
-      <div className="rounded-md border border-primary/30 bg-primary/5 p-4 text-sm">
+      <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 text-sm">
         Reset link sent to <strong>{email}</strong>. Check your inbox (and spam
         folder).
       </div>
@@ -46,21 +46,30 @@ export function ForgotForm() {
 
   return (
     <form className="space-y-4" onSubmit={onSubmit}>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-sm font-semibold">
+          Email Address
+        </Label>
         <Input
           id="email"
           type="email"
           autoComplete="email"
           required
+          placeholder="Enter your email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={busy}
         />
       </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Sending…" : "Send reset link"}
-      </Button>
+      <div className="flex justify-center pt-1">
+        <Button
+          type="submit"
+          disabled={busy}
+          className="h-12 w-[250px] rounded-2xl text-base"
+        >
+          {busy ? "Sending…" : "Send Reset Link"}
+        </Button>
+      </div>
     </form>
   );
 }

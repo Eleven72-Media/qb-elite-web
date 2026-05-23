@@ -34,9 +34,6 @@ export function LoginForm({ next, error }: { next: string; error?: string }) {
       });
       return;
     }
-    // Server middleware reads the cookie on the redirect target,
-    // so a hard refresh is fine. Use replace() so the back button
-    // doesn't return to the login form.
     router.replace(next);
     router.refresh();
   }
@@ -59,59 +56,70 @@ export function LoginForm({ next, error }: { next: string; error?: string }) {
         variant: "destructive",
       });
     }
-    // Otherwise the browser is now navigating to Google.
   }
 
   return (
     <form className="space-y-4" onSubmit={onSubmit}>
       {error && (
-        <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {decodeURIComponent(error)}
         </div>
       )}
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-sm font-semibold">
+          Email Address
+        </Label>
         <Input
           id="email"
           type="email"
           autoComplete="email"
           required
+          placeholder="Enter your email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={busy}
         />
       </div>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            href="/forgot"
-            className="text-xs text-muted-foreground hover:text-primary"
-          >
-            Forgot?
-          </Link>
-        </div>
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-sm font-semibold">
+          Password
+        </Label>
         <Input
           id="password"
           type="password"
           autoComplete="current-password"
           required
+          placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={busy}
         />
+        <div className="flex justify-end pt-1">
+          <Link
+            href="/forgot"
+            className="text-sm font-medium text-foreground/70 hover:text-primary"
+          >
+            Forgot Password?
+          </Link>
+        </div>
       </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Signing in…" : "Log in"}
-      </Button>
-      <div className="relative py-2 text-center text-xs uppercase tracking-widest text-muted-foreground">
-        <span className="relative z-10 bg-card px-2">or</span>
+      <div className="flex justify-center pt-1">
+        <Button
+          type="submit"
+          disabled={busy}
+          className="h-12 w-[250px] rounded-2xl text-base"
+        >
+          {busy ? "Logging in…" : "Log in"}
+        </Button>
+      </div>
+      <div className="relative py-3 text-center text-[11px] uppercase tracking-widest text-muted-foreground">
+        <span className="relative z-10 bg-white px-3">or</span>
         <span className="absolute inset-x-0 top-1/2 -z-0 h-px bg-border" />
       </div>
       <Button
         type="button"
         variant="outline"
-        className="w-full"
+        className="h-12 w-full rounded-2xl text-base"
         onClick={onGoogle}
         disabled={busy}
       >

@@ -53,35 +53,47 @@ export function ResetPasswordForm() {
 
   return (
     <form className="space-y-4" onSubmit={onSubmit}>
-      <div className="space-y-2">
-        <Label htmlFor="password">New password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-sm font-semibold">
+          New Password
+        </Label>
         <Input
           id="password"
           type="password"
           autoComplete="new-password"
           required
           minLength={8}
+          placeholder="At least 8 characters"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={busy}
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="confirm">Confirm password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirm" className="text-sm font-semibold">
+          Confirm Password
+        </Label>
         <Input
           id="confirm"
           type="password"
           autoComplete="new-password"
           required
           minLength={8}
+          placeholder="Re-enter your password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           disabled={busy}
         />
       </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Saving…" : "Save new password"}
-      </Button>
+      <div className="flex justify-center pt-1">
+        <Button
+          type="submit"
+          disabled={busy}
+          className="h-12 w-[250px] rounded-2xl text-base"
+        >
+          {busy ? "Saving…" : "Save New Password"}
+        </Button>
+      </div>
     </form>
   );
 }

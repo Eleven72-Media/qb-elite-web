@@ -8,20 +8,22 @@ export const metadata = {
 
 export default function ForgotPage() {
   return (
-    <div className="rounded-2xl border bg-card p-8 shadow-sm">
-      <h1 className="mb-2 text-2xl font-extrabold uppercase tracking-tight">
-        Reset your password
+    <>
+      <h1 className="text-center text-[20px] font-bold tracking-tight">
+        Reset Your Password
       </h1>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <p className="mt-1.5 text-center text-sm text-muted-foreground">
         We&apos;ll email you a link to set a new one.
       </p>
-      <ForgotForm />
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <div className="mt-5">
+        <ForgotForm />
+      </div>
+      <p className="mt-6 text-center text-sm text-foreground">
         Remembered it?{" "}
-        <Link href="/login" className="font-semibold text-primary hover:underline">
-          Log in
+        <Link href="/login" className="font-bold text-primary hover:underline">
+          Log In
         </Link>
       </p>
-    </div>
+    </>
   );
 }

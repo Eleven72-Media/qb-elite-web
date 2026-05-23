@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Crown, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -33,7 +33,7 @@ export function PaywallClient({
   canceled: boolean;
 }) {
   const { toast } = useToast();
-  const [interval, setInterval] = useState<SubscriptionInterval>("monthly");
+  const [interval, setInterval] = useState<SubscriptionInterval>("yearly");
   const [busy, setBusy] = useState<null | "starter" | "legend">(null);
 
   async function startCheckout(tier: "starter" | "legend") {
@@ -62,13 +62,16 @@ export function PaywallClient({
   const alreadyOnApple = currentSource === "apple" && currentTier !== "free";
 
   return (
-    <div className="container max-w-3xl py-8">
-      <header className="mb-6 text-center">
-        <span className="inline-block rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+    <div className="mx-auto w-full max-w-[820px] px-5 pb-6 pt-2 md:px-6">
+      <header className="text-center">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+          <Sparkles className="h-3 w-3" strokeWidth={2.5} />
           7-day free trial
         </span>
-        <h1 className="mt-3 text-3xl font-extrabold uppercase tracking-tight md:text-4xl">
-          Start training. Free for 7 days.
+        <h1 className="mt-3 text-[26px] font-extrabold leading-tight tracking-tight">
+          Start training.
+          <br />
+          Free for 7 days.
         </h1>
         <p className="mx-auto mt-2 max-w-prose text-sm text-muted-foreground">
           No charge for the first week. Cancel any time in Settings.
@@ -76,36 +79,38 @@ export function PaywallClient({
       </header>
 
       {canceled && (
-        <div className="mb-6 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-center text-sm text-destructive">
+        <div className="mt-5 rounded-2xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-center text-sm text-destructive">
           Checkout canceled. Pick a plan to try again.
         </div>
       )}
 
       {alreadyOnApple && (
-        <div className="mb-6 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-center text-sm">
+        <div className="mt-5 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 text-center text-sm text-foreground">
           You&apos;re already subscribed via Apple. Manage your subscription in
           iPhone Settings → your name → Subscriptions.
         </div>
       )}
 
-      <IntervalToggle interval={interval} onChange={setInterval} />
+      <div className="mt-5">
+        <IntervalToggle interval={interval} onChange={setInterval} />
+      </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
         <TierCard
-          tier="starter"
           name="Starter"
           tagline="Get started with weekly QB training"
           price={TIER_PRICING.starter[interval].price}
+          period={interval === "yearly" ? "/yr" : "/mo"}
           features={STARTER_FEATURES}
           busy={busy === "starter"}
           disabled={alreadyOnApple || !!busy}
           onSelect={() => startCheckout("starter")}
         />
         <TierCard
-          tier="legend"
           name="Legend"
           tagline="The full QB Elite experience"
           price={TIER_PRICING.legend[interval].price}
+          period={interval === "yearly" ? "/yr" : "/mo"}
           features={LEGEND_FEATURES}
           highlight
           busy={busy === "legend"}
@@ -114,24 +119,29 @@ export function PaywallClient({
         />
       </div>
 
-      <section className="mt-6 rounded-2xl border bg-card p-5 text-center text-sm">
-        <p className="font-semibold">GOAT — 1-on-1 coaching</p>
-        <p className="mt-1 text-muted-foreground">
-          Custom-priced per athlete. Talk to a coach for a quote.
-        </p>
+      <section className="mt-5 flex items-center gap-3 rounded-2xl bg-muted p-4">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <Crown className="h-5 w-5" strokeWidth={2} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-bold">GOAT — 1-on-1 coaching</p>
+          <p className="text-[12px] text-muted-foreground">
+            Custom-priced per athlete.
+          </p>
+        </div>
         <a
           href="mailto:eleven72media@gmail.com?subject=QB%20Elite%20GOAT%20Tier%20%E2%80%94%20pricing%20inquiry"
-          className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:underline"
+          className="shrink-0 text-sm font-bold text-primary hover:underline"
         >
-          Contact Coach Miller →
+          Contact →
         </a>
       </section>
 
-      <p className="mt-8 text-center text-xs text-muted-foreground">
-        Your first 7 days are free. After the trial, your subscription auto-
-        renews at the price shown and is billed to your card. Cancel any time
-        in Settings — if you cancel before day 8, you won&apos;t be charged.
-        By starting your trial you agree to our{" "}
+      <p className="mt-6 text-center text-[11px] leading-relaxed text-muted-foreground">
+        Your first 7 days are free. After the trial, your subscription auto-renews
+        at the price shown and is billed to your card. Cancel any time in
+        Settings — if you cancel before day 8, you won&apos;t be charged. By
+        starting your trial you agree to our{" "}
         <a
           href="https://qb-elite-launch.web.app/terms-of-service"
           className="underline"
@@ -151,7 +161,7 @@ export function PaywallClient({
         </a>
         .
       </p>
-      <div className="mt-4 text-center">
+      <div className="mt-3 text-center">
         <Link
           href="/home"
           className="text-xs text-muted-foreground hover:underline"
@@ -171,7 +181,7 @@ function IntervalToggle({
   onChange: (i: SubscriptionInterval) => void;
 }) {
   return (
-    <div className="mx-auto flex w-fit gap-1 rounded-full border bg-card p-1 shadow-sm">
+    <div className="mx-auto flex w-fit gap-1 rounded-full bg-muted p-1">
       <ToggleButton
         active={interval === "monthly"}
         onClick={() => onChange("monthly")}
@@ -202,8 +212,10 @@ function ToggleButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest transition-colors",
-        active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+        "rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors",
+        active
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground"
       )}
     >
       {children}
@@ -215,16 +227,17 @@ function TierCard({
   name,
   tagline,
   price,
+  period,
   features,
   highlight,
   busy,
   disabled,
   onSelect,
 }: {
-  tier: "starter" | "legend";
   name: string;
   tagline: string;
   price: string;
+  period: string;
   features: string[];
   highlight?: boolean;
   busy: boolean;
@@ -234,33 +247,34 @@ function TierCard({
   return (
     <article
       className={cn(
-        "flex flex-col rounded-2xl border bg-card p-6 shadow-sm",
-        highlight && "border-primary ring-2 ring-primary/30"
+        "relative flex flex-col rounded-3xl bg-white p-6 shadow-[0_4px_16px_rgba(0,0,0,0.04)] ring-1",
+        highlight
+          ? "ring-2 ring-primary shadow-[0_8px_28px_rgba(182,31,38,0.18)]"
+          : "ring-black/5"
       )}
     >
-      <div className="flex items-baseline gap-2">
-        <h2 className="text-xl font-extrabold uppercase tracking-tight">
-          {name}
-        </h2>
-        {highlight && (
-          <span className="rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-            Popular
-          </span>
-        )}
-      </div>
-      <p className="mt-1 text-sm text-muted-foreground">{tagline}</p>
-      <p className="mt-3 text-3xl font-extrabold">{price}</p>
+      {highlight && (
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+          Most Popular
+        </span>
+      )}
+      <h2 className="text-[18px] font-extrabold tracking-tight">{name}</h2>
+      <p className="mt-1 text-[13px] text-muted-foreground">{tagline}</p>
+      <p className="mt-3 flex items-baseline gap-1">
+        <span className="text-[30px] font-extrabold tracking-tight">{price}</span>
+        <span className="text-sm text-muted-foreground">{period}</span>
+      </p>
       <ul className="mt-4 flex-1 space-y-2 text-sm">
         {features.map((f) => (
           <li key={f} className="flex items-start gap-2">
-            <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <span>{f}</span>
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={2.5} />
+            <span className="text-foreground/85">{f}</span>
           </li>
         ))}
       </ul>
       <Button
         size="lg"
-        className="mt-5"
+        className="mt-5 h-12 rounded-2xl text-base"
         onClick={onSelect}
         disabled={disabled}
         variant={highlight ? "default" : "outline"}

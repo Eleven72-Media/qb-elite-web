@@ -112,20 +112,25 @@ export function RegisterForm() {
 
   return (
     <form className="space-y-4" onSubmit={onSubmit}>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-sm font-semibold">
+          Email Address
+        </Label>
         <Input
           id="email"
           type="email"
           autoComplete="email"
           required
+          placeholder="Enter your email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={busy}
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="birth-date">Date of birth</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="birth-date" className="text-sm font-semibold">
+          Date of Birth
+        </Label>
         <Input
           id="birth-date"
           type="date"
@@ -138,35 +143,47 @@ export function RegisterForm() {
           We use this to match you with the right training plan.
         </p>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-sm font-semibold">
+          Password
+        </Label>
         <Input
           id="password"
           type="password"
           autoComplete="new-password"
           required
           minLength={8}
+          placeholder="At least 8 characters"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={busy}
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="confirm">Confirm password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirm" className="text-sm font-semibold">
+          Confirm Password
+        </Label>
         <Input
           id="confirm"
           type="password"
           autoComplete="new-password"
           required
           minLength={8}
+          placeholder="Re-enter your password"
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           disabled={busy}
         />
       </div>
-      <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Creating account…" : "Sign up"}
-      </Button>
+      <div className="flex justify-center pt-2">
+        <Button
+          type="submit"
+          disabled={busy}
+          className="h-12 w-[250px] rounded-2xl text-base"
+        >
+          {busy ? "Creating account…" : "Sign Up"}
+        </Button>
+      </div>
       <p className="text-center text-xs text-muted-foreground">
         By signing up you agree to our{" "}
         <a

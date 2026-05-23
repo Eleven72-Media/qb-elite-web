@@ -6,14 +6,16 @@ export const metadata = {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="rounded-2xl border bg-card p-8 shadow-sm">
-      <h1 className="mb-2 text-2xl font-extrabold uppercase tracking-tight">
-        Set a new password
+    <>
+      <h1 className="text-center text-[20px] font-bold tracking-tight">
+        Set a New Password
       </h1>
-      <p className="mb-6 text-sm text-muted-foreground">
+      <p className="mt-1.5 text-center text-sm text-muted-foreground">
         Almost done. Pick something memorable.
       </p>
-      <ResetPasswordForm />
-    </div>
+      <div className="mt-5">
+        <ResetPasswordForm />
+      </div>
+    </>
   );
 }
