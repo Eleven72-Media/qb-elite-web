@@ -27,6 +27,31 @@ export function dateWindow(now = new Date(), count = 28): Date[] {
   });
 }
 
+/**
+ * Cohort plan_week for a given calendar date.
+ *
+ * `user_plan_week()` (the RPC) returns the cohort week for *today*.
+ * Every additional 7 days adds one to the cohort week. So a date 8
+ * days in the future is `currentCohortWeek + 1`.
+ *
+ * Used by the Weight Room week strip so future days resolve to the
+ * future cohort week's plan (not the current week's plan reshown).
+ * Clamps at 0 so dates before this week (shouldn't happen, but) don't
+ * return negatives.
+ */
+export function cohortWeekForDate(
+  date: Date,
+  currentCohortWeek: number,
+  now = new Date()
+): number {
+  const thisMonday = dateWindow(now, 1)[0];
+  const msPerWeek = 7 * 86400000;
+  const weeksAhead = Math.floor(
+    (date.getTime() - thisMonday.getTime()) / msPerWeek
+  );
+  return Math.max(0, currentCohortWeek + weeksAhead);
+}
+
 const DAYS: DayOfRelease[] = [
   "monday",
   "tuesday",

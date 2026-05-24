@@ -43,9 +43,18 @@ export function ScheduleWorkoutButton({ workoutId }: { workoutId: string }) {
           sort_order: Date.now() % 2_000_000_000,
         });
       if (error) {
+        // Most common "Couldn't schedule" path in early rollout is the
+        // user_scheduled_exercises table not being migrated yet. Surface
+        // a clearer hint so we recognize it in the wild.
+        const looksLikeMissingTable =
+          /relation .*user_scheduled_exercises.* does not exist/i.test(
+            error.message
+          );
         toast({
           title: "Couldn't schedule",
-          description: error.message,
+          description: looksLikeMissingTable
+            ? "Setup incomplete on the server — please ping support."
+            : error.message,
           variant: "destructive",
         });
         return;

@@ -20,6 +20,7 @@ import {
   type WorkoutPlanExercise,
 } from "@/features/weight-room/queries";
 import {
+  cohortWeekForDate,
   dateWindow,
   isoDate,
   matchDay,
@@ -74,10 +75,10 @@ export default async function WeightRoomPage({
   const requested = searchParams.week
     ? parseInt(searchParams.week.replace(/[^0-9]/g, ""), 10)
     : NaN;
-  const explicitWeek =
-    !Number.isNaN(requested) && requested <= currentWeek ? requested : null;
-  const selectedWeek = explicitWeek ?? currentWeek;
-  const isViewingPast = explicitWeek !== null && explicitWeek !== currentWeek;
+  // Explicit ?week=… from the picker always wins, even when it points
+  // at a future week (B-019 dropped the server-side week_of_release
+  // gate so we can show future content too).
+  const explicitWeek = !Number.isNaN(requested) ? requested : null;
 
   // Day selection: defaults to today; can be overridden with ?day=YYYY-MM-DD.
   const today = new Date();
@@ -95,14 +96,30 @@ export default async function WeightRoomPage({
   });
   const isSelectedToday = selectedIso === isoDate(today);
 
-  const activePlan =
-    plans
-      .filter((p) => p.weekOfRelease === selectedWeek)
-      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
-    ?? plans
-      .filter((p) => p.weekOfRelease <= selectedWeek)
-      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
-    ?? null;
+  // Cohort week for the *selected date*. If the user picks Thursday of
+  // next week, this returns currentWeek + 1 so we pull that week's plan
+  // instead of reshowing the current week's Thursday with its (stale)
+  // completion ticks.
+  const dateCohortWeek = cohortWeekForDate(selectedDate, currentWeek, today);
+  const selectedWeek = explicitWeek ?? dateCohortWeek;
+  const isViewingPast = explicitWeek !== null && explicitWeek < currentWeek;
+  const isViewingFuture = selectedWeek > currentWeek;
+
+  // For a future cohort week with no plan authored yet, *don't* fall
+  // back to an earlier week — that's the bug where Thursday next week
+  // re-rendered Thursday this week with old completion state. Show
+  // empty state instead. For current/past weeks, fall back is fine
+  // because a plan stays "active" until the next is published.
+  const exactMatch = plans
+    .filter((p) => p.weekOfRelease === selectedWeek)
+    .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0];
+  const activePlan = isViewingFuture
+    ? exactMatch ?? null
+    : exactMatch
+      ?? plans
+        .filter((p) => p.weekOfRelease <= selectedWeek)
+        .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
+      ?? null;
 
   const days = activePlan ? await getWorkoutPlanDays(supabase, activePlan.id) : [];
   const selectedDayWorkout = matchDay(selectedDate, days);
@@ -163,11 +180,12 @@ export default async function WeightRoomPage({
   // 28 days = this week + 3 weeks ahead, horizontally scrollable.
   const weekDates = dateWindow(new Date(), 28);
 
+  // Always tell the detail page which cohort week to use, so future
+  // dates resolve to the future plan (not the current one re-shown).
   const detailHref = (() => {
     const p = new URLSearchParams();
-    if (explicitWeek != null) p.set("week", String(explicitWeek));
-    const qs = p.toString();
-    return `/weight-room/workout/${selectedIso}${qs ? `?${qs}` : ""}`;
+    p.set("week", String(selectedWeek));
+    return `/weight-room/workout/${selectedIso}?${p.toString()}`;
   })();
 
   return (
@@ -213,6 +231,7 @@ export default async function WeightRoomPage({
           days={days}
           selectedIso={selectedIso}
           weekParam={explicitWeek != null ? String(explicitWeek) : null}
+          currentWeek={currentWeek}
         />
       </div>
 
@@ -312,41 +331,35 @@ export default async function WeightRoomPage({
               )}
             </ul>
           </Link>
-        ) : activePlan ? (
-          // Admin plan exists but no workout for this day
+        ) : isViewingFuture && !activePlan ? (
+          // Future cohort week with no plan published yet. Starter
+          // users can still self-schedule from Training Videos; higher
+          // tiers see a "coming soon" stub.
           showAddExercisesCta ? (
-            <div className="rounded-3xl border border-[#E8E6E3] bg-white px-5 py-6 text-center">
-              <div className="mx-auto mb-2 flex h-[26px] w-[26px] items-center justify-center text-muted-foreground">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <path d="M16 2v4M8 2v4M3 10h18" />
-                </svg>
-              </div>
-              <p className="text-[15px] font-bold">No workout scheduled</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Add exercises below to build one for this day
-              </p>
-              <a
-                href="#training-videos"
-                className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary px-3.5 py-1.5 text-[12px] font-semibold text-white"
-              >
-                <ListPlus className="h-3.5 w-3.5" strokeWidth={2.25} />
-                Browse Training Videos
-              </a>
-            </div>
+            <EmptyDayCard
+              title="No workout scheduled"
+              subtitle="Add exercises below to schedule one for this day"
+              cta="Browse Training Videos"
+            />
           ) : (
-            <div className="rounded-3xl border border-[#E8E6E3] bg-white px-5 py-6 text-center">
-              <div className="mx-auto mb-2 flex h-[26px] w-[26px] items-center justify-center text-muted-foreground">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" />
-                  <path d="M16 2v4M8 2v4M3 10h18" />
-                </svg>
-              </div>
-              <p className="text-[15px] font-bold">Rest Day</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                No workout scheduled for this day
-              </p>
-            </div>
+            <EmptyDayCard
+              title="Plan coming soon"
+              subtitle={`Week ${selectedWeek} hasn't been published yet`}
+            />
+          )
+        ) : activePlan ? (
+          // Admin plan exists but no workout for this day-of-week
+          showAddExercisesCta ? (
+            <EmptyDayCard
+              title="No workout scheduled"
+              subtitle="Add exercises below to build one for this day"
+              cta="Browse Training Videos"
+            />
+          ) : (
+            <EmptyDayCard
+              title="Rest Day"
+              subtitle="No workout scheduled for this day"
+            />
           )
         ) : (
           <PaywallCard />
@@ -384,6 +397,47 @@ export default async function WeightRoomPage({
             workoutsByCategory={workoutsByCategory}
           />
         </section>
+      )}
+    </div>
+  );
+}
+
+function EmptyDayCard({
+  title,
+  subtitle,
+  cta,
+}: {
+  title: string;
+  subtitle: string;
+  cta?: string;
+}) {
+  return (
+    <div className="rounded-3xl border border-[#E8E6E3] bg-white px-5 py-6 text-center">
+      <div className="mx-auto mb-2 flex h-[26px] w-[26px] items-center justify-center text-muted-foreground">
+        <svg
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+        </svg>
+      </div>
+      <p className="text-[15px] font-bold">{title}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{subtitle}</p>
+      {cta && (
+        <a
+          href="#training-videos"
+          className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary px-3.5 py-1.5 text-[12px] font-semibold text-white"
+        >
+          <ListPlus className="h-3.5 w-3.5" strokeWidth={2.25} />
+          {cta}
+        </a>
       )}
     </div>
   );

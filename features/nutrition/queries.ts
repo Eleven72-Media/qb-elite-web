@@ -123,27 +123,53 @@ export async function getRecipe(
 }
 
 /**
- * Pull recipe rows by title (case-insensitive). Used by the Grocery List
- * generator: meal_plan_days stores meal names as free text strings, so we
- * normalize + match titles back to the recipes table to harvest their
- * ingredients arrays.
+ * Returns a `lowercase-title → recipe-id` map for matching meal-plan
+ * day text (which is free-text typed by the admin) to a real recipe row.
+ *
+ * meal_plan_days stores `breakfast`, `snack`, `main_course`, etc. as
+ * strings — there's also a `*_recipe_id` FK when the admin explicitly
+ * pins a recipe, but most rows rely on title-match. The previous
+ * implementation used Postgres `.in("title", […])`, which is
+ * case-sensitive and exact — so "Pancakes" in the day cell didn't
+ * match "pancakes" in `recipes.title` (or any extra trailing space).
+ *
+ * Fetching all recipes once and matching client-side is cheap
+ * (typically <200 rows) and gives us a single source of truth that's
+ * trivially case- and whitespace-insensitive. When two recipes share
+ * the same title (rare but possible), we skip the duplicate so a click
+ * never lands on the "wrong" recipe — the admin should disambiguate
+ * by setting an explicit `*_recipe_id` FK in that case.
  */
-export async function getRecipesByTitles(
-  supabase: SupabaseClient,
-  titles: string[]
-): Promise<Recipe[]> {
-  const normalized = Array.from(
-    new Set(
-      titles.map((t) => t.trim()).filter((t) => t.length > 0)
-    )
-  );
-  if (normalized.length === 0) return [];
+export async function getRecipeIdByTitleMap(
+  supabase: SupabaseClient
+): Promise<Map<string, string>> {
   const { data, error } = await supabase
     .from("recipes")
-    .select("*")
-    .in("title", normalized);
-  if (error) throw error;
-  return (data ?? []).map(mapRecipe);
+    .select("id, title")
+    .limit(1000);
+  if (error) {
+    console.warn("recipes title-map fetch failed:", error.message);
+    return new Map();
+  }
+  const result = new Map<string, string>();
+  const seenDuplicates = new Set<string>();
+  for (const row of (data ?? []) as Array<{ id: string; title: string | null }>) {
+    const key = (row.title ?? "").trim().toLowerCase();
+    if (!key) continue;
+    if (result.has(key)) {
+      if (!seenDuplicates.has(key)) {
+        seenDuplicates.add(key);
+        console.warn(
+          `recipes: duplicate title "${row.title}" — meal-plan title-match disabled for this title (set *_recipe_id explicitly).`
+        );
+      }
+      result.delete(key); // ambiguous → no auto-link
+      continue;
+    }
+    if (seenDuplicates.has(key)) continue;
+    result.set(key, row.id);
+  }
+  return result;
 }
 
 const mapNutritionVideo = (db: any): NutritionVideo => ({

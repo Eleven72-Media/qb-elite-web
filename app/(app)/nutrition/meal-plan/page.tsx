@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { PlanWeekPicker } from "@/features/weight-room/components/plan-week-picker";
 import {
   getAllMealPlans,
-  getRecipesByTitles,
+  getRecipeIdByTitleMap,
   getUserMealPlan,
   getUserMealPlanWeek,
   type MealPlanDay,
@@ -82,25 +82,14 @@ export default async function MealPlanPage({
   const selectedWeek = explicitWeek ?? currentWeek;
   const isViewingPast = explicitWeek !== null && explicitWeek !== currentWeek;
 
-  const mealPlan = await getUserMealPlan(supabase, selectedWeek);
-
-  // Collect every meal-text string used across the week (for the
-  // recipe-by-title fallback when the day doesn't have an explicit
-  // *_recipe_id FK set).
-  const titleSet = new Set<string>();
-  if (mealPlan) {
-    for (const d of mealPlan.days) {
-      for (const t of [d.breakfast, d.snack, d.proteinShake, d.mainCourse, d.side]) {
-        if (t && t.trim()) titleSet.add(t.trim());
-      }
-    }
-  }
-  const matched = titleSet.size > 0
-    ? await getRecipesByTitles(supabase, Array.from(titleSet))
-    : [];
-  const recipeIdByTitle = new Map(
-    matched.map((r) => [r.title.toLowerCase(), r.id])
-  );
+  const [mealPlan, recipeIdByTitle] = await Promise.all([
+    getUserMealPlan(supabase, selectedWeek),
+    // Pull the full lowercase title → id map once so meal-day text
+    // matches case- and whitespace-insensitively. Ambiguous duplicate
+    // titles are dropped from the map (no auto-link rather than wrong
+    // link — admin should set *_recipe_id explicitly to disambiguate).
+    getRecipeIdByTitleMap(supabase),
+  ]);
 
   function recipeHrefFor(
     text: string | null,

@@ -44,19 +44,28 @@ export default async function WorkoutDetailPage({
   const requested = searchParams.week
     ? parseInt(searchParams.week.replace(/[^0-9]/g, ""), 10)
     : NaN;
-  const explicitWeek =
-    !Number.isNaN(requested) && requested <= currentWeek ? requested : null;
+  // Accept any non-negative ?week=, including future weeks (B-019 dropped
+  // the server-side gate so we can preview them).
+  const explicitWeek = !Number.isNaN(requested) ? Math.max(0, requested) : null;
   const selectedWeek = explicitWeek ?? currentWeek;
+  const isFutureWeek = selectedWeek > currentWeek;
 
-  const activePlan =
-    plans
-      .filter((p) => p.weekOfRelease === selectedWeek)
-      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
-    ?? plans
-      .filter((p) => p.weekOfRelease <= selectedWeek)
-      .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
-    ?? plans[plans.length - 1]
-    ?? null;
+  // Match exactly; for past/current weeks, fall back to the most recent
+  // plan ≤ selectedWeek (the "current" plan stays active until a new
+  // one is published). For *future* weeks we do NOT fall back —
+  // otherwise we'd re-render the current week's exercises with their
+  // (irrelevant) completion ticks.
+  const exactPlan = plans
+    .filter((p) => p.weekOfRelease === selectedWeek)
+    .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0];
+  const activePlan = isFutureWeek
+    ? exactPlan ?? null
+    : exactPlan
+      ?? plans
+        .filter((p) => p.weekOfRelease <= selectedWeek)
+        .sort((a, b) => b.weekOfRelease - a.weekOfRelease)[0]
+      ?? plans[plans.length - 1]
+      ?? null;
 
   const days = activePlan ? await getWorkoutPlanDays(supabase, activePlan.id) : [];
   const day = activePlan ? matchDay(date, days) : null;
@@ -67,7 +76,9 @@ export default async function WorkoutDetailPage({
 
   const returnParams = new URLSearchParams();
   returnParams.set("day", params.date);
-  if (explicitWeek != null) returnParams.set("week", String(explicitWeek));
+  // Preserve the cohort week the user came from so the back arrow
+  // restores their context (week strip stays anchored on that week).
+  returnParams.set("week", String(selectedWeek));
   const returnHref = `/weight-room?${returnParams.toString()}`;
 
   // ── Branch A: admin-authored workout day ────────────────────────────

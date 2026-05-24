@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 import type { WorkoutPlanDay } from "../queries";
 import {
+  cohortWeekForDate,
   dayOfMonthLabel,
   isoDate,
   matchDay,
@@ -30,12 +31,19 @@ export function WeekStrip({
   selectedIso,
   basePath = "/weight-room",
   weekParam,
+  currentWeek,
 }: {
   initialDates: Date[];
   days: WorkoutPlanDay[];
   selectedIso: string;
   basePath?: string;
+  /** Non-null when the picker has pinned a specific past/future week.
+   *  Then *every* cell links to that same week, keeping the user in
+   *  "viewing past" mode while they browse days. */
   weekParam?: string | null;
+  /** User's current cohort plan_week (from `user_plan_week()`). Used
+   *  to compute each cell's cohort week when `weekParam` is null. */
+  currentWeek: number;
 }) {
   const todayIso = isoDate(new Date());
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -108,7 +116,9 @@ export function WeekStrip({
 
             const params = new URLSearchParams();
             params.set("day", iso);
-            if (weekParam) params.set("week", weekParam);
+            const cellWeek =
+              weekParam ?? String(cohortWeekForDate(d, currentWeek));
+            params.set("week", cellWeek);
             const href = `${basePath}?${params.toString()}`;
 
             return (
