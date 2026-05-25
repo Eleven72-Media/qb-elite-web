@@ -12,7 +12,12 @@ import {
   getWorkoutPlanExercises,
   type WorkoutPlanExercise,
 } from "@/features/weight-room/queries";
-import { longDateLabel, matchDay, parseIsoDate } from "@/features/weight-room/week-helpers";
+import {
+  cohortWeekForDate,
+  longDateLabel,
+  matchDay,
+  parseIsoDate,
+} from "@/features/weight-room/week-helpers";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Workout — QB Elite" };
@@ -47,7 +52,14 @@ export default async function WorkoutDetailPage({
   // Accept any non-negative ?week=, including future weeks (B-019 dropped
   // the server-side gate so we can preview them).
   const explicitWeek = !Number.isNaN(requested) ? Math.max(0, requested) : null;
-  const selectedWeek = explicitWeek ?? currentWeek;
+  // Defense in depth: if the caller forgot ?week= (e.g. external deep link,
+  // refresh after the schedule button's `?day=` redirect, etc.) compute
+  // the cohort week from the URL's date param instead of silently
+  // collapsing to currentWeek — otherwise a future date renders the
+  // current week's exercises (with their stale completion ticks). Mirrors
+  // /weight-room/page.tsx.
+  const dateCohortWeek = cohortWeekForDate(date, currentWeek);
+  const selectedWeek = explicitWeek ?? dateCohortWeek;
   const isFutureWeek = selectedWeek > currentWeek;
 
   // Match exactly; for past/current weeks, fall back to the most recent
