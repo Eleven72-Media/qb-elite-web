@@ -93,61 +93,38 @@ export default async function WorkoutDetailPage({
   returnParams.set("week", String(selectedWeek));
   const returnHref = `/weight-room?${returnParams.toString()}`;
 
-  // ── Branch A: admin-authored workout day ────────────────────────────
+  // Admin-authored blocks/exercises (when this day has a plan day).
+  let adminBlocks: Array<
+    Awaited<ReturnType<typeof getWorkoutPlanBlocks>>[number] & {
+      exercises: WorkoutPlanExercise[];
+    }
+  > = [];
+  let adminOrphanExercises: WorkoutPlanExercise[] = [];
+  let adminInitialCompleted: string[] = [];
   if (day && activePlan) {
     const [blocks, exercises, completedSet] = await Promise.all([
       getWorkoutPlanBlocks(supabase, day.id),
       getWorkoutPlanExercises(supabase, day.id),
       getCompletedExerciseIds(supabase, user.id),
     ]);
-
-    const blocksWithExercises = blocks.map((b) => ({
+    adminBlocks = blocks.map((b) => ({
       ...b,
       exercises: exercises
         .filter((e) => e.blockId === b.id)
         .sort((a, b) => a.sortOrder - b.sortOrder),
     }));
-    const orphanExercises = exercises.filter((e) => e.blockId === null);
-
+    adminOrphanExercises = exercises.filter((e) => e.blockId === null);
     const dayExerciseIds = new Set(exercises.map((e) => e.id));
-    const initialCompleted = Array.from(completedSet).filter((id) =>
+    adminInitialCompleted = Array.from(completedSet).filter((id) =>
       dayExerciseIds.has(id)
-    );
-
-    return (
-      <>
-        <PageHeader
-          title={day.label ?? "Today's Workout"}
-          backHref={returnHref}
-        />
-        <div className="mx-auto w-full max-w-[820px] px-5 pb-6 md:px-6">
-          <div className="mb-5 rounded-2xl bg-muted px-4 py-3">
-            <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
-              {longDateLabel(date)}
-            </p>
-            <p className="mt-0.5 text-sm text-foreground/80">
-              {activePlan.name ?? `Week ${activePlan.weekOfRelease} plan`}
-            </p>
-          </div>
-          <WorkoutDetailClient
-            blocks={blocksWithExercises}
-            orphanExercises={orphanExercises}
-            initialCompleted={initialCompleted}
-            returnHref={returnHref}
-          />
-        </div>
-      </>
     );
   }
 
-  // ── Branch B: user-scheduled custom workout day ─────────────────────
-  // Synthesize an "Other" pseudo-block from the scheduled rows so the
-  // existing WorkoutDetailClient can render + complete them without
-  // any UI changes. Each scheduled row maps to one exercise; we reuse
-  // the row id as both the exercise id and the completion key so
-  // toggling completion writes to user_scheduled_exercises.completed_at
-  // via the dedicated client variant below.
-  const synthesizedExercises: WorkoutPlanExercise[] = scheduled.map((s) => ({
+  // User-scheduled exercises (always synthesized when present so they
+  // render alongside an admin workout — previously they only showed when
+  // there was no admin day, which made the "+" button look broken on
+  // days that admin had also authored).
+  const scheduledSynthesized: WorkoutPlanExercise[] = scheduled.map((s) => ({
     id: s.id,
     dayId: "__scheduled__",
     blockId: null,
@@ -160,31 +137,61 @@ export default async function WorkoutDetailPage({
     notes: s.notes,
     sortOrder: s.sortOrder,
   }));
-  const initialCompleted = scheduled
+  const scheduledInitialCompleted = scheduled
     .filter((s) => s.completedAt != null)
     .map((s) => s.id);
 
+  const hasAdmin = day != null && activePlan != null;
+  const hasScheduled = scheduledSynthesized.length > 0;
+
+  const headerTitle = hasAdmin
+    ? (day!.label ?? "Today's Workout")
+    : "Your Workout";
+  const subtitleText = hasAdmin
+    ? (activePlan!.name ?? `Week ${activePlan!.weekOfRelease} plan`)
+    : `Custom workout · ${scheduled.length} exercise${scheduled.length === 1 ? "" : "s"}`;
+
   return (
     <>
-      <PageHeader title="Your Workout" backHref={returnHref} />
-      <div className="mx-auto w-full max-w-[820px] px-5 pb-6 md:px-6">
-        <div className="mb-5 rounded-2xl bg-muted px-4 py-3">
+      <PageHeader title={headerTitle} backHref={returnHref} />
+      <div className="mx-auto w-full max-w-[820px] space-y-5 px-5 pb-6 md:px-6">
+        <div className="rounded-2xl bg-muted px-4 py-3">
           <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
             {longDateLabel(date)}
           </p>
-          <p className="mt-0.5 text-sm text-foreground/80">
-            Custom workout · {scheduled.length} exercise
-            {scheduled.length === 1 ? "" : "s"}
-          </p>
+          <p className="mt-0.5 text-sm text-foreground/80">{subtitleText}</p>
         </div>
-        <WorkoutDetailClient
-          blocks={[]}
-          orphanExercises={synthesizedExercises}
-          initialCompleted={initialCompleted}
-          returnHref={returnHref}
-          mode="scheduled"
-        />
+
+        {hasAdmin && (
+          <WorkoutDetailClient
+            blocks={adminBlocks}
+            orphanExercises={adminOrphanExercises}
+            initialCompleted={adminInitialCompleted}
+            returnHref={returnHref}
+          />
+        )}
+
+        {hasScheduled && (
+          <section>
+            {hasAdmin && (
+              <h2 className="mb-3 mt-1 text-[15px] font-bold tracking-tight text-foreground">
+                Your additions
+                <span className="ml-2 text-xs font-medium text-muted-foreground">
+                  ({scheduledSynthesized.length})
+                </span>
+              </h2>
+            )}
+            <WorkoutDetailClient
+              blocks={[]}
+              orphanExercises={scheduledSynthesized}
+              initialCompleted={scheduledInitialCompleted}
+              returnHref={returnHref}
+              mode="scheduled"
+            />
+          </section>
+        )}
       </div>
     </>
   );
 }
+

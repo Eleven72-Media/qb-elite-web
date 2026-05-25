@@ -245,9 +245,12 @@ export default async function WeightRoomPage({
         )}
       </div>
 
-      <div className="px-4 pt-2 md:px-6">
-        {selectedDayWorkout && activePlan ? (
-          // Admin-authored workout for this day
+      <div className="space-y-3 px-4 pt-2 md:px-6">
+        {selectedDayWorkout && activePlan && (
+          // Admin-authored workout for this day. Renders ABOVE any
+          // user-scheduled additions so both surfaces are always visible
+          // (previously the admin card hid scheduled adds entirely,
+          // which made the "+" button feel broken).
           <Link
             href={detailHref}
             className="block rounded-3xl border border-[#E8E6E3] bg-white p-4 active:opacity-95"
@@ -290,8 +293,10 @@ export default async function WeightRoomPage({
               </ul>
             )}
           </Link>
-        ) : scheduledForDay.length > 0 ? (
-          // User-scheduled custom workout
+        )}
+        {scheduledForDay.length > 0 && (
+          // User-scheduled additions — stacks under the admin card when
+          // both exist, OR stands alone on a rest day / future date.
           <Link
             href={detailHref}
             className="block rounded-3xl border border-[#E8E6E3] bg-white p-4 active:opacity-95"
@@ -302,7 +307,9 @@ export default async function WeightRoomPage({
               </span>
               <div className="min-w-0 flex-1">
                 <p className="line-clamp-1 text-[15px] font-bold leading-tight">
-                  Your custom workout
+                  {selectedDayWorkout && activePlan
+                    ? "Your additions"
+                    : "Your custom workout"}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {scheduledForDay.length} exercise
@@ -321,7 +328,9 @@ export default async function WeightRoomPage({
                   className="flex items-center gap-2 text-[13px] text-foreground/80"
                 >
                   <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-                  <span className="line-clamp-1">{ex.exerciseName}</span>
+                  <span className="line-clamp-1">
+                    {ex.exerciseName || "Untitled workout"}
+                  </span>
                 </li>
               ))}
               {scheduledForDay.length > 3 && (
@@ -331,38 +340,41 @@ export default async function WeightRoomPage({
               )}
             </ul>
           </Link>
-        ) : isViewingFuture && !activePlan ? (
-          // Future cohort week with no plan published yet. Starter
-          // users can still self-schedule from Training Videos; higher
-          // tiers see a "coming soon" stub.
-          showAddExercisesCta ? (
-            <EmptyDayCard
-              title="No workout scheduled"
-              subtitle="Add exercises below to schedule one for this day"
-              cta="Browse Training Videos"
-            />
+        )}
+        {!selectedDayWorkout && scheduledForDay.length === 0 && (
+          isViewingFuture && !activePlan ? (
+            // Future cohort week with no plan published yet. Starter
+            // users can still self-schedule from Training Videos;
+            // higher tiers see a "coming soon" stub.
+            showAddExercisesCta ? (
+              <EmptyDayCard
+                title="No workout scheduled"
+                subtitle="Add exercises below to schedule one for this day"
+                cta="Browse Training Videos"
+              />
+            ) : (
+              <EmptyDayCard
+                title="Plan coming soon"
+                subtitle={`Week ${selectedWeek} hasn't been published yet`}
+              />
+            )
+          ) : activePlan ? (
+            // Admin plan exists but no workout for this day-of-week
+            showAddExercisesCta ? (
+              <EmptyDayCard
+                title="No workout scheduled"
+                subtitle="Add exercises below to build one for this day"
+                cta="Browse Training Videos"
+              />
+            ) : (
+              <EmptyDayCard
+                title="Rest Day"
+                subtitle="No workout scheduled for this day"
+              />
+            )
           ) : (
-            <EmptyDayCard
-              title="Plan coming soon"
-              subtitle={`Week ${selectedWeek} hasn't been published yet`}
-            />
+            <PaywallCard />
           )
-        ) : activePlan ? (
-          // Admin plan exists but no workout for this day-of-week
-          showAddExercisesCta ? (
-            <EmptyDayCard
-              title="No workout scheduled"
-              subtitle="Add exercises below to build one for this day"
-              cta="Browse Training Videos"
-            />
-          ) : (
-            <EmptyDayCard
-              title="Rest Day"
-              subtitle="No workout scheduled for this day"
-            />
-          )
-        ) : (
-          <PaywallCard />
         )}
       </div>
 
