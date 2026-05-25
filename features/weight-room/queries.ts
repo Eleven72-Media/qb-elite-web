@@ -189,9 +189,14 @@ const mapScheduled = (db: any): ScheduledExercise => ({
   userId: db.user_id,
   scheduledDate: db.scheduled_date,
   workoutId: db.workout_id,
-  exerciseName: db.workouts?.name ?? db.workouts?.title ?? "",
+  // The workouts table only has `name` + `video_url` + `description`
+  // (per shared/schema.ts in qb_elite_admin). Earlier versions of this
+  // mapper asked for `title`/`image`/`image_url` too — those columns
+  // don't exist, which caused the whole PostgREST query to error out
+  // and return zero rows. That's why "Your additions" was invisible.
+  exerciseName: db.workouts?.name ?? "",
   videoUrl: db.workouts?.video_url ?? null,
-  imageUrl: db.workouts?.image ?? db.workouts?.image_url ?? null,
+  imageUrl: null,
   sets: db.sets ?? null,
   reps: db.reps ?? null,
   weight: db.weight ?? null,
@@ -207,7 +212,7 @@ export async function getScheduledExercisesForDay(
 ): Promise<ScheduledExercise[]> {
   const { data, error } = await supabase
     .from("user_scheduled_exercises")
-    .select("*, workouts(id, name, title, video_url, image, image_url)")
+    .select("*, workouts(id, name, video_url)")
     .eq("user_id", userId)
     .eq("scheduled_date", isoDay)
     .order("sort_order", { ascending: true });

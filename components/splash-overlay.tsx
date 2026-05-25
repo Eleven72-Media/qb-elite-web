@@ -17,8 +17,8 @@ import { useEffect, useRef, useState } from "react";
  * only fires once per session (sessionStorage-gated).
  */
 const VIDEO_SRC = "/hero-qbapp.mp4";
-const MIN_HOLD_MS = 1600;
-const MAX_HOLD_MS = 3000;
+const MIN_HOLD_MS = 5000;
+const MAX_HOLD_MS = 6500;
 const FADE_MS = 350;
 
 export function SplashOverlay() {
