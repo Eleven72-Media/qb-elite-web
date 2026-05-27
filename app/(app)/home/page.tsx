@@ -1,3 +1,4 @@
+import { IosA2HSPrompt } from "@/components/ios-a2hs-prompt";
 import { HomeSlider } from "@/features/home/components/home-slider";
 import { QuickActions } from "@/features/home/components/quick-actions";
 import { WidgetRail } from "@/features/home/components/widget-rail";
@@ -48,6 +49,7 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-7 pb-2 pt-3 md:px-6">
+      <IosA2HSPrompt />
       <HomeSlider slides={slides} />
 
       <section className="space-y-3 px-5 md:px-0">

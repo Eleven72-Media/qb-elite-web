@@ -1,8 +1,19 @@
-import { Brain, Dumbbell, Sparkles, Users, Utensils, Video } from "lucide-react";
+import {
+  Apple,
+  Brain,
+  Dumbbell,
+  Globe,
+  Play,
+  Sparkles,
+  Users,
+  Utensils,
+  Video,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { IosA2HSPrompt } from "@/components/ios-a2hs-prompt";
 
 export const metadata = {
   title: "QB Elite — Become Elite",
@@ -13,6 +24,7 @@ export const metadata = {
 export default function MarketingHome() {
   return (
     <main className="min-h-screen bg-white">
+      <IosA2HSPrompt />
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
@@ -143,6 +155,50 @@ export default function MarketingHome() {
         </div>
       </section>
 
+      {/* INSTALL */}
+      <section className="bg-muted/50 py-16 md:py-20">
+        <div className="mx-auto w-full max-w-[1100px] px-5 md:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+              Install
+            </p>
+            <h2 className="mt-2 text-[28px] font-extrabold tracking-tight md:text-[36px]">
+              Train anywhere — phone, tablet, desktop
+            </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              Native apps on iPhone and Android. Or skip the store and
+              install QB Elite straight from this page on any device.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <InstallCard
+              icon={<Apple className="h-6 w-6" strokeWidth={1.75} />}
+              title="iPhone & iPad"
+              body="Download from the App Store, or tap Share → Add to Home Screen in Safari for a no-store install."
+              ctaLabel="Open in App Store"
+              ctaHref="https://apps.apple.com/us/app/qb-elite/id6753002596"
+              external
+            />
+            <InstallCard
+              icon={<Play className="h-6 w-6" strokeWidth={1.75} />}
+              title="Android"
+              body="Get the Play Store version, or open this site in Chrome and tap the install banner that pops up."
+              ctaLabel="Open in Play Store"
+              ctaHref="https://play.google.com/store/apps/details?id=com.quarterbackelite.app"
+              external
+            />
+            <InstallCard
+              icon={<Globe className="h-6 w-6" strokeWidth={1.75} />}
+              title="Web"
+              body="Works in any modern browser. Sign in once and the app installs to your home screen as a full-screen experience."
+              ctaLabel="Start in browser"
+              ctaHref="/register"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* TRIAL CTA */}
       <section className="bg-gradient-to-br from-primary to-primary/85 py-16 md:py-20">
         <div className="mx-auto max-w-[760px] px-5 text-center md:px-8">
@@ -220,6 +276,53 @@ function FeatureCard({
       </div>
       <h3 className="mt-4 text-[17px] font-extrabold tracking-tight">{title}</h3>
       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{body}</p>
+    </article>
+  );
+}
+
+function InstallCard({
+  icon,
+  title,
+  body,
+  ctaLabel,
+  ctaHref,
+  external = false,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+  ctaLabel: string;
+  ctaHref: string;
+  external?: boolean;
+}) {
+  const cta = external ? (
+    <a
+      href={ctaHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center justify-center rounded-full bg-foreground/[0.06] px-4 py-2 text-[13px] font-semibold text-foreground/85 hover:bg-foreground/[0.10]"
+    >
+      {ctaLabel}
+    </a>
+  ) : (
+    <Link
+      href={ctaHref}
+      className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white hover:bg-primary/90"
+    >
+      {ctaLabel}
+    </Link>
+  );
+
+  return (
+    <article className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-[0_4px_18px_rgba(0,0,0,0.05)] ring-1 ring-black/5">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        {icon}
+      </div>
+      <h3 className="mt-4 text-[17px] font-extrabold tracking-tight">{title}</h3>
+      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-muted-foreground">
+        {body}
+      </p>
+      <div className="mt-4">{cta}</div>
     </article>
   );
 }
