@@ -1,4 +1,4 @@
-import { ArrowUpRight, FolderHeart, Lock, Video } from "lucide-react";
+import { ArrowUpRight, CalendarPlus, FolderHeart, Lock } from "lucide-react";
 import Link from "next/link";
 
 /**
@@ -7,19 +7,24 @@ import Link from "next/link";
  * gradient corner blob, icon in a gradient pill, lock + outward-arrow
  * top-right.
  */
+const COACHFLOW_BOOKING_URL =
+  "https://app.mycoachflow.co/book/justin-miller-pzoq";
+
 export function QuickActions({
-  goatLocked,
+  // Retained for API compatibility with the page wrapper; the
+  // booking-link CTA is now public so there's nothing left to gate.
+  goatLocked: _goatLocked,
 }: {
   goatLocked: boolean;
 }) {
   return (
     <div className="grid grid-cols-2 gap-3">
       <QuickActionCard
-        href="/coaching"
-        title="Monthly 1:1 call"
-        subtitle="The GOAT — monthly virtual session"
-        icon={<Video className="h-6 w-6" strokeWidth={1.6} />}
-        showLock={goatLocked}
+        href={COACHFLOW_BOOKING_URL}
+        external
+        title="Schedule Your Next Training"
+        subtitle="Group, Private, or Virtual"
+        icon={<CalendarPlus className="h-6 w-6" strokeWidth={1.6} />}
       />
       <QuickActionCard
         href="/resources"
@@ -37,18 +42,19 @@ function QuickActionCard({
   subtitle,
   icon,
   showLock = false,
+  external = false,
 }: {
   href: string;
   title: string;
   subtitle: string;
   icon: React.ReactNode;
   showLock?: boolean;
+  /** When true, opens in a new tab (used for the external CoachFlow
+   *  booking link so iOS PWA hands off to the system browser-modal). */
+  external?: boolean;
 }) {
-  return (
-    <Link
-      href={href}
-      className="group relative flex h-[118px] flex-col justify-between overflow-hidden rounded-[20px] border border-border bg-muted p-3.5 shadow-sm transition-transform active:scale-[0.98]"
-    >
+  const inner = (
+    <>
       {/* Corner accent blob */}
       <span
         aria-hidden
@@ -75,6 +81,27 @@ function QuickActionCard({
           {subtitle}
         </p>
       </div>
+    </>
+  );
+
+  const className =
+    "group relative flex h-[118px] flex-col justify-between overflow-hidden rounded-[20px] border border-border bg-muted p-3.5 shadow-sm transition-transform active:scale-[0.98]";
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
+        {inner}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {inner}
     </Link>
   );
 }
