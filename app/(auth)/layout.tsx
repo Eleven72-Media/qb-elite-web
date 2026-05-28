@@ -1,9 +1,10 @@
 import Image from "next/image";
 
 /**
- * Auth shell — matches Flutter login screen: top half is the brand
- * image (img_bg-login.png), bottom is a white card with the rounded
- * QB Elite logo sitting on its top edge.
+ * Auth shell — top is the brand-navy ladder (matches qbeliteapp.com
+ * landing + qbelite.com marketing), bottom is a white card with the
+ * rounded QB Elite logo sitting on its top edge. No photo backdrop
+ * any more — pure navy + soft red/blue brand glows.
  */
 export default function AuthLayout({
   children,
@@ -12,16 +13,17 @@ export default function AuthLayout({
 }) {
   return (
     <div className="relative min-h-screen bg-white">
-      <div className="absolute inset-x-0 top-0 h-[40vh] min-h-[260px] max-h-[420px]">
-        <Image
-          src="/img_bg-login.png"
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
+      <div className="absolute inset-x-0 top-0 h-[40vh] min-h-[260px] max-h-[420px] overflow-hidden">
+        <div className="absolute inset-0 bg-brand-navyDeep" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-navyDeep via-brand-navy to-white" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-20 top-1/3 h-[300px] w-[300px] rounded-full bg-primary/22 blur-3xl"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-white" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-24 h-[300px] w-[300px] rounded-full bg-[#0693e3]/18 blur-3xl"
+        />
       </div>
       <div className="relative z-10 mx-auto flex min-h-screen max-w-md flex-col px-5 pb-8 pt-[max(env(safe-area-inset-top),1rem)]">
         <div className="flex-1" />
