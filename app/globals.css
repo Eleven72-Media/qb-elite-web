@@ -3,10 +3,13 @@
 @tailwind utilities;
 
 /*
- * QB Elite brand tokens.
- * Primary red = #B61F26 → hsl(357, 70%, 41%)
- * Foreground = #161C24 → hsl(213, 25%, 12%)
- * Background = #ffffff → hsl(0, 0%, 100%)
+ * QB Elite brand tokens — matched against qbelite.com/app 2026-05-28.
+ *
+ * Primary red     = #B62025 → hsl(358, 70%, 42%)  (canonical brand red)
+ * Brand navy      = #003554 → hsl(203, 100%, 17%) (hero backdrops, cards)
+ * Brand navy deep = #002947 → hsl(205, 100%, 14%) (footer + deepest fills)
+ * Foreground      = #161C24 → hsl(213, 25%, 12%)
+ * Background      = #ffffff → hsl(0, 0%, 100%)
  *
  * Values are space-separated HSL triplets so Tailwind's
  * `hsl(var(--token) / <alpha-value>)` expansion works.
@@ -20,7 +23,7 @@
     --card-foreground: 213 25% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 213 25% 12%;
-    --primary: 357 70% 41%;
+    --primary: 358 70% 42%;
     --primary-foreground: 0 0% 100%;
     --secondary: 240 7% 97%;
     --secondary-foreground: 213 25% 12%;
@@ -32,8 +35,13 @@
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 93%;
     --input: 0 0% 96%;
-    --ring: 357 70% 41%;
+    --ring: 358 70% 42%;
     --radius: 1.25rem;
+    /* Brand navy ladder — used on the qbeliteapp.com landing hero
+       (matches qbelite.com/app) and anywhere we need cool dark depth
+       instead of the warm dark text foreground. */
+    --brand-navy: 203 100% 17%;
+    --brand-navy-deep: 205 100% 14%;
   }
 
   .dark {
@@ -43,7 +51,7 @@
     --card-foreground: 0 0% 98%;
     --popover: 213 25% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 357 70% 51%;
+    --primary: 358 70% 52%;
     --primary-foreground: 0 0% 100%;
     --secondary: 213 25% 18%;
     --secondary-foreground: 0 0% 98%;
@@ -55,7 +63,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 213 25% 22%;
     --input: 213 25% 22%;
-    --ring: 357 70% 51%;
+    --ring: 358 70% 52%;
   }
 }
 

@@ -28,17 +28,28 @@ export default function DownloadHome() {
     <main className="relative min-h-screen overflow-hidden bg-white">
       <IosA2HSPrompt />
 
-      {/* Full-bleed dark hero backdrop */}
-      <div className="absolute inset-x-0 top-0 h-[560px] md:h-[640px]">
+      {/* Full-bleed brand-navy hero backdrop. Matches qbelite.com/app
+          — deep navy ladder up top, blends into white below the hero. */}
+      <div className="absolute inset-x-0 top-0 h-[640px] md:h-[720px]">
+        <div className="absolute inset-0 bg-brand-navyDeep" />
         <Image
           src="/img_bg-login.png"
           alt=""
           fill
           priority
-          className="object-cover"
+          className="object-cover opacity-30 mix-blend-luminosity"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-white" />
+        {/* Navy-tinted vignette + soft red accent glow in the corner */}
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-navyDeep/85 via-brand-navy/75 to-white" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-24 top-1/3 h-[420px] w-[420px] rounded-full bg-primary/22 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-[#0693e3]/15 blur-3xl"
+        />
       </div>
 
       {/* Header */}
@@ -107,24 +118,29 @@ export default function DownloadHome() {
         </p>
       </section>
 
-      {/* Primary install — web/PWA */}
+      {/* Primary install — web/PWA. Navy card with a red accent rail
+          on the left to mirror the qbelite.com brand pairing. */}
       <section className="relative z-10 mx-auto w-full max-w-[820px] px-5 pb-10 md:px-8">
-        <article className="relative overflow-hidden rounded-[28px] bg-white p-7 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-primary/15 md:p-9">
+        <article className="relative overflow-hidden rounded-[28px] bg-brand-navyDeep p-7 text-white shadow-[0_24px_60px_rgba(0,41,71,0.45)] ring-1 ring-white/10 md:p-9">
           <span
             aria-hidden
-            className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-primary/12"
+            className="pointer-events-none absolute inset-y-0 left-0 w-1.5 bg-primary"
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/25 blur-2xl"
           />
           <div className="relative flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white ring-1 ring-white/20">
               <Globe className="h-7 w-7" strokeWidth={1.75} />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
                   <Sparkles className="h-3 w-3" strokeWidth={2.25} />
                   Recommended
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-foreground/55">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-white/65">
                   <Zap className="h-3 w-3" strokeWidth={2.25} />
                   Installs in seconds
                 </span>
@@ -132,7 +148,7 @@ export default function DownloadHome() {
               <h2 className="mt-2 text-[22px] font-extrabold tracking-tight md:text-[26px]">
                 Use the web app
               </h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
+              <p className="mt-2 text-sm leading-relaxed text-white/75 md:text-base">
                 The fastest way in. Sign in once, then QB Elite installs to
                 your home screen as a full-screen app — no store account, no
                 download wait, no updates to manage. Works on iPhone, Android,
@@ -140,7 +156,7 @@ export default function DownloadHome() {
               </p>
             </div>
           </div>
-          <div className="relative mt-5 flex flex-col gap-3 sm:flex-row">
+          <div className="relative mt-6 flex flex-col gap-3 sm:flex-row">
             <Link href="/register" className="sm:flex-1">
               <Button
                 size="lg"
@@ -153,7 +169,7 @@ export default function DownloadHome() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-12 w-full rounded-full text-base"
+                className="h-12 w-full rounded-full border-white/30 bg-white/10 text-base text-white backdrop-blur hover:bg-white/20 hover:text-white"
               >
                 Log in
               </Button>
@@ -164,7 +180,7 @@ export default function DownloadHome() {
 
       {/* Secondary install — native app stores */}
       <section className="relative z-10 mx-auto w-full max-w-[820px] px-5 pb-16 md:px-8 md:pb-24">
-        <p className="text-center text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+        <p className="text-center text-[11px] font-bold uppercase tracking-[0.18em] text-brand-navy/70">
           Prefer a native app?
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -172,21 +188,21 @@ export default function DownloadHome() {
             href={APP_STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-3 rounded-2xl border border-border bg-white px-5 py-4 transition-colors hover:border-foreground/20"
+            className="group flex items-center gap-3 rounded-2xl border border-brand-navy/15 bg-white px-5 py-4 transition-colors hover:border-brand-navy/40"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.06] text-foreground/80 group-hover:bg-foreground/10">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy/8 text-brand-navy group-hover:bg-brand-navy/14">
               <Apple className="h-5 w-5" strokeWidth={1.75} />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-[10px] font-semibold uppercase tracking-[0.10em] text-muted-foreground">
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.10em] text-brand-navy/60">
                 iPhone & iPad
               </span>
-              <span className="block text-[14px] font-bold tracking-tight text-foreground">
+              <span className="block text-[14px] font-bold tracking-tight text-brand-navy">
                 Download on the App Store
               </span>
             </span>
             <ArrowUpRight
-              className="h-4 w-4 shrink-0 text-foreground/40 group-hover:text-foreground/70"
+              className="h-4 w-4 shrink-0 text-brand-navy/40 group-hover:text-brand-navy/80"
               strokeWidth={2}
             />
           </a>
@@ -194,65 +210,67 @@ export default function DownloadHome() {
             href={PLAY_STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-3 rounded-2xl border border-border bg-white px-5 py-4 transition-colors hover:border-foreground/20"
+            className="group flex items-center gap-3 rounded-2xl border border-brand-navy/15 bg-white px-5 py-4 transition-colors hover:border-brand-navy/40"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.06] text-foreground/80 group-hover:bg-foreground/10">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy/8 text-brand-navy group-hover:bg-brand-navy/14">
               <Play className="h-5 w-5" strokeWidth={1.75} />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-[10px] font-semibold uppercase tracking-[0.10em] text-muted-foreground">
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.10em] text-brand-navy/60">
                 Android
               </span>
-              <span className="block text-[14px] font-bold tracking-tight text-foreground">
+              <span className="block text-[14px] font-bold tracking-tight text-brand-navy">
                 Get it on Google Play
               </span>
             </span>
             <ArrowUpRight
-              className="h-4 w-4 shrink-0 text-foreground/40 group-hover:text-foreground/70"
+              className="h-4 w-4 shrink-0 text-brand-navy/40 group-hover:text-brand-navy/80"
               strokeWidth={2}
             />
           </a>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 mx-auto w-full max-w-[1100px] px-5 pb-10 text-center text-xs text-muted-foreground md:px-8">
-        <p>
-          Learn more about QB Elite at{" "}
-          <a
-            href={MARKETING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-0.5 font-semibold text-primary hover:underline"
-          >
-            qbelite.com
-            <ArrowUpRight className="h-3 w-3" strokeWidth={2.25} />
-          </a>
-        </p>
-        <p className="mt-3">
-          © {new Date().getFullYear()} Eleven72 Media. All rights reserved.
-        </p>
-        <p className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-          <a
-            href="https://qb-elite-launch.web.app/terms-of-service"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-primary"
-          >
-            Terms
-          </a>
-          <a
-            href="https://qb-elite-launch.web.app/privacy-policy"
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-primary"
-          >
-            Privacy
-          </a>
-          <a href="mailto:jmiller@qbelite.com" className="hover:text-primary">
-            Support
-          </a>
-        </p>
+      {/* Footer — navy band bookends the hero, matching qbelite.com */}
+      <footer className="relative z-10 bg-brand-navyDeep py-10 text-center text-xs text-white/70">
+        <div className="mx-auto w-full max-w-[1100px] px-5 md:px-8">
+          <p>
+            Learn more about QB Elite at{" "}
+            <a
+              href={MARKETING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-0.5 font-semibold text-white hover:underline"
+            >
+              qbelite.com
+              <ArrowUpRight className="h-3 w-3" strokeWidth={2.25} />
+            </a>
+          </p>
+          <p className="mt-3">
+            © {new Date().getFullYear()} Eleven72 Media. All rights reserved.
+          </p>
+          <p className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            <a
+              href="https://qb-elite-launch.web.app/terms-of-service"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white"
+            >
+              Terms
+            </a>
+            <a
+              href="https://qb-elite-launch.web.app/privacy-policy"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-white"
+            >
+              Privacy
+            </a>
+            <a href="mailto:jmiller@qbelite.com" className="hover:text-white">
+              Support
+            </a>
+          </p>
+        </div>
       </footer>
     </main>
   );

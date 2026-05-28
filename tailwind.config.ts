@@ -1,6 +1,11 @@
 import type { Config } from "tailwindcss";
 
-// QB Elite brand: primary red #B61F26, dark text #161C24, white background.
+// QB Elite brand (matched to qbelite.com/app 2026-05-28):
+//   primary red     #B62025
+//   brand navy      #003554
+//   brand navy deep #002947
+//   dark text       #161C24
+//   white bg        #ffffff
 // HSL variables resolved in app/globals.css so shadcn primitives Just Work.
 
 const config: Config = {
@@ -58,6 +63,13 @@ const config: Config = {
         destructive: {
           DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
           foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
+        },
+        // Navy ladder pulled from qbelite.com/app — use on landing hero,
+        // CTA backdrops, and anywhere we need cool dark depth. Pair with
+        // primary (red) accents for the QB Elite look.
+        brand: {
+          navy: "hsl(var(--brand-navy) / <alpha-value>)",
+          navyDeep: "hsl(var(--brand-navy-deep) / <alpha-value>)",
         },
       },
       fontFamily: {
