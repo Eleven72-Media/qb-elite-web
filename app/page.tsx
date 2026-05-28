@@ -1,4 +1,14 @@
-import { Apple, ArrowUpRight, Globe, Play, Sparkles, Zap } from "lucide-react";
+import {
+  Apple,
+  ArrowUpRight,
+  Globe,
+  MoreVertical,
+  Play,
+  Plus,
+  Share,
+  Sparkles,
+  Zap,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -106,7 +116,13 @@ export default function DownloadHome() {
           </Link>
         </div>
         <p className="mt-4 text-xs text-white/65">
-          7 days free, cancel anytime. No download required.
+          7 days free, cancel anytime. No download required.{" "}
+          <a
+            href="#install-steps"
+            className="font-semibold text-white/85 underline-offset-2 hover:text-white hover:underline"
+          >
+            How to install →
+          </a>
         </p>
       </section>
 
@@ -168,6 +184,56 @@ export default function DownloadHome() {
             </Link>
           </div>
         </article>
+      </section>
+
+      {/* Install instructions — always visible (the auto-popup is iOS-Safari
+          only and snoozes when dismissed, so people on desktop / Android
+          / returning visitors still need to find them) */}
+      <section
+        id="install-steps"
+        className="relative z-10 mx-auto w-full max-w-[820px] px-5 pb-12 md:px-8 md:pb-16"
+      >
+        <p className="text-center text-[11px] font-bold uppercase tracking-[0.18em] text-brand-navy/70">
+          How to add to your home screen
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <InstallStepsCard
+            platform="iPhone & iPad (Safari)"
+            steps={[
+              <>
+                Tap{" "}
+                <InlineChip>
+                  <Share className="h-3.5 w-3.5" strokeWidth={2} />
+                  Share
+                </InlineChip>{" "}
+                in the Safari toolbar
+              </>,
+              <>Scroll and tap &ldquo;Add to Home Screen&rdquo;</>,
+              <>
+                Tap{" "}
+                <InlineChip>
+                  <Plus className="h-3.5 w-3.5" strokeWidth={2} />
+                  Add
+                </InlineChip>
+              </>,
+            ]}
+          />
+          <InstallStepsCard
+            platform="Android (Chrome)"
+            steps={[
+              <>
+                Tap the{" "}
+                <InlineChip>
+                  <MoreVertical className="h-3.5 w-3.5" strokeWidth={2} />
+                  menu
+                </InlineChip>{" "}
+                in the top-right
+              </>,
+              <>Tap &ldquo;Install app&rdquo; or &ldquo;Add to Home screen&rdquo;</>,
+              <>Confirm &mdash; QB Elite installs in seconds</>,
+            ]}
+          />
+        </div>
       </section>
 
       {/* Secondary install — native app stores */}
@@ -265,6 +331,42 @@ export default function DownloadHome() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function InstallStepsCard({
+  platform,
+  steps,
+}: {
+  platform: string;
+  steps: React.ReactNode[];
+}) {
+  return (
+    <article className="rounded-3xl border border-brand-navy/12 bg-white p-5 shadow-[0_4px_18px_rgba(0,41,71,0.05)]">
+      <p className="text-[12px] font-bold uppercase tracking-[0.10em] text-brand-navy">
+        {platform}
+      </p>
+      <ol className="mt-3 space-y-2.5">
+        {steps.map((step, i) => (
+          <li key={i} className="flex items-start gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-white">
+              {i + 1}
+            </span>
+            <span className="pt-0.5 text-sm leading-snug text-foreground/85">
+              {step}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </article>
+  );
+}
+
+function InlineChip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-md bg-brand-navy/8 px-1.5 py-0.5 text-xs font-semibold text-brand-navy">
+      {children}
+    </span>
   );
 }
 
