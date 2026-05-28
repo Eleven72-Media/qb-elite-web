@@ -1,4 +1,4 @@
-import { Apple, ArrowUpRight, Globe, Play } from "lucide-react";
+import { Apple, ArrowUpRight, Globe, Play, Sparkles, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -66,7 +66,7 @@ export default function DownloadHome() {
       </nav>
 
       {/* Hero */}
-      <section className="relative z-10 mx-auto flex w-full max-w-[820px] flex-col items-center px-5 pb-14 pt-10 text-center md:px-8 md:pb-20 md:pt-16">
+      <section className="relative z-10 mx-auto flex w-full max-w-[820px] flex-col items-center px-5 pb-12 pt-10 text-center md:px-8 md:pb-16 md:pt-16">
         <div className="flex h-[88px] w-[88px] items-center justify-center rounded-3xl bg-white/15 p-3 shadow-2xl ring-1 ring-white/25 backdrop-blur">
           <Image
             src="/logo.png"
@@ -77,66 +77,141 @@ export default function DownloadHome() {
           />
         </div>
         <h1 className="mt-6 text-[34px] font-extrabold uppercase leading-[1.05] tracking-tight text-white md:text-5xl">
-          Get the app
+          Install QB Elite
         </h1>
-        <p className="mt-4 max-w-[520px] text-base leading-relaxed text-white/85 md:text-lg">
-          Pick your device — QB Elite runs natively on iPhone and Android, or
-          install it straight from your browser.
+        <p className="mt-4 max-w-[540px] text-base leading-relaxed text-white/85 md:text-lg">
+          Use it in seconds — no app store required. Works on iPhone, Android,
+          and desktop browsers.
         </p>
-      </section>
-
-      {/* Install cards */}
-      <section className="relative z-10 mx-auto w-full max-w-[1100px] px-5 pb-16 md:px-8 md:pb-24">
-        <div className="grid gap-4 md:grid-cols-3">
-          <InstallCard
-            icon={<Apple className="h-6 w-6" strokeWidth={1.75} />}
-            title="iPhone & iPad"
-            body="Download from the App Store, or open this page in Safari and tap Share → Add to Home Screen for a no-store install."
-            ctaLabel="Open in App Store"
-            ctaHref={APP_STORE_URL}
-            external
-          />
-          <InstallCard
-            icon={<Play className="h-6 w-6" strokeWidth={1.75} />}
-            title="Android"
-            body="Get the Play Store version, or open this site in Chrome and tap the install banner that pops up."
-            ctaLabel="Open in Play Store"
-            ctaHref={PLAY_STORE_URL}
-            external
-          />
-          <InstallCard
-            icon={<Globe className="h-6 w-6" strokeWidth={1.75} />}
-            title="Web app"
-            body="No store needed. Sign in once and QB Elite installs as a full-screen app you can launch from your dock or home screen."
-            ctaLabel="Start in browser"
-            ctaHref="/register"
-            primary
-          />
-        </div>
-
-        <p className="mx-auto mt-10 max-w-[520px] text-center text-sm text-muted-foreground">
-          New here? Start with the 7-day free trial — no charge if you cancel
-          before day 8.
-        </p>
-
-        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+        <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link href="/register">
             <Button
               size="lg"
-              className="h-12 w-[220px] rounded-full text-base shadow-lg"
+              className="h-12 w-[240px] rounded-full bg-white text-base text-primary shadow-lg hover:bg-white/90"
             >
-              Start 7-Day Free Trial
+              Start Free in Browser
             </Button>
           </Link>
           <Link href="/login">
             <Button
               size="lg"
               variant="outline"
-              className="h-12 w-[220px] rounded-full text-base"
+              className="h-12 w-[240px] rounded-full border-white/30 bg-white/10 text-base text-white backdrop-blur hover:bg-white/20"
             >
               I already have an account
             </Button>
           </Link>
+        </div>
+        <p className="mt-4 text-xs text-white/65">
+          7 days free, cancel anytime. No download required.
+        </p>
+      </section>
+
+      {/* Primary install — web/PWA */}
+      <section className="relative z-10 mx-auto w-full max-w-[820px] px-5 pb-10 md:px-8">
+        <article className="relative overflow-hidden rounded-[28px] bg-white p-7 shadow-[0_18px_60px_rgba(0,0,0,0.18)] ring-1 ring-primary/15 md:p-9">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-primary/12"
+          />
+          <div className="relative flex items-start gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Globe className="h-7 w-7" strokeWidth={1.75} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
+                  <Sparkles className="h-3 w-3" strokeWidth={2.25} />
+                  Recommended
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-foreground/55">
+                  <Zap className="h-3 w-3" strokeWidth={2.25} />
+                  Installs in seconds
+                </span>
+              </div>
+              <h2 className="mt-2 text-[22px] font-extrabold tracking-tight md:text-[26px]">
+                Use the web app
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
+                The fastest way in. Sign in once, then QB Elite installs to
+                your home screen as a full-screen app — no store account, no
+                download wait, no updates to manage. Works on iPhone, Android,
+                Mac, and Windows.
+              </p>
+            </div>
+          </div>
+          <div className="relative mt-5 flex flex-col gap-3 sm:flex-row">
+            <Link href="/register" className="sm:flex-1">
+              <Button
+                size="lg"
+                className="h-12 w-full rounded-full text-base shadow-md"
+              >
+                Start Free 7-Day Trial
+              </Button>
+            </Link>
+            <Link href="/login" className="sm:w-[200px]">
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 w-full rounded-full text-base"
+              >
+                Log in
+              </Button>
+            </Link>
+          </div>
+        </article>
+      </section>
+
+      {/* Secondary install — native app stores */}
+      <section className="relative z-10 mx-auto w-full max-w-[820px] px-5 pb-16 md:px-8 md:pb-24">
+        <p className="text-center text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+          Prefer a native app?
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-3 rounded-2xl border border-border bg-white px-5 py-4 transition-colors hover:border-foreground/20"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.06] text-foreground/80 group-hover:bg-foreground/10">
+              <Apple className="h-5 w-5" strokeWidth={1.75} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.10em] text-muted-foreground">
+                iPhone & iPad
+              </span>
+              <span className="block text-[14px] font-bold tracking-tight text-foreground">
+                Download on the App Store
+              </span>
+            </span>
+            <ArrowUpRight
+              className="h-4 w-4 shrink-0 text-foreground/40 group-hover:text-foreground/70"
+              strokeWidth={2}
+            />
+          </a>
+          <a
+            href={PLAY_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-3 rounded-2xl border border-border bg-white px-5 py-4 transition-colors hover:border-foreground/20"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-foreground/[0.06] text-foreground/80 group-hover:bg-foreground/10">
+              <Play className="h-5 w-5" strokeWidth={1.75} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.10em] text-muted-foreground">
+                Android
+              </span>
+              <span className="block text-[14px] font-bold tracking-tight text-foreground">
+                Get it on Google Play
+              </span>
+            </span>
+            <ArrowUpRight
+              className="h-4 w-4 shrink-0 text-foreground/40 group-hover:text-foreground/70"
+              strokeWidth={2}
+            />
+          </a>
         </div>
       </section>
 
@@ -183,52 +258,3 @@ export default function DownloadHome() {
   );
 }
 
-function InstallCard({
-  icon,
-  title,
-  body,
-  ctaLabel,
-  ctaHref,
-  external = false,
-  primary = false,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-  ctaLabel: string;
-  ctaHref: string;
-  external?: boolean;
-  primary?: boolean;
-}) {
-  const ctaClasses = primary
-    ? "inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white hover:bg-primary/90"
-    : "inline-flex items-center justify-center rounded-full bg-foreground/[0.06] px-4 py-2 text-[13px] font-semibold text-foreground/85 hover:bg-foreground/[0.10]";
-
-  const cta = external ? (
-    <a
-      href={ctaHref}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={ctaClasses}
-    >
-      {ctaLabel}
-    </a>
-  ) : (
-    <Link href={ctaHref} className={ctaClasses}>
-      {ctaLabel}
-    </Link>
-  );
-
-  return (
-    <article className="flex h-full flex-col rounded-3xl bg-white p-6 shadow-[0_4px_18px_rgba(0,0,0,0.05)] ring-1 ring-black/5">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-        {icon}
-      </div>
-      <h3 className="mt-4 text-[17px] font-extrabold tracking-tight">{title}</h3>
-      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-muted-foreground">
-        {body}
-      </p>
-      <div className="mt-4">{cta}</div>
-    </article>
-  );
-}
