@@ -32,16 +32,8 @@ export default function DownloadHome() {
           — deep navy ladder up top, blends into white below the hero. */}
       <div className="absolute inset-x-0 top-0 h-[640px] md:h-[720px]">
         <div className="absolute inset-0 bg-brand-navyDeep" />
-        <Image
-          src="/img_bg-login.png"
-          alt=""
-          fill
-          priority
-          className="object-cover opacity-30 mix-blend-luminosity"
-          sizes="100vw"
-        />
-        {/* Navy-tinted vignette + soft red accent glow in the corner */}
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-navyDeep/85 via-brand-navy/75 to-white" />
+        {/* Navy-tinted vignette + soft brand glows for depth (no photo) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-navyDeep via-brand-navy to-white" />
         <div
           aria-hidden
           className="pointer-events-none absolute -left-24 top-1/3 h-[420px] w-[420px] rounded-full bg-primary/22 blur-3xl"
