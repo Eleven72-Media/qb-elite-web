@@ -3,7 +3,6 @@ import {
   ArrowUpRight,
   Globe,
   MoreVertical,
-  Play,
   Plus,
   Share,
   Sparkles,
@@ -22,8 +21,6 @@ export const metadata = {
 };
 
 const APP_STORE_URL = "https://apps.apple.com/us/app/qb-elite/id6753002596";
-const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=com.quarterbackelite.app";
 const MARKETING_URL = "https://qbelite.com/app/";
 
 /**
@@ -236,17 +233,18 @@ export default function DownloadHome() {
         </div>
       </section>
 
-      {/* Secondary install — native app stores */}
+      {/* Secondary install — native app store (iPhone only for now;
+          Android users get the PWA until Google Play approval lands) */}
       <section className="relative z-10 mx-auto w-full max-w-[820px] px-5 pb-16 md:px-8 md:pb-24">
         <p className="text-center text-[11px] font-bold uppercase tracking-[0.18em] text-brand-navy/70">
           Prefer a native app?
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 flex justify-center">
           <a
             href={APP_STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-3 rounded-2xl border border-brand-navy/15 bg-white px-5 py-4 transition-colors hover:border-brand-navy/40"
+            className="group flex w-full max-w-[400px] items-center gap-3 rounded-2xl border border-brand-navy/15 bg-white px-5 py-4 transition-colors hover:border-brand-navy/40"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy/8 text-brand-navy group-hover:bg-brand-navy/14">
               <Apple className="h-5 w-5" strokeWidth={1.75} />
@@ -257,28 +255,6 @@ export default function DownloadHome() {
               </span>
               <span className="block text-[14px] font-bold tracking-tight text-brand-navy">
                 Download on the App Store
-              </span>
-            </span>
-            <ArrowUpRight
-              className="h-4 w-4 shrink-0 text-brand-navy/40 group-hover:text-brand-navy/80"
-              strokeWidth={2}
-            />
-          </a>
-          <a
-            href={PLAY_STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-3 rounded-2xl border border-brand-navy/15 bg-white px-5 py-4 transition-colors hover:border-brand-navy/40"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-navy/8 text-brand-navy group-hover:bg-brand-navy/14">
-              <Play className="h-5 w-5" strokeWidth={1.75} />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[10px] font-semibold uppercase tracking-[0.10em] text-brand-navy/60">
-                Android
-              </span>
-              <span className="block text-[14px] font-bold tracking-tight text-brand-navy">
-                Get it on Google Play
               </span>
             </span>
             <ArrowUpRight
