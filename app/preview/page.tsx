@@ -447,11 +447,15 @@ function PedigreeSection() {
   return (
     <section
       id="pedigree"
-      className="relative bg-black px-5 py-24 md:px-10 md:py-32"
+      className="relative bg-gradient-to-b from-brand-navy via-brand-navy to-brand-navyDeep px-5 py-24 md:px-10 md:py-32"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-32 top-1/3 h-[420px] w-[420px] rounded-full bg-primary/15 blur-[140px]"
+        className="pointer-events-none absolute -left-32 top-1/3 h-[420px] w-[420px] rounded-full bg-primary/20 blur-[140px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-40 top-1/4 h-[420px] w-[420px] rounded-full bg-[#0693e3]/10 blur-[140px]"
       />
 
       <div className="relative mx-auto w-full max-w-[1320px]">
