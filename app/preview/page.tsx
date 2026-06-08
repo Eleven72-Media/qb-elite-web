@@ -44,10 +44,10 @@ export default function HomepagePreview() {
     <main className="relative min-h-screen overflow-hidden bg-brand-navyDeep text-white">
       <FloatingNav />
       <Hero />
-      <FeaturedOnStrip />
       <PillarsSection />
       <PedigreeSection />
       <ByTheNumbers />
+      <FeaturedOnStrip />
       <CreedSection />
       <TestimonialsSection />
       <ContactSection />
@@ -238,16 +238,16 @@ function Hero() {
 function FeaturedOnStrip() {
   const outlets = ["ESPN", "247Sports", "Rivals", "MaxPreps", "On3", "Deseret News"];
   return (
-    <section className="relative border-b border-white/10 bg-brand-navyDeep">
-      <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-6 px-5 py-8 md:flex-row md:justify-between md:px-10 md:py-10">
-        <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-white/55">
+    <section className="relative bg-brand-navy">
+      <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-8 px-5 py-14 md:px-10 md:py-16">
+        <p className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary">
           Featured On
         </p>
-        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 md:gap-x-12">
+        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 md:gap-x-16">
           {outlets.map((o) => (
             <li
               key={o}
-              className="text-[14px] font-extrabold uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-white/85"
+              className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-white/45 transition-colors hover:text-white"
             >
               {o}
             </li>
