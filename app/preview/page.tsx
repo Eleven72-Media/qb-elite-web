@@ -239,10 +239,10 @@ function FeaturedOnStrip() {
   const outlets = ["ESPN", "247Sports", "Rivals", "MaxPreps", "On3", "Deseret News"];
   return (
     <section className="relative bg-brand-navy">
-      <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-8 px-5 pb-20 pt-8 md:px-10 md:pb-24 md:pt-10">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary">
+      <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-10 px-5 pb-20 pt-16 md:px-10 md:pb-24 md:pt-20">
+        <h3 className="text-center text-5xl font-black uppercase leading-none tracking-tight text-primary md:text-[64px]">
           Featured On
-        </p>
+        </h3>
         <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 md:gap-x-16">
           {outlets.map((o) => (
             <li
