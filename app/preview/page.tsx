@@ -581,13 +581,7 @@ function ByTheNumbers() {
         <SectionHeader
           number="03"
           eyebrow="By The Numbers"
-          title={
-            <>
-              The Work
-              <br />
-              <span className="text-primary">Speaks Loud.</span>
-            </>
-          }
+          title={<span className="text-primary">Elite Results.</span>}
         />
 
         <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden bg-white/10 md:grid-cols-4">
@@ -643,15 +637,12 @@ function PedigreeLogoGallery() {
   return (
     <section className="relative bg-brand-navy px-5 pb-12 pt-20 md:px-10 md:pb-16 md:pt-24">
       <div className="mx-auto w-full max-w-[1320px]">
-        <p className="text-center text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary">
-          Pedigree
-        </p>
-        <p className="mt-3 text-center text-[12px] font-bold uppercase tracking-[0.18em] text-white/55">
-          Schools & Organizations
-        </p>
+        <h3 className="text-center text-5xl font-black uppercase leading-none tracking-tight text-primary md:text-[64px]">
+          Schools &amp; Organizations
+        </h3>
 
-        <div className="mt-14">
-          <PedigreeRow label="Colleges" orgs={PEDIGREE_COLLEGES} />
+        <div className="mt-16">
+          <PedigreeRow label="Division One" orgs={PEDIGREE_COLLEGES} />
         </div>
         <div className="mt-12">
           <PedigreeRow label="Pro Teams" orgs={PEDIGREE_PROS} />
