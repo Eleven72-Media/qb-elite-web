@@ -185,9 +185,8 @@ function Hero() {
           </h1>
 
           <p className="mt-7 max-w-[560px] text-base leading-relaxed text-white/85 drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] md:text-lg">
-            Camps, 1:1 training, and the QB Elite app — built around
-            mechanics, mindset, and competition. Train where the next
-            generation of college and pro quarterbacks train.
+            Train where the next generation of college and pro
+            quarterbacks train.
           </p>
 
           <div className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
