@@ -210,7 +210,7 @@ function Hero() {
 function FeaturedOnStrip() {
   const outlets = ["ESPN", "247Sports", "Rivals", "MaxPreps", "On3", "Deseret News"];
   return (
-    <section className="relative bg-brand-navy">
+    <section className="relative bg-brand-graphite">
       <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-10 px-5 pb-20 pt-16 md:px-10 md:pb-24 md:pt-20">
         <h3 className="text-center font-display text-5xl uppercase leading-none tracking-tight text-primary md:text-[72px]">
           Featured On
@@ -543,7 +543,7 @@ const STATS = [
 
 function ByTheNumbers() {
   return (
-    <section className="relative overflow-hidden bg-brand-navy px-5 py-24 md:px-10 md:py-32">
+    <section className="relative overflow-hidden bg-brand-graphite px-5 py-24 md:px-10 md:py-32">
       <div
         aria-hidden
         className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/20 blur-[140px]"
@@ -559,7 +559,7 @@ function ByTheNumbers() {
           {STATS.map((s) => (
             <div
               key={s.label}
-              className="bg-brand-navy p-8 md:p-10"
+              className="bg-brand-graphite p-8 md:p-10"
             >
               <p className="font-display text-5xl leading-none tracking-tight text-white md:text-[72px]">
                 {s.value}
@@ -639,7 +639,7 @@ const PEDIGREE_PROS: PedigreeOrg[] = [
 
 function PedigreeLogoGallery() {
   return (
-    <section className="relative bg-brand-navy px-5 pb-12 pt-20 md:px-10 md:pb-16 md:pt-24">
+    <section className="relative bg-brand-graphite px-5 pb-12 pt-20 md:px-10 md:pb-16 md:pt-24">
       <div className="mx-auto w-full max-w-[1320px]">
         <h3 className="text-center font-display text-5xl uppercase leading-none tracking-tight text-primary md:text-[72px]">
           Schools &amp; Organizations
@@ -901,7 +901,7 @@ function SocialFollowSection() {
   return (
     <section
       id="social"
-      className="relative overflow-hidden bg-brand-navy px-5 py-24 md:px-10 md:py-32"
+      className="relative overflow-hidden bg-brand-graphite px-5 py-24 md:px-10 md:py-32"
     >
       <div
         aria-hidden

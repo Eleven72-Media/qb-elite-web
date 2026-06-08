@@ -70,6 +70,10 @@ const config: Config = {
         brand: {
           navy: "hsl(var(--brand-navy) / <alpha-value>)",
           navyDeep: "hsl(var(--brand-navy-deep) / <alpha-value>)",
+          // Warm near-black neutral — third color used on credibility
+          // (03) and social (06) sections to break the navy/white
+          // rhythm without competing with red accents.
+          graphite: "hsl(var(--brand-graphite) / <alpha-value>)",
         },
       },
       fontFamily: {
