@@ -79,7 +79,7 @@ function FloatingNav() {
               className="object-contain"
             />
           </div>
-          <span className="text-base font-extrabold uppercase tracking-[0.14em] text-white">
+          <span className="font-display text-xl uppercase tracking-[0.08em] text-white">
             QB Elite
           </span>
         </Link>
@@ -154,15 +154,15 @@ function Hero() {
             </span>
           </div>
 
-          <h1 className="mt-6 text-[64px] font-black uppercase leading-[0.88] tracking-tight text-white drop-shadow-[0_8px_32px_rgba(0,0,0,0.6)] md:text-[112px] lg:text-[136px]">
+          <h1 className="mt-6 font-display text-[64px] uppercase leading-[0.88] tracking-tight text-white drop-shadow-[0_8px_32px_rgba(0,0,0,0.6)] md:text-[120px] lg:text-[148px]">
             Become
             <br />
             <span className="text-primary">Elite.</span>
           </h1>
 
           <p className="mt-7 max-w-[560px] text-base leading-relaxed text-white/85 drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] md:text-lg">
-            Where the next generation of college and pro quarterbacks
-            train.
+            Developing the complete quarterback — where the next
+            generation of college and pro QBs train.
           </p>
 
           {/* Hero stat — single most impressive number, per Justin's brief */}
@@ -212,7 +212,7 @@ function FeaturedOnStrip() {
   return (
     <section className="relative bg-brand-navy">
       <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-10 px-5 pb-20 pt-16 md:px-10 md:pb-24 md:pt-20">
-        <h3 className="text-center text-5xl font-black uppercase leading-none tracking-tight text-primary md:text-[64px]">
+        <h3 className="text-center font-display text-5xl uppercase leading-none tracking-tight text-primary md:text-[72px]">
           Featured On
         </h3>
         <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 md:gap-x-16">
@@ -323,7 +323,7 @@ function PillarCard({
         </span>
       </div>
 
-      <h3 className="mt-8 text-3xl font-black uppercase tracking-tight text-brand-navy md:text-[34px]">
+      <h3 className="mt-8 font-display text-[34px] uppercase leading-tight tracking-tight text-brand-navy md:text-[40px]">
         {title}
       </h3>
       <p className="mt-4 flex-1 text-[15px] leading-relaxed text-foreground/70">
@@ -441,7 +441,7 @@ function PedigreeSection() {
               <span className="text-primary">Been There.</span>
             </>
           }
-          subhead="Every drill, every cue, every film clip comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros — they all coach here."
+          subhead="Mechanics, film study, football IQ, and leadership — every cue comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros."
         />
 
         {/* Coaching staff — 3-up, full-time QB Elite coaches */}
@@ -561,7 +561,7 @@ function ByTheNumbers() {
               key={s.label}
               className="bg-brand-navy p-8 md:p-10"
             >
-              <p className="text-5xl font-black tracking-tight text-white md:text-[64px]">
+              <p className="font-display text-5xl leading-none tracking-tight text-white md:text-[72px]">
                 {s.value}
               </p>
               <p className="mt-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary">
@@ -641,7 +641,7 @@ function PedigreeLogoGallery() {
   return (
     <section className="relative bg-brand-navy px-5 pb-12 pt-20 md:px-10 md:pb-16 md:pt-24">
       <div className="mx-auto w-full max-w-[1320px]">
-        <h3 className="text-center text-5xl font-black uppercase leading-none tracking-tight text-primary md:text-[64px]">
+        <h3 className="text-center font-display text-5xl uppercase leading-none tracking-tight text-primary md:text-[72px]">
           Schools &amp; Organizations
         </h3>
 
@@ -956,7 +956,7 @@ function SocialCard({ platform }: { platform: SocialPlatform }) {
       <p className="mt-7 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/55">
         {platform.name}
       </p>
-      <p className="mt-1 text-2xl font-extrabold tracking-tight text-white md:text-[26px]">
+      <p className="mt-1 font-display text-[30px] uppercase tracking-tight text-white md:text-[34px]">
         {platform.handle}
       </p>
       <p className="mt-3 flex-1 text-[14px] leading-relaxed text-white/65">
@@ -1146,7 +1146,7 @@ function SectionHeader({
     <div className="grid gap-8 md:grid-cols-[auto_1fr] md:gap-12">
       <div className="flex items-start gap-5">
         <span
-          className={`text-[60px] font-black leading-none md:text-[84px] ${
+          className={`font-display text-[60px] leading-none md:text-[84px] ${
             onLight ? "text-brand-navy/15" : "text-white/15"
           }`}
         >
@@ -1159,7 +1159,7 @@ function SectionHeader({
           {eyebrow}
         </p>
         <h2
-          className={`mt-4 text-[34px] font-black uppercase leading-[1.02] tracking-tight md:text-[56px] lg:text-[64px] ${
+          className={`mt-4 font-display text-[40px] uppercase leading-[1.02] tracking-tight md:text-[64px] lg:text-[80px] ${
             onLight ? "text-brand-navy" : "text-white"
           }`}
         >

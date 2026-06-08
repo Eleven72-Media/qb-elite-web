@@ -74,6 +74,10 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-outfit)", "system-ui", "-apple-system", "sans-serif"],
+        // Anton — condensed industrial display face from the QB Elite
+        // brand guide (Mar 2026, v1.0). Use on big uppercase headlines,
+        // eyebrow chips, and stat numbers. Pairs with Outfit for body.
+        display: ["var(--font-anton)", "Impact", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

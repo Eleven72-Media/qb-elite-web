@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit } from "next/font/google";
+import { Anton, Outfit } from "next/font/google";
 import "./globals.css";
 
 import { Providers } from "@/components/providers";
@@ -12,6 +12,17 @@ const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
   weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+// Anton matches the condensed industrial display face used throughout
+// the QB Elite brand guide (Mar 2026, v1.0). Single-weight (400) by
+// design — it's only meant for big uppercase headlines, eyebrow chips,
+// and stat numbers. Exposed via fontFamily.display in tailwind.config.
+const anton = Anton({
+  subsets: ["latin"],
+  variable: "--font-anton",
+  weight: ["400"],
   display: "swap",
 });
 
@@ -55,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={outfit.variable}>
+    <html lang="en" className={`${outfit.variable} ${anton.variable}`}>
       <body className="min-h-screen antialiased">
         <Providers>{children}</Providers>
         <SplashOverlay />
