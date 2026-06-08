@@ -6,7 +6,6 @@ import {
   Facebook,
   Instagram,
   Play,
-  Quote,
   Smartphone,
   Star,
   Youtube,
@@ -48,7 +47,6 @@ export default function HomepagePreview() {
       <ByTheNumbers />
       <PedigreeLogoGallery />
       <FeaturedOnStrip />
-      <CreedSection />
       <TestimonialsSection />
       <ContactSection />
       <Footer />
@@ -727,47 +725,32 @@ function PedigreeRow({
   );
 }
 
-/* ───────────────────────────── CREED ───────────────────────────── */
-
-function CreedSection() {
-  return (
-    <section className="relative bg-brand-navyDeep px-5 py-24 md:px-10 md:py-32">
-      <div className="relative mx-auto flex w-full max-w-[1100px] flex-col items-center text-center">
-        <Quote className="h-10 w-10 fill-primary text-primary" />
-        <p className="mt-8 text-[28px] font-black uppercase leading-[1.15] tracking-tight text-white md:text-[44px] lg:text-[54px]">
-          Talent gets you noticed.
-          <br />
-          <span className="text-primary">Work gets you drafted.</span>
-        </p>
-        <p className="mt-7 max-w-[520px] text-sm font-bold uppercase tracking-[0.18em] text-white/55">
-          — The QB Elite Creed
-        </p>
-      </div>
-      <DashedDivider position="bottom" tone="light" />
-    </section>
-  );
-}
-
 /* ───────────────────────────── 04 TESTIMONIALS ───────────────────────────── */
 
+/**
+ * Real reviews pulled from qbelite.com (homepage + /testimonials/)
+ * on 2026-06-08 — verbatim text, original attributions. When new
+ * reviews come in, append here; oldest-first is fine since the
+ * grid renders left→right and the strongest names anchor either end.
+ */
 const TESTIMONIALS = [
   {
     quote:
-      "QB Elite turned my mechanics around in a single camp. I went into my junior year throwing more confidently than I ever have.",
-    name: "Caleb R.",
-    role: "Class of 2027 · UT",
+      "I would not have received my scholarship had I not taken advantage of the training I received through QB Elite.",
+    name: "Troy",
+    role: "QB Elite Athlete",
   },
   {
     quote:
-      "Justin and the team treat every kid like they're the next D1 starter. The app keeps us on track between camps — it's a complete system.",
-    name: "Megan T.",
-    role: "Parent · Class of 2026",
+      "I'm so impressed with QB Elite. I would recommend my QBs to Dustin Smith to train and we live in Florida!",
+    name: "Mark Brunell",
+    role: "3x NFL Pro Bowl QB · 1991 Rose Bowl MVP",
   },
   {
     quote:
-      "Working with QBE coaches gave me reps I couldn't get anywhere else. The film breakdowns alone are worth the price of admission.",
-    name: "Drew K.",
-    role: "Class of 2025 · committed",
+      "We have seen a lot of coaches and spent a lot of money over the years. Coach Smith is the best. Worth every penny! Do the work! Be Elite!",
+    name: "Ryan",
+    role: "QB Elite Parent",
   },
 ] as const;
 
@@ -777,14 +760,8 @@ function TestimonialsSection() {
       <div className="mx-auto w-full max-w-[1320px]">
         <SectionHeader
           number="04"
-          eyebrow="Hear From Our Athletes"
-          title={
-            <>
-              Results That
-              <br />
-              <span className="text-primary">Speak For Themselves.</span>
-            </>
-          }
+          eyebrow="Testimonials"
+          title={<span className="text-primary">Hear From Our Athletes.</span>}
         />
 
         <div className="mt-14 grid gap-px bg-white/10 md:grid-cols-3">
