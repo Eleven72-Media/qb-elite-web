@@ -621,15 +621,16 @@ function ByTheNumbers() {
  */
 type PedigreeOrg = { name: string; logo?: string };
 
-const PEDIGREE_ORGS: PedigreeOrg[] = [
-  // Colleges
+const PEDIGREE_COLLEGES: PedigreeOrg[] = [
   { name: "BYU" },
   { name: "Utah" },
   { name: "Washington" },
   { name: "Colorado" },
   { name: "USC" },
   { name: "Oregon" },
-  // Pro teams (where coaches / alumni have played)
+];
+
+const PEDIGREE_PROS: PedigreeOrg[] = [
   { name: "Cardinals" },
   { name: "Packers" },
   { name: "Eagles" },
@@ -649,30 +650,56 @@ function PedigreeLogoGallery() {
           Schools & Organizations
         </p>
 
-        <div className="mt-12 grid grid-cols-3 items-center gap-x-8 gap-y-12 sm:grid-cols-4 md:grid-cols-6 md:gap-x-12">
-          {PEDIGREE_ORGS.map((org) => (
-            <div
-              key={org.name}
-              className="group flex items-center justify-center"
-            >
-              {org.logo ? (
-                <Image
-                  src={org.logo}
-                  alt={org.name}
-                  width={120}
-                  height={48}
-                  className="h-12 w-auto object-contain opacity-40 transition-opacity duration-200 group-hover:opacity-100"
-                />
-              ) : (
-                <span className="text-[17px] font-black uppercase tracking-[0.1em] text-white opacity-40 transition-opacity duration-200 group-hover:opacity-100">
-                  {org.name}
-                </span>
-              )}
-            </div>
-          ))}
+        <div className="mt-14">
+          <PedigreeRow label="Colleges" orgs={PEDIGREE_COLLEGES} />
+        </div>
+        <div className="mt-12">
+          <PedigreeRow label="Pro Teams" orgs={PEDIGREE_PROS} />
         </div>
       </div>
     </section>
+  );
+}
+
+function PedigreeRow({
+  label,
+  orgs,
+}: {
+  label: string;
+  orgs: PedigreeOrg[];
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-4">
+        <span className="h-px flex-1 bg-white/10" />
+        <span className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-white/55">
+          {label}
+        </span>
+        <span className="h-px flex-1 bg-white/10" />
+      </div>
+      <div className="mt-7 grid grid-cols-3 items-center gap-x-8 gap-y-10 sm:grid-cols-6 md:gap-x-12">
+        {orgs.map((org) => (
+          <div
+            key={org.name}
+            className="group flex items-center justify-center"
+          >
+            {org.logo ? (
+              <Image
+                src={org.logo}
+                alt={org.name}
+                width={120}
+                height={48}
+                className="h-12 w-auto object-contain opacity-40 transition-opacity duration-200 group-hover:opacity-100"
+              />
+            ) : (
+              <span className="text-[17px] font-black uppercase tracking-[0.1em] text-white opacity-40 transition-opacity duration-200 group-hover:opacity-100">
+                {org.name}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
