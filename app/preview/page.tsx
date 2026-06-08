@@ -615,15 +615,32 @@ function ByTheNumbers() {
  */
 type PedigreeOrg = { name: string; logo?: string };
 
+/**
+ * Division One schools sourced from the alumni list Justin sent
+ * 2026-06-08. Schools deduped, alphabetized. Three non-D1 alumni
+ * programs (Snow College / JUCO, Midland / NAIA, Adams State / D2)
+ * are not shown here — confirm with Justin whether they should get
+ * their own row or be folded into a single "Colleges" group.
+ */
 const PEDIGREE_COLLEGES: PedigreeOrg[] = [
+  { name: "Boise State" },
   { name: "BYU" },
-  { name: "Utah" },
-  { name: "Washington" },
-  { name: "Colorado" },
+  { name: "Hawaii" },
+  { name: "Montana" },
+  { name: "Ole Miss" },
+  { name: "Oklahoma" },
+  { name: "SUU" },
+  { name: "Texas A&M" },
   { name: "USC" },
-  { name: "Oregon" },
+  { name: "Utah" },
+  { name: "Utah State" },
+  { name: "Utah Tech" },
+  { name: "Weber State" },
+  { name: "Western Kentucky" },
 ];
 
+// Placeholder NFL teams — confirm with Justin which pro orgs actually
+// belong here (alumni who went pro, coach NFL affiliations, or both).
 const PEDIGREE_PROS: PedigreeOrg[] = [
   { name: "Cardinals" },
   { name: "Packers" },
@@ -668,7 +685,7 @@ function PedigreeRow({
         </span>
         <span className="h-px flex-1 bg-white/10" />
       </div>
-      <div className="mt-7 grid grid-cols-3 items-center gap-x-8 gap-y-10 sm:grid-cols-6 md:gap-x-12">
+      <div className="mt-7 grid grid-cols-2 items-center gap-x-8 gap-y-10 sm:grid-cols-4 md:grid-cols-7 md:gap-x-10">
         {orgs.map((org) => (
           <div
             key={org.name}
