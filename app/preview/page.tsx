@@ -616,19 +616,25 @@ function ByTheNumbers() {
 type PedigreeOrg = { name: string; logo?: string };
 
 /**
- * Division One schools sourced from the alumni list Justin sent
- * 2026-06-08. Schools deduped, alphabetized. Three non-D1 alumni
- * programs (Snow College / JUCO, Midland / NAIA, Adams State / D2)
- * are not shown here — confirm with Justin whether they should get
- * their own row or be folded into a single "Colleges" group.
+ * Colleges = every school in Justin's alumni list (2026-06-08),
+ * deduped + alphabetized, including non-D1 programs (Adams State,
+ * Midland, Snow College) per Justin's "merge with Colleges" call.
+ *
+ * Pro Teams = every NFL franchise an alum or coach played for
+ * (alumni: Wilson, Hall, Dart) + (coaches: Ty Detmer, Brunell,
+ * Warner, Koy Detmer, Doman, Madsen, Max Hall) + Montreal
+ * Alouettes for Ben Cahoon's 15-yr CFL career.
  */
 const PEDIGREE_COLLEGES: PedigreeOrg[] = [
+  { name: "Adams State" },
   { name: "Boise State" },
   { name: "BYU" },
   { name: "Hawaii" },
+  { name: "Midland" },
   { name: "Montana" },
   { name: "Ole Miss" },
   { name: "Oklahoma" },
+  { name: "Snow College" },
   { name: "SUU" },
   { name: "Texas A&M" },
   { name: "USC" },
@@ -639,15 +645,25 @@ const PEDIGREE_COLLEGES: PedigreeOrg[] = [
   { name: "Western Kentucky" },
 ];
 
-// Placeholder NFL teams — confirm with Justin which pro orgs actually
-// belong here (alumni who went pro, coach NFL affiliations, or both).
 const PEDIGREE_PROS: PedigreeOrg[] = [
+  { name: "Alouettes" },
+  { name: "Broncos" },
+  { name: "Browns" },
   { name: "Cardinals" },
-  { name: "Packers" },
+  { name: "Commanders" },
   { name: "Eagles" },
-  { name: "Rams" },
+  { name: "Falcons" },
+  { name: "49ers" },
   { name: "Giants" },
   { name: "Jaguars" },
+  { name: "Jets" },
+  { name: "Lions" },
+  { name: "Packers" },
+  { name: "Raiders" },
+  { name: "Rams" },
+  { name: "Saints" },
+  { name: "Seahawks" },
+  { name: "Vikings" },
 ];
 
 function PedigreeLogoGallery() {
@@ -659,9 +675,9 @@ function PedigreeLogoGallery() {
         </h3>
 
         <div className="mt-16">
-          <PedigreeRow label="Division One" orgs={PEDIGREE_COLLEGES} />
+          <PedigreeRow label="Colleges" orgs={PEDIGREE_COLLEGES} />
         </div>
-        <div className="mt-12">
+        <div className="mt-14">
           <PedigreeRow label="Pro Teams" orgs={PEDIGREE_PROS} />
         </div>
       </div>
@@ -685,7 +701,7 @@ function PedigreeRow({
         </span>
         <span className="h-px flex-1 bg-white/10" />
       </div>
-      <div className="mt-7 grid grid-cols-2 items-center gap-x-8 gap-y-10 sm:grid-cols-4 md:grid-cols-7 md:gap-x-10">
+      <div className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 md:gap-x-10">
         {orgs.map((org) => (
           <div
             key={org.name}
