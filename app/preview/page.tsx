@@ -59,11 +59,11 @@ export default function HomepagePreview() {
 /* ───────────────────────────── NAV ───────────────────────────── */
 
 const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "QB Training", href: "#training" },
+  { label: "QB Academy", href: "#training" },
   { label: "Camps", href: "#camps" },
   { label: "App", href: "#app" },
-  { label: "Shop", href: "#shop" },
-  { label: "About", href: "#pedigree" },
+  { label: "Store", href: "#shop" },
+  { label: "About Us", href: "#pedigree" },
 ];
 
 function FloatingNav() {
@@ -125,7 +125,11 @@ function Hero() {
     >
       {/* Full-bleed hero media. Swap the gradient layers for a real
           <video poster=... autoplay muted loop playsinline> or an
-          <Image fill> once b-roll/key art is captured. */}
+          <Image fill> once b-roll/key art is captured.
+          Justin's brief calls for a drone-camp video that zooms in/out
+          of the QB Elite logo as an intro animation — implement as a
+          one-shot CSS/canvas reveal on first visit, then settle into
+          this static hero. v2 motion treatment. */}
       <div
         aria-hidden
         className="absolute inset-0 bg-gradient-to-br from-primary/35 via-brand-navy to-black"
@@ -188,6 +192,18 @@ function Hero() {
             Train where the next generation of college and pro
             quarterbacks train.
           </p>
+
+          {/* Hero stat — single most impressive number, per Justin's brief */}
+          <div className="mt-8 flex items-center gap-5">
+            <span className="text-[44px] font-black leading-none tracking-tight text-primary drop-shadow-[0_4px_20px_rgba(182,32,37,0.6)] md:text-[56px]">
+              500+
+            </span>
+            <span className="text-[11px] font-extrabold uppercase leading-tight tracking-[0.18em] text-white/85 md:text-[12px]">
+              Quarterbacks Trained
+              <br />
+              Across 20+ States
+            </span>
+          </div>
 
           <div className="mt-10 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <Link href="#contact">
@@ -257,11 +273,11 @@ const PILLARS = [
   },
   {
     id: "training",
-    eyebrow: "1:1 Training",
-    title: "QB Training",
+    eyebrow: "Bulk-Week Programs",
+    title: "QB Academy",
     description:
-      "Private and group sessions with QB Elite coaches — paired by zip code so you're working with the right coach for your region.",
-    cta: "Schedule Your Workout",
+      "5-week, 10-week, and extended prepaid training blocks with QB Elite coaches. Paired by zip code so you're working with the right coach for your region.",
+    cta: "Start Your Block",
     href: "#training",
     icon: Dumbbell,
   },
@@ -270,7 +286,7 @@ const PILLARS = [
     eyebrow: "Online Training",
     title: "QB Elite App",
     description:
-      "Daily workouts, classroom film breakdowns, meal plans, and live Huddles — on iPhone, Android, and web. Train anywhere.",
+      "Training on the go — nonstop improvement even when you're away from coaches. Daily workouts, film breakdowns, meal plans, and live Huddles on iPhone, Android, and web.",
     cta: "Access The App",
     href: "https://qbeliteapp.com",
     icon: Smartphone,
@@ -393,7 +409,7 @@ function PedigreeSection() {
       <div className="relative mx-auto w-full max-w-[1320px]">
         <SectionHeader
           number="02"
-          eyebrow="The Pedigree"
+          eyebrow="Why Work With QB Elite?"
           title={
             <>
               Built By QBs Who&rsquo;ve
@@ -762,14 +778,14 @@ function Footer() {
         <FooterColumn
           title="Train"
           links={[
-            { label: "QB Training", href: "#training" },
+            { label: "QB Academy", href: "#training" },
             { label: "Camps", href: "#camps" },
             { label: "QB Elite App", href: "https://qbeliteapp.com" },
-            { label: "Shop", href: "#shop" },
+            { label: "Store", href: "#shop" },
           ]}
         />
         <FooterColumn
-          title="About"
+          title="About Us"
           links={[
             { label: "Coaches", href: "#pedigree" },
             { label: "Alumni", href: "#pedigree" },
