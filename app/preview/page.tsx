@@ -121,20 +121,21 @@ function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate flex min-h-[820px] w-full items-center overflow-hidden bg-black md:min-h-[920px]"
+      className="relative isolate flex min-h-[760px] w-full items-end overflow-hidden bg-black md:min-h-[860px] lg:min-h-[920px]"
     >
-      {/* Layered dark backdrop. Swap the gradient for a real hero
-          video <video poster=... autoplay muted loop> once captured. */}
+      {/* Full-bleed hero media. Swap the gradient layers for a real
+          <video poster=... autoplay muted loop playsinline> or an
+          <Image fill> once b-roll/key art is captured. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-b from-black via-brand-navyDeep to-brand-navy"
+        className="absolute inset-0 bg-gradient-to-br from-primary/35 via-brand-navy to-black"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-50"
+        className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse at 75% 30%, rgba(182,32,37,0.35), transparent 55%), radial-gradient(ellipse at 15% 80%, rgba(0,53,84,0.6), transparent 55%)",
+            "radial-gradient(ellipse at 75% 25%, rgba(182,32,37,0.45), transparent 55%), radial-gradient(ellipse at 15% 90%, rgba(0,53,84,0.7), transparent 55%)",
         }}
       />
       <div
@@ -146,9 +147,29 @@ function Hero() {
           backgroundSize: "26px 26px",
         }}
       />
+      {/* Bottom darken so the copy stays legible against any future
+          full-bleed image/video, regardless of the underlying frame. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
+      />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-[1320px] gap-12 px-5 pb-24 pt-40 md:grid-cols-[1.2fr_1fr] md:gap-20 md:px-10 md:pb-32 md:pt-48">
-        {/* Left — copy + CTA */}
+      {/* Centered play affordance for the intro video. Floats over the
+          backdrop so the user knows the hero is the video. */}
+      <button
+        type="button"
+        aria-label="Play intro video"
+        className="group absolute left-1/2 top-[42%] z-10 -translate-x-1/2 -translate-y-1/2 md:top-[44%]"
+      >
+        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white shadow-[0_20px_60px_rgba(182,32,37,0.65)] transition-transform group-hover:scale-105 md:h-24 md:w-24">
+          <Play className="h-7 w-7 translate-x-0.5 fill-current md:h-9 md:w-9" />
+        </span>
+        <span className="mt-4 block text-center text-[11px] font-extrabold uppercase tracking-[0.24em] text-white/80">
+          Watch The Story
+        </span>
+      </button>
+
+      <div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 pb-20 pt-40 md:px-10 md:pb-28 md:pt-48">
         <div className="flex flex-col">
           <div className="flex items-center gap-3">
             <span className="h-px w-10 bg-primary" />
@@ -157,13 +178,13 @@ function Hero() {
             </span>
           </div>
 
-          <h1 className="mt-6 text-[52px] font-black uppercase leading-[0.88] tracking-tight text-white md:text-[88px] lg:text-[104px]">
+          <h1 className="mt-6 text-[64px] font-black uppercase leading-[0.88] tracking-tight text-white drop-shadow-[0_8px_32px_rgba(0,0,0,0.6)] md:text-[112px] lg:text-[136px]">
             Become
             <br />
             <span className="text-primary">Elite.</span>
           </h1>
 
-          <p className="mt-7 max-w-[540px] text-base leading-relaxed text-white/75 md:text-lg">
+          <p className="mt-7 max-w-[560px] text-base leading-relaxed text-white/85 drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] md:text-lg">
             Camps, 1:1 training, and the QB Elite app — built around
             mechanics, mindset, and competition. Train where the next
             generation of college and pro quarterbacks train.
@@ -173,7 +194,7 @@ function Hero() {
             <Link href="#contact">
               <Button
                 size="lg"
-                className="group h-14 w-full rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.45)] hover:bg-primary/90 sm:w-auto"
+                className="group h-14 w-full rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.55)] hover:bg-primary/90 sm:w-auto"
               >
                 Become Elite Today
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -183,51 +204,11 @@ function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 w-full rounded-none border-white/25 bg-transparent px-6 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white hover:bg-white/10 hover:text-white sm:w-auto"
+                className="h-14 w-full rounded-none border-white/30 bg-white/5 px-6 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white backdrop-blur hover:bg-white/15 hover:text-white sm:w-auto"
               >
-                <Play className="mr-2 h-4 w-4 fill-current" />
-                Watch The Story
+                Explore Training
               </Button>
             </Link>
-          </div>
-        </div>
-
-        {/* Right — intro video placeholder */}
-        <div className="relative">
-          <div className="relative aspect-[4/5] w-full overflow-hidden bg-brand-navy shadow-[0_40px_100px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-br from-primary/25 via-brand-navy to-black"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-50"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 70% 30%, rgba(255,255,255,0.25), transparent 60%)",
-              }}
-            />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-              <button
-                type="button"
-                aria-label="Play intro video"
-                className="group flex h-24 w-24 items-center justify-center rounded-full bg-primary text-white shadow-[0_20px_60px_rgba(182,32,37,0.65)] transition-transform hover:scale-105"
-              >
-                <Play className="h-9 w-9 translate-x-0.5 fill-current" />
-              </button>
-              <p className="mt-6 text-[11px] font-extrabold uppercase tracking-[0.24em] text-white/80">
-                Intro · 0:90
-              </p>
-            </div>
-            {/* Red corner accent */}
-            <span
-              aria-hidden
-              className="absolute left-0 top-0 h-12 w-1 bg-primary"
-            />
-            <span
-              aria-hidden
-              className="absolute left-0 top-0 h-1 w-12 bg-primary"
-            />
           </div>
         </div>
       </div>
