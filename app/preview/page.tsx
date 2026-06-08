@@ -189,8 +189,8 @@ function Hero() {
           </h1>
 
           <p className="mt-7 max-w-[560px] text-base leading-relaxed text-white/85 drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)] md:text-lg">
-            Train where the next generation of college and pro
-            quarterbacks train.
+            Where the next generation of college and pro quarterbacks
+            train.
           </p>
 
           {/* Hero stat — single most impressive number, per Justin's brief */}
