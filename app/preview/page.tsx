@@ -46,6 +46,7 @@ export default function HomepagePreview() {
       <PillarsSection />
       <PedigreeSection />
       <ByTheNumbers />
+      <PedigreeLogoGallery />
       <FeaturedOnStrip />
       <CreedSection />
       <TestimonialsSection />
@@ -238,7 +239,7 @@ function FeaturedOnStrip() {
   const outlets = ["ESPN", "247Sports", "Rivals", "MaxPreps", "On3", "Deseret News"];
   return (
     <section className="relative bg-brand-navy">
-      <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-8 px-5 py-14 md:px-10 md:py-16">
+      <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-8 px-5 pb-20 pt-8 md:px-10 md:pb-24 md:pt-10">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary">
           Featured On
         </p>
@@ -246,7 +247,7 @@ function FeaturedOnStrip() {
           {outlets.map((o) => (
             <li
               key={o}
-              className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-white/45 transition-colors hover:text-white"
+              className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-white opacity-40 transition-opacity duration-200 hover:opacity-100"
             >
               {o}
             </li>
@@ -601,6 +602,72 @@ function ByTheNumbers() {
               <p className="mt-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary">
                 {s.label}
               </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────────── PEDIGREE LOGOS ───────────────────────────── */
+
+/**
+ * Schools + organizations our coaches and alumni have played for / been
+ * affiliated with. Each entry can carry an optional `logo` path
+ * (PNG/SVG in /public/pedigree/, white-on-transparent) — when present
+ * we render the image; otherwise we fall back to a wordmark of the
+ * organization's name. Drop SVGs in as you obtain rights to use them.
+ */
+type PedigreeOrg = { name: string; logo?: string };
+
+const PEDIGREE_ORGS: PedigreeOrg[] = [
+  // Colleges
+  { name: "BYU" },
+  { name: "Utah" },
+  { name: "Washington" },
+  { name: "Colorado" },
+  { name: "USC" },
+  { name: "Oregon" },
+  // Pro teams (where coaches / alumni have played)
+  { name: "Cardinals" },
+  { name: "Packers" },
+  { name: "Eagles" },
+  { name: "Rams" },
+  { name: "Giants" },
+  { name: "Jaguars" },
+];
+
+function PedigreeLogoGallery() {
+  return (
+    <section className="relative bg-brand-navy px-5 pb-12 pt-20 md:px-10 md:pb-16 md:pt-24">
+      <div className="mx-auto w-full max-w-[1320px]">
+        <p className="text-center text-[11px] font-extrabold uppercase tracking-[0.28em] text-primary">
+          Pedigree
+        </p>
+        <p className="mt-3 text-center text-[12px] font-bold uppercase tracking-[0.18em] text-white/55">
+          Schools & Organizations
+        </p>
+
+        <div className="mt-12 grid grid-cols-3 items-center gap-x-8 gap-y-12 sm:grid-cols-4 md:grid-cols-6 md:gap-x-12">
+          {PEDIGREE_ORGS.map((org) => (
+            <div
+              key={org.name}
+              className="group flex items-center justify-center"
+            >
+              {org.logo ? (
+                <Image
+                  src={org.logo}
+                  alt={org.name}
+                  width={120}
+                  height={48}
+                  className="h-12 w-auto object-contain opacity-40 transition-opacity duration-200 group-hover:opacity-100"
+                />
+              ) : (
+                <span className="text-[17px] font-black uppercase tracking-[0.1em] text-white opacity-40 transition-opacity duration-200 group-hover:opacity-100">
+                  {org.name}
+                </span>
+              )}
             </div>
           ))}
         </div>
