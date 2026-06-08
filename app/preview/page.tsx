@@ -67,49 +67,51 @@ const NAV_LINKS: { label: string; href: string }[] = [
 
 function FloatingNav() {
   return (
-    <header className="absolute inset-x-0 top-0 z-30 mx-auto flex w-full max-w-[1320px] items-center justify-between px-5 pt-[max(env(safe-area-inset-top),1.25rem)] md:px-10">
-      <Link href="#top" className="flex items-center gap-2.5">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 p-1.5 ring-1 ring-white/20 backdrop-blur">
-          <Image
-            src="/logo.png"
-            alt="QB Elite"
-            width={36}
-            height={36}
-            className="object-contain"
-          />
-        </div>
-        <span className="text-base font-extrabold uppercase tracking-[0.14em] text-white">
-          QB Elite
-        </span>
-      </Link>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-brand-navyDeep/85 backdrop-blur-md">
+      <div className="mx-auto flex w-full max-w-[1320px] items-center justify-between px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 md:px-10">
+        <Link href="#top" className="flex items-center gap-2.5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 p-1.5 ring-1 ring-white/20">
+            <Image
+              src="/logo.png"
+              alt="QB Elite"
+              width={36}
+              height={36}
+              className="object-contain"
+            />
+          </div>
+          <span className="text-base font-extrabold uppercase tracking-[0.14em] text-white">
+            QB Elite
+          </span>
+        </Link>
 
-      <nav className="hidden items-center gap-0.5 rounded-full bg-white/5 px-1.5 py-1.5 ring-1 ring-white/10 backdrop-blur lg:flex">
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={link.label}
-            href={link.href}
-            className="rounded-full px-4 py-2 text-[12px] font-bold uppercase tracking-[0.12em] text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+        <nav className="hidden items-center gap-0.5 rounded-full bg-white/5 px-1.5 py-1.5 ring-1 ring-white/10 lg:flex">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="rounded-full px-4 py-2 text-[12px] font-bold uppercase tracking-[0.12em] text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <Link href="#contact" className="hidden sm:inline-flex">
+          <Button
+            size="sm"
+            className="h-10 rounded-none bg-primary px-5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-white shadow-md hover:bg-primary/90"
           >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
+            Train With Us
+          </Button>
+        </Link>
 
-      <Link href="#contact" className="hidden sm:inline-flex">
-        <Button
-          size="sm"
-          className="h-10 rounded-none bg-primary px-5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-white shadow-md hover:bg-primary/90"
+        <Link
+          href="#contact"
+          className="inline-flex items-center gap-1 bg-primary px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white sm:hidden"
         >
-          Train With Us
-        </Button>
-      </Link>
-
-      <Link
-        href="#contact"
-        className="inline-flex items-center gap-1 bg-primary px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white sm:hidden"
-      >
-        Menu
-      </Link>
+          Menu
+        </Link>
+      </div>
     </header>
   );
 }
@@ -120,42 +122,13 @@ function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate flex min-h-[760px] w-full items-end overflow-hidden bg-black md:min-h-[860px] lg:min-h-[920px]"
+      className="relative isolate flex min-h-[760px] w-full items-end overflow-hidden bg-brand-navy md:min-h-[860px] lg:min-h-[920px]"
     >
-      {/* Full-bleed hero media. Swap the gradient layers for a real
-          <video poster=... autoplay muted loop playsinline> or an
-          <Image fill> once b-roll/key art is captured.
-          Justin's brief calls for a drone-camp video that zooms in/out
-          of the QB Elite logo as an intro animation — implement as a
-          one-shot CSS/canvas reveal on first visit, then settle into
-          this static hero. v2 motion treatment. */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-br from-primary/35 via-brand-navy to-black"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-60"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse at 75% 25%, rgba(182,32,37,0.45), transparent 55%), radial-gradient(ellipse at 15% 90%, rgba(0,53,84,0.7), transparent 55%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.08]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)",
-          backgroundSize: "26px 26px",
-        }}
-      />
-      {/* Bottom darken so the copy stays legible against any future
-          full-bleed image/video, regardless of the underlying frame. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent"
-      />
+      {/* Solid brand-navy placeholder. When ready, swap the section
+          background for a full-bleed <video poster=... autoplay muted
+          loop playsinline> or an <Image fill> of camp/drone footage —
+          Justin's brief calls for a drone-zoom intro animation as v2
+          motion treatment. */}
 
       {/* Centered play affordance for the intro video. Floats over the
           backdrop so the user knows the hero is the video. */}
@@ -814,16 +787,8 @@ function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative overflow-hidden bg-black px-5 py-24 md:px-10 md:py-32"
+      className="relative overflow-hidden bg-brand-navyDeep px-5 py-24 md:px-10 md:py-32"
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/20 blur-[140px]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-32 -left-32 h-[420px] w-[420px] rounded-full bg-brand-navy/40 blur-[140px]"
-      />
 
       <div className="relative mx-auto grid w-full max-w-[1320px] gap-14 md:grid-cols-[1.2fr_1fr] md:items-center md:gap-20">
         <div>
