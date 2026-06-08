@@ -49,6 +49,7 @@ export default function HomepagePreview() {
       <FeaturedOnStrip />
       <TestimonialsSection />
       <ContactSection />
+      <SocialFollowSection />
       <Footer />
     </main>
   );
@@ -891,6 +892,122 @@ function FormField({
         className="h-11 border border-white/15 bg-white/5 px-4 text-sm text-white placeholder-white/35 outline-none ring-primary/50 focus:ring-2"
       />
     </label>
+  );
+}
+
+/* ───────────────────────────── 06 SOCIAL ───────────────────────────── */
+
+/**
+ * Confirm handles / URLs with Justin. Footer keeps a smaller social-icon
+ * row for redundancy; this section is the explicit "follow us" CTA.
+ */
+type SocialPlatform = {
+  name: string;
+  handle: string;
+  href: string;
+  icon: typeof Instagram;
+  blurb: string;
+};
+
+const SOCIALS: SocialPlatform[] = [
+  {
+    name: "Instagram",
+    handle: "@qbelite",
+    href: "https://www.instagram.com/qbelite/",
+    icon: Instagram,
+    blurb: "Camp footage, athlete signing days, training cues.",
+  },
+  {
+    name: "YouTube",
+    handle: "@QBElite",
+    href: "https://www.youtube.com/@qbelite",
+    icon: Youtube,
+    blurb: "Full coach breakdowns, film studies, and highlight reels.",
+  },
+  {
+    name: "Facebook",
+    handle: "QB Elite",
+    href: "https://www.facebook.com/qbelite",
+    icon: Facebook,
+    blurb: "Event announcements and community updates.",
+  },
+];
+
+function SocialFollowSection() {
+  return (
+    <section
+      id="social"
+      className="relative overflow-hidden bg-brand-navy px-5 py-24 md:px-10 md:py-32"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-32 top-1/4 h-[420px] w-[420px] rounded-full bg-primary/18 blur-[140px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-32 bottom-0 h-[420px] w-[420px] rounded-full bg-[#0693e3]/15 blur-[140px]"
+      />
+
+      <div className="relative mx-auto w-full max-w-[1320px]">
+        <SectionHeader
+          number="06"
+          eyebrow="Stay Connected"
+          title={
+            <>
+              Follow{" "}
+              <span className="text-primary">The Journey.</span>
+            </>
+          }
+          subhead="Camp footage, signing-day moments, and coaching cues drop on our feeds every week."
+        />
+
+        <div className="mt-14 grid gap-5 md:grid-cols-3">
+          {SOCIALS.map((s) => (
+            <SocialCard key={s.name} platform={s} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SocialCard({ platform }: { platform: SocialPlatform }) {
+  const Icon = platform.icon;
+  return (
+    <Link
+      href={platform.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative flex flex-col overflow-hidden border border-white/12 bg-white/[0.04] p-7 transition-all hover:-translate-y-1 hover:border-primary/60 hover:bg-white/[0.08]"
+    >
+      <span
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100"
+      />
+
+      <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
+        <Icon className="h-7 w-7" strokeWidth={1.75} />
+      </div>
+
+      <p className="mt-7 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/55">
+        {platform.name}
+      </p>
+      <p className="mt-1 text-2xl font-extrabold tracking-tight text-white md:text-[26px]">
+        {platform.handle}
+      </p>
+      <p className="mt-3 flex-1 text-[14px] leading-relaxed text-white/65">
+        {platform.blurb}
+      </p>
+
+      <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-5">
+        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
+          Follow
+        </span>
+        <span className="flex h-9 w-9 items-center justify-center bg-white/10 text-white transition-colors group-hover:bg-primary">
+          <ArrowUpRight className="h-4 w-4" />
+        </span>
+      </div>
+    </Link>
   );
 }
 
