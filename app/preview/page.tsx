@@ -6,7 +6,6 @@ import {
   Dumbbell,
   Facebook,
   Instagram,
-  Mail,
   Play,
   Quote,
   Smartphone,
