@@ -373,16 +373,21 @@ function PillarCard({
 /* ───────────────────────────── 02 PEDIGREE ───────────────────────────── */
 
 /**
- * Coaches sourced from the live qbelite.com/instructors page on
- * 2026-06-08. "Coaching Staff" = full-time QB Elite staff (founders +
- * assistant coaches). "Guest Instructors" = NFL/college veterans who
- * appear at camps + film sessions. Confirm split with Justin — if any
- * names should move tiers (e.g. Justin Miller missing as a founder),
- * update here.
+ * Coaches sourced from qbelite.com/instructors (2026-06-08) plus
+ * Justin Miller added per Justin's brief. "Coaching Staff" = the three
+ * full-time QB Elite coaches. "Guest Coaches" = pro/college veterans
+ * who join camps and film sessions. Per Justin: never use "instructor"
+ * or "assistant coach" anywhere — every role label is a credential or
+ * the word "coach".
  */
 type Coach = { name: string; role: string; photo: string };
 
 const COACHING_STAFF: Coach[] = [
+  {
+    name: "Justin Miller",
+    role: "QB Elite Coach",
+    photo: "/coaches/justin_miller.webp",
+  },
   {
     name: "Dustin Smith",
     role: "Owner · QB Elite Coach",
@@ -393,19 +398,9 @@ const COACHING_STAFF: Coach[] = [
     role: "14-Yr NFL QB · Heisman Trophy Winner",
     photo: "/coaches/ty_detmer.jpg",
   },
-  {
-    name: "Landon Taylor",
-    role: "QB Elite Assistant Coach",
-    photo: "/coaches/landon_taylor.jpg",
-  },
-  {
-    name: "Max Hall",
-    role: "QB Elite Assistant Coach",
-    photo: "/coaches/max_hall.jpg",
-  },
 ];
 
-const GUEST_INSTRUCTORS: Coach[] = [
+const GUEST_COACHES: Coach[] = [
   {
     name: "Mark Brunell",
     role: "18-Yr NFL QB",
@@ -436,6 +431,16 @@ const GUEST_INSTRUCTORS: Coach[] = [
     role: "15-Yr Pro · Former D1 WR Coach",
     photo: "/coaches/ben_cahoon.jpg",
   },
+  {
+    name: "Max Hall",
+    role: "Former NFL QB · BYU All-Time Wins Leader",
+    photo: "/coaches/max_hall.jpg",
+  },
+  {
+    name: "Landon Taylor",
+    role: "Utah Football Academy Co-Founder",
+    photo: "/coaches/landon_taylor.jpg",
+  },
 ];
 
 function PedigreeSection() {
@@ -463,21 +468,21 @@ function PedigreeSection() {
           subhead="Every drill, every cue, every film clip comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros — they all coach here."
         />
 
-        {/* Coaching staff — 4-up */}
+        {/* Coaching staff — 3-up, full-time QB Elite coaches */}
         <div className="mt-16">
           <CoachTierHeader title="Coaching Staff" count={COACHING_STAFF.length} />
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
             {COACHING_STAFF.map((c) => (
               <CoachCard key={c.name} coach={c} featured />
             ))}
           </div>
         </div>
 
-        {/* Guest instructors — 6-up */}
+        {/* Guest coaches — 4-up (8 names → 2 rows of 4 on desktop) */}
         <div className="mt-16">
-          <CoachTierHeader title="Guest Instructors" count={GUEST_INSTRUCTORS.length} />
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-6">
-            {GUEST_INSTRUCTORS.map((c) => (
+          <CoachTierHeader title="Guest Coaches" count={GUEST_COACHES.length} />
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
+            {GUEST_COACHES.map((c) => (
               <CoachCard key={c.name} coach={c} />
             ))}
           </div>
