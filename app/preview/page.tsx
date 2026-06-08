@@ -2,7 +2,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   CalendarDays,
-  ChevronRight,
   Dumbbell,
   Facebook,
   Instagram,
@@ -373,26 +372,70 @@ function PillarCard({
 
 /* ───────────────────────────── 02 PEDIGREE ───────────────────────────── */
 
-const CURRENT_COACHES = ["Justin Miller", "Dustin", "Ty"];
-const GUEST_COACHES = [
-  "Mark Brunell",
-  "Kirk",
-  "Kay",
-  "Max",
-  "Jaren",
-  "Brandon",
+/**
+ * Coaches sourced from the live qbelite.com/instructors page on
+ * 2026-06-08. "Coaching Staff" = full-time QB Elite staff (founders +
+ * assistant coaches). "Guest Instructors" = NFL/college veterans who
+ * appear at camps + film sessions. Confirm split with Justin — if any
+ * names should move tiers (e.g. Justin Miller missing as a founder),
+ * update here.
+ */
+type Coach = { name: string; role: string; photo: string };
+
+const COACHING_STAFF: Coach[] = [
+  {
+    name: "Dustin Smith",
+    role: "Owner · QB Elite Coach",
+    photo: "/coaches/dustin_smith.jpg",
+  },
+  {
+    name: "Ty Detmer",
+    role: "14-Yr NFL QB · Heisman Trophy Winner",
+    photo: "/coaches/ty_detmer.jpg",
+  },
+  {
+    name: "Landon Taylor",
+    role: "QB Elite Assistant Coach",
+    photo: "/coaches/landon_taylor.jpg",
+  },
+  {
+    name: "Max Hall",
+    role: "QB Elite Assistant Coach",
+    photo: "/coaches/max_hall.jpg",
+  },
 ];
-const PEDIGREE_LOGOS = [
-  "BYU",
-  "Utah",
-  "Utah State",
-  "Boise State",
-  "USC",
-  "Oregon",
-  "Texas",
-  "NFL",
-  "XFL",
-  "CFL",
+
+const GUEST_INSTRUCTORS: Coach[] = [
+  {
+    name: "Mark Brunell",
+    role: "18-Yr NFL QB",
+    photo: "/coaches/mark_brunell.jpg",
+  },
+  {
+    name: "Kurt Warner",
+    role: "2x NFL MVP · 12-Yr NFL QB",
+    photo: "/coaches/kurt_warner.jpg",
+  },
+  {
+    name: "Koy Detmer",
+    role: "10-Yr NFL QB",
+    photo: "/coaches/koy_detmer.jpg",
+  },
+  {
+    name: "Brandon Doman",
+    role: "Former D1 Coach · NFL QB",
+    photo: "/coaches/brandon_doman.jpg",
+  },
+  {
+    name: "John Madsen",
+    role: "Former NFL TE",
+    photo: "/coaches/john_madsen.jpg",
+  },
+  {
+    name: "Ben Cahoon",
+    role: "15-Yr Pro · Former D1 WR Coach",
+    photo: "/coaches/ben_cahoon.jpg",
+  },
 ];
 
 function PedigreeSection() {
@@ -417,38 +460,30 @@ function PedigreeSection() {
               <span className="text-primary">Been There.</span>
             </>
           }
-          subhead="QB Elite is led by current and former college and pro quarterbacks. Every drill, every cue, every film clip comes from coaches who've lived the position — not theory."
+          subhead="Every drill, every cue, every film clip comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros — they all coach here."
         />
 
-        {/* Pedigree logo strip */}
-        <div className="mt-12 border-y border-white/10 py-8">
-          <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 md:gap-x-14">
-            {PEDIGREE_LOGOS.map((logo) => (
-              <li
-                key={logo}
-                className="text-[18px] font-black uppercase tracking-[0.12em] text-white/40 transition-colors hover:text-white"
-              >
-                {logo}
-              </li>
+        {/* Coaching staff — 4-up */}
+        <div className="mt-16">
+          <CoachTierHeader title="Coaching Staff" count={COACHING_STAFF.length} />
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
+            {COACHING_STAFF.map((c) => (
+              <CoachCard key={c.name} coach={c} featured />
             ))}
-          </ul>
+          </div>
         </div>
 
-        {/* Coach roster */}
-        <div className="mt-16 grid gap-12 md:grid-cols-[1fr_1fr] md:gap-20">
-          <CoachColumn
-            title="Current Coaches"
-            names={CURRENT_COACHES}
-            blurb="Full-time QB Elite staff — running camps, leading 1:1 sessions, and building the app curriculum every week."
-          />
-          <CoachColumn
-            title="Guest Coaches"
-            names={GUEST_COACHES}
-            blurb="Pro and college veterans who join camps and film sessions throughout the year to share what they've learned at the highest level."
-          />
+        {/* Guest instructors — 6-up */}
+        <div className="mt-16">
+          <CoachTierHeader title="Guest Instructors" count={GUEST_INSTRUCTORS.length} />
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-6">
+            {GUEST_INSTRUCTORS.map((c) => (
+              <CoachCard key={c.name} coach={c} />
+            ))}
+          </div>
         </div>
 
-        <div className="mt-14 flex flex-wrap items-center gap-4">
+        <div className="mt-16 flex flex-wrap items-center gap-4">
           <Link href="#about-detail">
             <Button
               size="lg"
@@ -467,40 +502,52 @@ function PedigreeSection() {
   );
 }
 
-function CoachColumn({
-  title,
-  names,
-  blurb,
-}: {
-  title: string;
-  names: string[];
-  blurb: string;
-}) {
+function CoachTierHeader({ title, count }: { title: string; count: number }) {
   return (
-    <div>
-      <div className="flex items-baseline justify-between">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
-          {title}
-        </p>
-        <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/40">
-          {names.length} Total
-        </span>
-      </div>
-      <p className="mt-4 max-w-[420px] text-sm leading-relaxed text-white/65">
-        {blurb}
+    <div className="flex items-end justify-between border-b border-white/10 pb-3">
+      <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
+        {title}
       </p>
-      <ul className="mt-7 grid grid-cols-2 gap-x-6 gap-y-3">
-        {names.map((n) => (
-          <li
-            key={n}
-            className="flex items-center gap-2.5 border-b border-white/8 pb-2.5 text-[14px] font-extrabold uppercase tracking-[0.08em] text-white"
-          >
-            <ChevronRight className="h-3.5 w-3.5 text-primary" />
-            {n}
-          </li>
-        ))}
-      </ul>
+      <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/40">
+        {count} Total
+      </span>
     </div>
+  );
+}
+
+function CoachCard({ coach, featured = false }: { coach: Coach; featured?: boolean }) {
+  return (
+    <figure className="group relative overflow-hidden border border-white/10 bg-white/[0.03] transition-colors hover:border-primary/50">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-brand-navyDeep">
+        <Image
+          src={coach.photo}
+          alt={coach.name}
+          fill
+          sizes="(min-width: 1024px) 16vw, (min-width: 768px) 25vw, 50vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        {/* Bottom darken keeps the name legible over busy headshots */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/55 to-transparent"
+        />
+        {/* Red corner accent on featured (staff) cards */}
+        {featured && (
+          <span
+            aria-hidden
+            className="absolute left-0 top-0 h-8 w-1 bg-primary"
+          />
+        )}
+      </div>
+      <figcaption className="absolute inset-x-0 bottom-0 p-4">
+        <p className="text-[14px] font-extrabold uppercase leading-tight tracking-[0.06em] text-white">
+          {coach.name}
+        </p>
+        <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">
+          {coach.role}
+        </p>
+      </figcaption>
+    </figure>
   );
 }
 
