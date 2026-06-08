@@ -269,10 +269,11 @@ function PillarsSection() {
   return (
     <section
       id="pillars"
-      className="relative bg-brand-navyDeep px-5 py-24 md:px-10 md:py-32"
+      className="relative bg-white px-5 py-24 text-foreground md:px-10 md:py-32"
     >
       <div className="mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="01"
           eyebrow="Training & Programs"
           title={
@@ -291,7 +292,6 @@ function PillarsSection() {
           ))}
         </div>
       </div>
-      <DashedDivider position="bottom" tone="light" />
     </section>
   );
 }
@@ -307,9 +307,8 @@ function PillarCard({
   return (
     <Link
       href={href}
-      className="group relative flex flex-col overflow-hidden border border-white/12 bg-gradient-to-br from-white/[0.04] to-transparent p-8 transition-all hover:border-primary/60 hover:bg-white/[0.06]"
+      className="group relative flex flex-col overflow-hidden border border-brand-navy/12 bg-white p-8 shadow-[0_4px_20px_rgba(0,41,71,0.05)] transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_18px_40px_rgba(0,41,71,0.10)]"
     >
-      {/* Top accent rail — animates in on hover */}
       <span
         aria-hidden
         className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100"
@@ -319,23 +318,23 @@ function PillarCard({
         <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
           <Icon className="h-7 w-7" strokeWidth={1.75} />
         </div>
-        <span className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-white/45">
+        <span className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-brand-navy/55">
           {eyebrow}
         </span>
       </div>
 
-      <h3 className="mt-8 text-3xl font-black uppercase tracking-tight text-white md:text-[34px]">
+      <h3 className="mt-8 text-3xl font-black uppercase tracking-tight text-brand-navy md:text-[34px]">
         {title}
       </h3>
-      <p className="mt-4 flex-1 text-[15px] leading-relaxed text-white/65">
+      <p className="mt-4 flex-1 text-[15px] leading-relaxed text-foreground/70">
         {description}
       </p>
 
-      <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-5">
-        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
+      <div className="mt-8 flex items-center justify-between border-t border-brand-navy/10 pt-5">
+        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-navy">
           {cta}
         </span>
-        <span className="flex h-9 w-9 items-center justify-center bg-white/10 text-white transition-colors group-hover:bg-primary">
+        <span className="flex h-9 w-9 items-center justify-center bg-brand-navy/8 text-brand-navy transition-colors group-hover:bg-primary group-hover:text-white">
           <ArrowRight className="h-4 w-4" />
         </span>
       </div>
@@ -730,21 +729,21 @@ const TESTIMONIALS = [
 
 function TestimonialsSection() {
   return (
-    <section className="relative bg-brand-navyDeep px-5 py-24 md:px-10 md:py-32">
+    <section className="relative bg-white px-5 py-24 text-foreground md:px-10 md:py-32">
       <div className="mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="04"
           eyebrow="Testimonials"
           title={<span className="text-primary">Hear From Our Athletes.</span>}
         />
 
-        <div className="mt-14 grid gap-px bg-white/10 md:grid-cols-3">
+        <div className="mt-14 grid gap-5 md:grid-cols-3">
           {TESTIMONIALS.map((t) => (
             <TestimonialCard key={t.name} {...t} />
           ))}
         </div>
       </div>
-      <DashedDivider position="bottom" tone="light" />
     </section>
   );
 }
@@ -755,24 +754,24 @@ function TestimonialCard({
   role,
 }: (typeof TESTIMONIALS)[number]) {
   return (
-    <figure className="flex flex-col bg-brand-navyDeep p-9">
+    <figure className="flex flex-col border border-brand-navy/12 bg-white p-9 shadow-[0_4px_20px_rgba(0,41,71,0.05)]">
       <div className="flex items-center gap-1 text-primary">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star key={i} className="h-4 w-4 fill-current" />
         ))}
       </div>
-      <blockquote className="mt-6 flex-1 text-[16px] leading-relaxed text-white/85">
+      <blockquote className="mt-6 flex-1 text-[16px] leading-relaxed text-foreground/85">
         &ldquo;{quote}&rdquo;
       </blockquote>
-      <figcaption className="mt-9 flex items-center gap-4 border-t border-white/10 pt-5">
+      <figcaption className="mt-9 flex items-center gap-4 border-t border-brand-navy/10 pt-5">
         <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-sm font-extrabold uppercase text-white">
           {name.charAt(0)}
         </span>
         <div>
-          <p className="text-[14px] font-extrabold uppercase tracking-[0.08em] text-white">
+          <p className="text-[14px] font-extrabold uppercase tracking-[0.08em] text-brand-navy">
             {name}
           </p>
-          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/45">
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground/50">
             {role}
           </p>
         </div>
@@ -1131,16 +1130,26 @@ function SectionHeader({
   eyebrow,
   title,
   subhead,
+  surface = "dark",
 }: {
   number: string;
   eyebrow: string;
   title: React.ReactNode;
   subhead?: string;
+  /** Sets the foreground palette. "dark" = white text on navy bg;
+   *  "light" = navy text on white bg. Cards in the section should
+   *  receive the same prop. */
+  surface?: "dark" | "light";
 }) {
+  const onLight = surface === "light";
   return (
     <div className="grid gap-8 md:grid-cols-[auto_1fr] md:gap-12">
       <div className="flex items-start gap-5">
-        <span className="font-black leading-none text-white/15 text-[60px] md:text-[84px]">
+        <span
+          className={`text-[60px] font-black leading-none md:text-[84px] ${
+            onLight ? "text-brand-navy/15" : "text-white/15"
+          }`}
+        >
           {number}
         </span>
         <span className="mt-2 h-px w-16 bg-primary md:mt-4 md:w-20" />
@@ -1149,11 +1158,19 @@ function SectionHeader({
         <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
           {eyebrow}
         </p>
-        <h2 className="mt-4 text-[34px] font-black uppercase leading-[1.02] tracking-tight text-white md:text-[56px] lg:text-[64px]">
+        <h2
+          className={`mt-4 text-[34px] font-black uppercase leading-[1.02] tracking-tight md:text-[56px] lg:text-[64px] ${
+            onLight ? "text-brand-navy" : "text-white"
+          }`}
+        >
           {title}
         </h2>
         {subhead && (
-          <p className="mt-5 max-w-[640px] text-base leading-relaxed text-white/65 md:text-lg">
+          <p
+            className={`mt-5 max-w-[640px] text-base leading-relaxed md:text-lg ${
+              onLight ? "text-foreground/70" : "text-white/65"
+            }`}
+          >
             {subhead}
           </p>
         )}
