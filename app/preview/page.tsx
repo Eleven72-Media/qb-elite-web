@@ -13,6 +13,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
+import {
+  DashedDivider,
+  SectionHeader,
+} from "@/components/marketing/section-header";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
@@ -40,7 +44,6 @@ export const metadata = {
 export default function HomepagePreview() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-brand-navyDeep text-white">
-      <FloatingNav />
       <Hero />
       <PillarsSection />
       <PedigreeSection />
@@ -50,69 +53,7 @@ export default function HomepagePreview() {
       <TestimonialsSection />
       <ContactSection />
       <SocialFollowSection />
-      <Footer />
     </main>
-  );
-}
-
-/* ───────────────────────────── NAV ───────────────────────────── */
-
-const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "QB Academy", href: "#training" },
-  { label: "Camps", href: "#camps" },
-  { label: "App", href: "#app" },
-  { label: "Store", href: "#shop" },
-  { label: "About Us", href: "#pedigree" },
-];
-
-function FloatingNav() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-brand-navyDeep/85 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-[1320px] items-center justify-between px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3 md:px-10">
-        <Link href="#top" className="flex items-center gap-2.5">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 p-1.5 ring-1 ring-white/20">
-            <Image
-              src="/logo.png"
-              alt="QB Elite"
-              width={36}
-              height={36}
-              className="object-contain"
-            />
-          </div>
-          <span className="font-display text-xl uppercase tracking-[0.08em] text-white">
-            QB Elite
-          </span>
-        </Link>
-
-        <nav className="hidden items-center gap-0.5 rounded-full bg-white/5 px-1.5 py-1.5 ring-1 ring-white/10 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="rounded-full px-4 py-2 text-[12px] font-bold uppercase tracking-[0.12em] text-white/80 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        <Link href="#contact" className="hidden sm:inline-flex">
-          <Button
-            size="sm"
-            className="h-10 rounded-none bg-primary px-5 text-[11px] font-extrabold uppercase tracking-[0.16em] text-white shadow-md hover:bg-primary/90"
-          >
-            Train With Us
-          </Button>
-        </Link>
-
-        <Link
-          href="#contact"
-          className="inline-flex items-center gap-1 bg-primary px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white sm:hidden"
-        >
-          Menu
-        </Link>
-      </div>
-    </header>
   );
 }
 
@@ -187,7 +128,7 @@ function Hero() {
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
             </Link>
-            <Link href="#training">
+            <Link href="/preview/qb-academy">
               <Button
                 size="lg"
                 variant="outline"
@@ -240,7 +181,7 @@ const PILLARS = [
     description:
       "Multi-day intensives across Utah and the Mountain West. Mechanics, footwork, film, and competition in a small-group setting.",
     cta: "Schedule / Upcoming Camps",
-    href: "#camps",
+    href: "/preview/camps",
     icon: CalendarDays,
   },
   {
@@ -250,7 +191,7 @@ const PILLARS = [
     description:
       "5-week, 10-week, and extended prepaid training blocks with QB Elite coaches. Paired by zip code so you're working with the right coach for your region.",
     cta: "Start Your Block",
-    href: "#training",
+    href: "/preview/qb-academy",
     icon: Dumbbell,
   },
   {
@@ -465,7 +406,7 @@ function PedigreeSection() {
         </div>
 
         <div className="mt-16 flex flex-wrap items-center gap-4">
-          <Link href="#about-detail">
+          <Link href="/preview/about">
             <Button
               size="lg"
               className="h-14 rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.45)] hover:bg-primary/90"
@@ -975,228 +916,3 @@ function SocialCard({ platform }: { platform: SocialPlatform }) {
   );
 }
 
-/* ───────────────────────────── FOOTER ───────────────────────────── */
-
-function Footer() {
-  return (
-    <footer className="border-t border-white/10 bg-brand-navyDeep px-5 pt-20 text-white md:px-10">
-      <div className="mx-auto grid w-full max-w-[1320px] gap-12 md:grid-cols-[1.4fr_0.9fr_0.9fr_1.2fr]">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white p-1.5 shadow-md">
-              <Image
-                src="/logo.png"
-                alt="QB Elite"
-                width={36}
-                height={36}
-                className="object-contain"
-              />
-            </div>
-            <span className="text-base font-extrabold uppercase tracking-[0.14em] text-white">
-              QB Elite
-            </span>
-          </div>
-          <p className="mt-5 max-w-[300px] text-sm leading-relaxed text-white/65">
-            Quarterback training built by QBs who&rsquo;ve played at the
-            highest level.
-          </p>
-          <div className="mt-7 flex items-center gap-2">
-            <SocialIcon icon={Instagram} href="#" label="Instagram" />
-            <SocialIcon icon={Youtube} href="#" label="YouTube" />
-            <SocialIcon icon={Facebook} href="#" label="Facebook" />
-          </div>
-        </div>
-
-        <FooterColumn
-          title="Train"
-          links={[
-            { label: "QB Academy", href: "#training" },
-            { label: "Camps", href: "#camps" },
-            { label: "QB Elite App", href: "https://qbeliteapp.com" },
-            { label: "Store", href: "#shop" },
-          ]}
-        />
-        <FooterColumn
-          title="About Us"
-          links={[
-            { label: "Coaches", href: "#pedigree" },
-            { label: "Alumni", href: "#pedigree" },
-            { label: "Sponsors", href: "#pedigree" },
-            { label: "Contact", href: "#contact" },
-          ]}
-        />
-
-        <div>
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
-            Newsletter
-          </p>
-          <p className="mt-3 text-sm text-white/65">
-            Camp schedules, training tips, and roster news — straight to
-            your inbox.
-          </p>
-          <form className="mt-5 flex flex-col gap-2 sm:flex-row">
-            <input
-              type="email"
-              required
-              placeholder="you@example.com"
-              className="h-11 flex-1 border border-white/15 bg-white/5 px-4 text-sm text-white placeholder-white/40 outline-none ring-primary/50 focus:ring-2"
-            />
-            <Button
-              type="submit"
-              className="h-11 rounded-none bg-primary px-5 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white hover:bg-primary/90"
-            >
-              Join
-            </Button>
-          </form>
-        </div>
-      </div>
-
-      <div className="mx-auto mt-16 flex w-full max-w-[1320px] flex-col items-center justify-between gap-4 border-t border-white/10 py-7 text-[11px] font-bold uppercase tracking-[0.16em] text-white/45 md:flex-row">
-        <p>© {new Date().getFullYear()} Eleven72 Media. All Rights Reserved.</p>
-        <div className="flex items-center gap-6">
-          <Link
-            href="https://qb-elite-launch.web.app/terms-of-service"
-            className="hover:text-white"
-          >
-            Terms
-          </Link>
-          <Link
-            href="https://qb-elite-launch.web.app/privacy-policy"
-            className="hover:text-white"
-          >
-            Privacy
-          </Link>
-          <Link href="mailto:jmiller@qbelite.com" className="hover:text-white">
-            Support
-          </Link>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
-function FooterColumn({
-  title,
-  links,
-}: {
-  title: string;
-  links: { label: string; href: string }[];
-}) {
-  return (
-    <div>
-      <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
-        {title}
-      </p>
-      <ul className="mt-5 space-y-3">
-        {links.map((l) => (
-          <li key={l.label}>
-            <Link
-              href={l.href}
-              className="text-sm font-semibold text-white/70 hover:text-white"
-            >
-              {l.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function SocialIcon({
-  icon: Icon,
-  href,
-  label,
-}: {
-  icon: typeof Instagram;
-  href: string;
-  label: string;
-}) {
-  return (
-    <Link
-      href={href}
-      aria-label={label}
-      className="flex h-10 w-10 items-center justify-center rounded-full bg-white/8 ring-1 ring-white/15 transition-colors hover:bg-primary hover:ring-primary"
-    >
-      <Icon className="h-4 w-4 text-white" strokeWidth={1.75} />
-    </Link>
-  );
-}
-
-/* ───────────────────────────── SHARED BITS ───────────────────────────── */
-
-function SectionHeader({
-  number,
-  eyebrow,
-  title,
-  subhead,
-  surface = "dark",
-}: {
-  number: string;
-  eyebrow: string;
-  title: React.ReactNode;
-  subhead?: string;
-  /** Sets the foreground palette. "dark" = white text on navy bg;
-   *  "light" = navy text on white bg. Cards in the section should
-   *  receive the same prop. */
-  surface?: "dark" | "light";
-}) {
-  const onLight = surface === "light";
-  return (
-    <div className="grid gap-8 md:grid-cols-[auto_1fr] md:gap-12">
-      <div className="flex items-start gap-5">
-        <span
-          className={`font-display text-[60px] leading-none md:text-[84px] ${
-            onLight ? "text-brand-navy/15" : "text-white/15"
-          }`}
-        >
-          {number}
-        </span>
-        <span className="mt-2 h-px w-16 bg-primary md:mt-4 md:w-20" />
-      </div>
-      <div>
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
-          {eyebrow}
-        </p>
-        <h2
-          className={`mt-4 font-display text-[40px] uppercase leading-[1.02] tracking-tight md:text-[64px] lg:text-[80px] ${
-            onLight ? "text-brand-navy" : "text-white"
-          }`}
-        >
-          {title}
-        </h2>
-        {subhead && (
-          <p
-            className={`mt-5 max-w-[640px] text-base leading-relaxed md:text-lg ${
-              onLight ? "text-foreground/70" : "text-white/65"
-            }`}
-          >
-            {subhead}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function DashedDivider({
-  position,
-  tone = "light",
-}: {
-  position: "top" | "bottom";
-  tone?: "light" | "dark";
-}) {
-  return (
-    <div
-      aria-hidden
-      className={`pointer-events-none absolute inset-x-0 ${
-        position === "top" ? "top-0" : "bottom-0"
-      } h-px`}
-      style={{
-        backgroundImage: `repeating-linear-gradient(to right, ${
-          tone === "light" ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.15)"
-        } 0 8px, transparent 8px 16px)`,
-      }}
-    />
-  );
-}
