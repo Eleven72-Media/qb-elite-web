@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 const NAV_LINKS: { label: string; href: string }[] = [
   { label: "QB Academy", href: "/preview/qb-academy" },
   { label: "Camps", href: "/preview/camps" },
-  { label: "App", href: "https://qbeliteapp.com" },
+  { label: "App", href: "/preview/app" },
   { label: "Store", href: "/preview/store" },
   { label: "About Us", href: "/preview/about" },
 ];

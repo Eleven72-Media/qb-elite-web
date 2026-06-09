@@ -39,7 +39,7 @@ export function Footer() {
           links={[
             { label: "QB Academy", href: "/preview/qb-academy" },
             { label: "Camps", href: "/preview/camps" },
-            { label: "QB Elite App", href: "https://qbeliteapp.com" },
+            { label: "QB Elite App", href: "/preview/app" },
             { label: "Store", href: "/preview/store" },
           ]}
         />

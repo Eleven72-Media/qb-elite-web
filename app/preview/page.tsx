@@ -201,7 +201,7 @@ const PILLARS = [
     description:
       "Training on the go — nonstop improvement even when you're away from coaches. Daily workouts, film breakdowns, meal plans, and live Huddles on iPhone, Android, and web.",
     cta: "Access The App",
-    href: "https://qbeliteapp.com",
+    href: "/preview/app",
     icon: Smartphone,
   },
 ] as const;
