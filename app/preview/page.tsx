@@ -375,9 +375,14 @@ function PedigreeSection() {
       />
 
       <div className="relative mx-auto w-full max-w-[1320px]">
-        {/* Header row — SectionHeader on the left, "See All" CTA pinned
-            to the bottom-right of the header on desktop. Stacks on mobile. */}
-        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">
+        {/* Philosophy block leads — north-star goal + the three coaching
+            pillars set the WHY before the WHO (coaches) below. */}
+        <PhilosophyBlock />
+
+        {/* Coaches header row — flows naturally out of the philosophy.
+            SectionHeader on the left, "See All" CTA pinned to the
+            bottom-right on desktop. Stacks on mobile. */}
+        <div className="mt-24 flex flex-col gap-8 border-t border-white/10 pt-16 md:flex-row md:items-end md:justify-between md:gap-12">
           <div className="flex-1">
             <SectionHeader
               number="02"
@@ -408,13 +413,8 @@ function PedigreeSection() {
           </div>
         </div>
 
-        {/* Philosophy block — north-star goal + the three coaching pillars.
-            Sits between the section header and the coach grids so the
-            reader sees WHAT we teach before WHO teaches it. */}
-        <PhilosophyBlock />
-
         {/* Coaching staff — 3-up, full-time QB Elite coaches */}
-        <div className="mx-auto mt-20 max-w-2xl">
+        <div className="mx-auto mt-16 max-w-2xl">
           <CoachTierHeader title="Coaching Staff" count={COACHING_STAFF.length} />
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
             {COACHING_STAFF.map((c) => (
@@ -462,31 +462,22 @@ const PHILOSOPHY_PILLARS = [
 
 function PhilosophyBlock() {
   return (
-    <div className="mt-20 border-t border-white/10 pt-16">
-      <div className="grid gap-8 md:grid-cols-[auto_1fr] md:gap-12">
-        <div className="flex items-start gap-5">
-          <span className="font-display text-[60px] leading-none text-white/15 md:text-[84px]">
-            ·
-          </span>
-          <span className="mt-2 h-px w-16 bg-primary md:mt-4 md:w-20" />
-        </div>
-        <div>
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
-            Our Philosophy
-          </p>
-          <h3 className="mt-4 font-display text-[32px] uppercase leading-[1.05] tracking-tight text-white md:text-[48px] lg:text-[56px]">
-            The Goal Is{" "}
-            <span className="text-primary">
-              On-Time, Consistent Throws.
-            </span>
-          </h3>
-          <p className="mt-5 max-w-[680px] text-base leading-relaxed text-white/65 md:text-lg">
-            Every drill, every rep, every film clip at QB Elite is built
-            around one outcome: getting the ball out on time, to the right
-            spot, on every snap. We get there through three pillars.
-          </p>
-        </div>
+    <div>
+      <div className="flex items-center gap-4">
+        <span className="h-px w-16 bg-primary md:w-20" />
+        <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
+          Our Philosophy
+        </p>
       </div>
+      <h3 className="mt-5 font-display text-[36px] uppercase leading-[1.02] tracking-tight text-white md:text-[56px] lg:text-[68px]">
+        The Goal Is{" "}
+        <span className="text-primary">On-Time, Consistent Throws.</span>
+      </h3>
+      <p className="mt-5 max-w-[720px] text-base leading-relaxed text-white/65 md:text-lg">
+        Every drill, every rep, every film clip at QB Elite is built around
+        one outcome: getting the ball out on time, to the right spot, on
+        every snap. We get there through three pillars.
+      </p>
 
       <div className="mt-12 grid gap-4 md:grid-cols-3 md:gap-5">
         {PHILOSOPHY_PILLARS.map((p) => (
