@@ -42,10 +42,12 @@
        instead of the warm dark text foreground. */
     --brand-navy: 203 100% 17%;
     --brand-navy-deep: 205 100% 14%;
-    /* Brand graphite — warm gray third color used to break the
+    /* Brand graphite — light cool gray third color used to break the
        navy/white rhythm on credibility (03) and social (06) sections
-       of the marketing landing page. Roughly #322E2A. */
-    --brand-graphite: 20 8% 18%;
+       of the marketing landing page. #e5e6e5 — experimental light
+       variant; if kept, the `text-white` overrides on the graphite
+       sections need to flip to dark text. */
+    --brand-graphite: 120 2% 90%;
   }
 
   .dark {
