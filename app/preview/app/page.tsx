@@ -1,13 +1,10 @@
 import {
-  Apple,
   ArrowRight,
-  ArrowUpRight,
   BookOpen,
   Brain,
   ChevronDown,
   Dumbbell,
   Mic,
-  Play,
   Smartphone,
   Trophy,
   Users,
@@ -30,8 +27,6 @@ export const metadata = {
     "Train like a pro. Lead like a champion. Play with confidence. The QB Elite app — mechanics, film study, weight room, nutrition, and live coach huddles in your pocket.",
 };
 
-const APP_STORE_URL = "https://apps.apple.com/us/app/qb-elite/id6753002596";
-const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.quarterbackelite.app";
 const REGISTER_URL = "/register";
 
 /**
@@ -117,10 +112,6 @@ function Hero() {
             </Link>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <StoreButton store="apple" />
-            <StoreButton store="google" />
-          </div>
         </div>
 
         {/* Right — phone-frame placeholder */}
@@ -150,32 +141,6 @@ function Hero() {
       </div>
       <DashedDivider position="bottom" tone="light" />
     </section>
-  );
-}
-
-function StoreButton({ store }: { store: "apple" | "google" }) {
-  const isApple = store === "apple";
-  const href = isApple ? APP_STORE_URL : PLAY_STORE_URL;
-  const label = isApple ? "App Store" : "Google Play";
-  const sub = isApple ? "Download on the" : "Get it on";
-  const Icon = isApple ? Apple : Play;
-  return (
-    <Link
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group inline-flex h-12 items-center gap-3 border border-white/25 bg-white/5 px-4 backdrop-blur transition-colors hover:border-primary/60 hover:bg-white/10"
-    >
-      <Icon className="h-5 w-5 text-white" strokeWidth={1.75} />
-      <span className="flex flex-col text-left leading-none">
-        <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">
-          {sub}
-        </span>
-        <span className="mt-0.5 font-display text-[16px] uppercase tracking-tight text-white">
-          {label}
-        </span>
-      </span>
-    </Link>
   );
 }
 
@@ -845,53 +810,15 @@ function FinalCta() {
             Android, and the web.
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row md:flex-col lg:flex-row">
-          <Link href={REGISTER_URL}>
-            <Button
-              size="lg"
-              className="h-14 rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.55)] hover:bg-primary/90"
-            >
-              Start Free Trial
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Link
-              href={APP_STORE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-14 items-center gap-3 border border-white/25 bg-white/5 px-5 hover:border-primary/60"
-            >
-              <Apple className="h-5 w-5 text-white" strokeWidth={1.75} />
-              <span className="flex flex-col text-left leading-none">
-                <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">
-                  Download
-                </span>
-                <span className="font-display text-[14px] uppercase tracking-tight text-white">
-                  App Store
-                </span>
-              </span>
-              <ArrowUpRight className="ml-2 h-4 w-4 text-white/45" />
-            </Link>
-            <Link
-              href={PLAY_STORE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-14 items-center gap-3 border border-white/25 bg-white/5 px-5 hover:border-primary/60"
-            >
-              <Play className="h-5 w-5 text-white" strokeWidth={1.75} />
-              <span className="flex flex-col text-left leading-none">
-                <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/65">
-                  Get it on
-                </span>
-                <span className="font-display text-[14px] uppercase tracking-tight text-white">
-                  Google Play
-                </span>
-              </span>
-              <ArrowUpRight className="ml-2 h-4 w-4 text-white/45" />
-            </Link>
-          </div>
-        </div>
+        <Link href={REGISTER_URL}>
+          <Button
+            size="lg"
+            className="h-14 rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.55)] hover:bg-primary/90"
+          >
+            Start Free Trial
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
       </div>
     </section>
   );
