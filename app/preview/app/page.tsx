@@ -5,7 +5,6 @@ import {
   ChevronDown,
   Dumbbell,
   Mic,
-  Smartphone,
   Trophy,
   Users,
   Utensils,
@@ -117,28 +116,19 @@ function Hero() {
 
         </div>
 
-        {/* Right — phone-frame placeholder */}
+        {/* Right — real app composition (three-phone fan from
+            qbelite.com app graphic). Drop the asset at
+            /public/app-hero.png to swap. */}
         <div className="relative hidden md:block">
-          <div className="relative mx-auto aspect-[9/16] w-full max-w-[340px] overflow-hidden rounded-[40px] bg-brand-navyDeep ring-1 ring-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.6)]">
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-br from-primary/25 via-brand-navy to-black"
+          <div className="relative mx-auto w-full max-w-[520px]">
+            <Image
+              src="/app-hero.png"
+              alt="QB Elite app — Classroom, Daily Grind, and Nutrition screens"
+              width={1100}
+              height={920}
+              priority
+              className="h-auto w-full drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-7 text-center text-white">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-                <Smartphone className="h-7 w-7" strokeWidth={1.5} />
-              </div>
-              <p className="mt-6 font-display text-[24px] uppercase leading-tight tracking-tight text-white">
-                Your Daily
-                <br />
-                <span className="text-primary">Training Plan.</span>
-              </p>
-              <p className="mt-4 text-[12px] font-bold uppercase tracking-[0.18em] text-white/65">
-                In Your Pocket
-              </p>
-            </div>
-            <span aria-hidden className="absolute left-0 top-0 h-12 w-1 bg-primary" />
-            <span aria-hidden className="absolute left-0 top-0 h-1 w-12 bg-primary" />
           </div>
         </div>
       </div>
