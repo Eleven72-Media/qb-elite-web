@@ -146,11 +146,6 @@ type Coach = { name: string; role: string; photo: string };
 
 const COACHING_STAFF: Coach[] = [
   {
-    name: "Justin Miller",
-    role: "QB Elite Coach",
-    photo: "/coaches/justin_miller.webp",
-  },
-  {
     name: "Dustin Smith",
     role: "Owner · QB Elite Coach",
     photo: "/coaches/dustin_smith.jpg",
@@ -159,6 +154,11 @@ const COACHING_STAFF: Coach[] = [
     name: "Ty Detmer",
     role: "14-Yr NFL QB · Heisman Trophy Winner",
     photo: "/coaches/ty_detmer.jpg",
+  },
+  {
+    name: "Justin Miller",
+    role: "QB Elite Coach",
+    photo: "/coaches/justin_miller.webp",
   },
 ];
 
@@ -234,7 +234,7 @@ function Coaches() {
           subhead="Every cue, every drill, every film clip comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros — they all coach here."
         />
 
-        <div className="mt-16">
+        <div className="mx-auto mt-16 max-w-2xl">
           <CoachTierHeader title="Coaching Staff" count={COACHING_STAFF.length} />
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
             {COACHING_STAFF.map((c) => (
@@ -243,7 +243,7 @@ function Coaches() {
           </div>
         </div>
 
-        <div className="mt-16">
+        <div className="mx-auto mt-16 max-w-3xl">
           <CoachTierHeader title="Guest Coaches" count={GUEST_COACHES.length} />
           <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
             {GUEST_COACHES.map((c) => (
