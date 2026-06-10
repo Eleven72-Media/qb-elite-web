@@ -314,14 +314,15 @@ function UpcomingCamps() {
   return (
     <section
       id="schedule"
-      className="relative bg-brand-graphite px-5 py-24 text-white md:px-10 md:py-32"
+      className="relative bg-brand-graphite px-5 py-24 text-foreground md:px-10 md:py-32"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/18 blur-[140px]"
+        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[140px]"
       />
       <div className="relative mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="02"
           eyebrow="Upcoming Camps"
           title={
@@ -347,15 +348,15 @@ function CampDayBlock({ day }: { day: CampDay }) {
     <div>
       <div className="flex items-center gap-4">
         <CalendarDays className="h-5 w-5 text-primary" strokeWidth={2} />
-        <p className="font-display text-[28px] uppercase tracking-tight text-white md:text-[32px]">
+        <p className="font-display text-[28px] uppercase tracking-tight text-brand-navy md:text-[32px]">
           {day.weekday}
-          <span className="text-white/55"> · </span>
+          <span className="text-brand-navy/55"> · </span>
           {day.monthDay}
         </p>
-        <span className="ml-2 inline-flex items-center rounded-full bg-primary/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-primary">
+        <span className="ml-2 inline-flex items-center rounded-full bg-primary/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-primary">
           {day.camps.length} Camps
         </span>
-        <span className="h-px flex-1 bg-white/10" />
+        <span className="h-px flex-1 bg-brand-navy/12" />
       </div>
 
       <div className="mt-6 grid gap-5 md:grid-cols-2">
@@ -369,14 +370,14 @@ function CampDayBlock({ day }: { day: CampDay }) {
 
 function CampCard({ camp }: { camp: Camp }) {
   return (
-    <article className="group relative flex flex-col overflow-hidden border border-white/12 bg-white/[0.04] p-7 transition-all hover:-translate-y-1 hover:border-primary/60 hover:bg-white/[0.08]">
+    <article className="group relative flex flex-col overflow-hidden border border-brand-navy/12 bg-white p-7 shadow-[0_4px_20px_rgba(0,41,71,0.05)] transition-all hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_rgba(0,41,71,0.10)]">
       <span
         aria-hidden
         className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100"
       />
 
       <div className="flex items-start justify-between gap-4">
-        <h3 className="font-display text-[28px] uppercase leading-tight tracking-tight text-white md:text-[32px]">
+        <h3 className="font-display text-[28px] uppercase leading-tight tracking-tight text-brand-navy md:text-[32px]">
           {camp.title}
         </h3>
         <div className="shrink-0 text-right">
@@ -386,14 +387,14 @@ function CampCard({ camp }: { camp: Camp }) {
         </div>
       </div>
 
-      <p className="mt-4 text-[14px] leading-relaxed text-white/70">
+      <p className="mt-4 text-[14px] leading-relaxed text-foreground/70">
         {camp.description}
       </p>
 
-      <dl className="mt-6 grid grid-cols-2 gap-y-3 border-y border-white/10 py-5 text-[12px]">
+      <dl className="mt-6 grid grid-cols-2 gap-y-3 border-y border-brand-navy/10 py-5 text-[12px]">
         <CampMeta icon={MapPin} label="Location">
           {camp.location}
-          <span className="block text-white/55">{camp.region}</span>
+          <span className="block text-foreground/55">{camp.region}</span>
         </CampMeta>
         <CampMeta icon={Clock} label="Time">
           {camp.time}
@@ -411,7 +412,7 @@ function CampCard({ camp }: { camp: Camp }) {
       </dl>
 
       <div className="mt-6 flex items-center justify-between">
-        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
+        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-navy">
           Secure Your Spot
         </span>
         <Link
@@ -439,10 +440,10 @@ function CampMeta({
     <div className="flex items-start gap-3">
       <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={2} />
       <div>
-        <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/45">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-foreground/55">
           {label}
         </p>
-        <p className="mt-0.5 text-[13px] font-semibold text-white">
+        <p className="mt-0.5 text-[13px] font-semibold text-brand-navy">
           {children}
         </p>
       </div>

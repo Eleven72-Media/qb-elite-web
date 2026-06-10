@@ -353,10 +353,11 @@ function Alumni() {
   return (
     <section
       id="alumni"
-      className="relative bg-brand-graphite px-5 py-24 text-white md:px-10 md:py-32"
+      className="relative bg-brand-graphite px-5 py-24 text-foreground md:px-10 md:py-32"
     >
       <div className="relative mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="03"
           eyebrow="QB Elite Alumni"
           title={
@@ -372,11 +373,11 @@ function Alumni() {
           <div className="flex flex-col gap-4 md:max-w-[260px]">
             <div className="flex items-center gap-3">
               <GraduationCap className="h-6 w-6 text-primary" strokeWidth={1.75} />
-              <p className="font-display text-[28px] uppercase tracking-tight text-white md:text-[32px]">
+              <p className="font-display text-[28px] uppercase tracking-tight text-brand-navy md:text-[32px]">
                 Colleges
               </p>
             </div>
-            <p className="text-[14px] leading-relaxed text-white/65">
+            <p className="text-[14px] leading-relaxed text-foreground/70">
               {ALUMNI_COLLEGES.length} programs across Division I, JUCO, NAIA,
               and Division II.
             </p>
@@ -385,7 +386,7 @@ function Alumni() {
             {ALUMNI_COLLEGES.map((c) => (
               <li
                 key={c}
-                className="flex items-center gap-2 border-b border-white/8 pb-2.5 text-[14px] font-extrabold uppercase tracking-[0.06em] text-white"
+                className="flex items-center gap-2 border-b border-brand-navy/10 pb-2.5 text-[14px] font-extrabold uppercase tracking-[0.06em] text-brand-navy"
               >
                 <ChevronRight className="h-3.5 w-3.5 text-primary" />
                 {c}
@@ -398,11 +399,11 @@ function Alumni() {
           <div className="flex flex-col gap-4 md:max-w-[260px]">
             <div className="flex items-center gap-3">
               <Trophy className="h-6 w-6 text-primary" strokeWidth={1.75} />
-              <p className="font-display text-[28px] uppercase tracking-tight text-white md:text-[32px]">
+              <p className="font-display text-[28px] uppercase tracking-tight text-brand-navy md:text-[32px]">
                 Pro Teams
               </p>
             </div>
-            <p className="text-[14px] leading-relaxed text-white/65">
+            <p className="text-[14px] leading-relaxed text-foreground/70">
               {ALUMNI_PROS.length} pro franchises across the NFL and CFL where
               alumni and QB Elite coaches have played.
             </p>
@@ -411,7 +412,7 @@ function Alumni() {
             {ALUMNI_PROS.map((p) => (
               <li
                 key={p}
-                className="flex items-center gap-2 border-b border-white/8 pb-2.5 text-[14px] font-extrabold uppercase tracking-[0.06em] text-white"
+                className="flex items-center gap-2 border-b border-brand-navy/10 pb-2.5 text-[14px] font-extrabold uppercase tracking-[0.06em] text-brand-navy"
               >
                 <ChevronRight className="h-3.5 w-3.5 text-primary" />
                 {p}

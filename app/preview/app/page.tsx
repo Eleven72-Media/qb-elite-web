@@ -253,14 +253,15 @@ function Approach() {
   return (
     <section
       id="approach"
-      className="relative bg-brand-graphite px-5 py-24 text-white md:px-10 md:py-32"
+      className="relative bg-brand-graphite px-5 py-24 text-foreground md:px-10 md:py-32"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/18 blur-[140px]"
+        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[140px]"
       />
       <div className="relative mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="02"
           eyebrow="Our Approach"
           title={
@@ -276,7 +277,7 @@ function Approach() {
             <Link
               key={a.title}
               href={a.anchor}
-              className="group relative flex flex-col overflow-hidden border border-white/12 bg-white/[0.04] p-7 transition-all hover:-translate-y-1 hover:border-primary/60 hover:bg-white/[0.08]"
+              className="group relative flex flex-col overflow-hidden border border-brand-navy/12 bg-white p-7 shadow-[0_4px_20px_rgba(0,41,71,0.05)] transition-all hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_rgba(0,41,71,0.10)]"
             >
               <span
                 aria-hidden
@@ -285,17 +286,17 @@ function Approach() {
               <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
                 <a.icon className="h-7 w-7" strokeWidth={1.75} />
               </div>
-              <h3 className="mt-7 font-display text-[28px] uppercase leading-tight tracking-tight text-white md:text-[32px]">
+              <h3 className="mt-7 font-display text-[28px] uppercase leading-tight tracking-tight text-brand-navy md:text-[32px]">
                 {a.title}
               </h3>
-              <p className="mt-3 flex-1 text-[14px] leading-relaxed text-white/70">
+              <p className="mt-3 flex-1 text-[14px] leading-relaxed text-foreground/70">
                 {a.description}
               </p>
-              <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-5">
-                <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
+              <div className="mt-7 flex items-center justify-between border-t border-brand-navy/10 pt-5">
+                <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-navy">
                   Learn More
                 </span>
-                <span className="flex h-9 w-9 items-center justify-center bg-white/10 text-white transition-colors group-hover:bg-primary">
+                <span className="flex h-9 w-9 items-center justify-center bg-brand-navy/8 text-brand-navy transition-colors group-hover:bg-primary group-hover:text-white">
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
@@ -470,10 +471,11 @@ function TheHuddle() {
   return (
     <section
       id="huddle"
-      className="relative bg-brand-graphite px-5 py-24 text-white md:px-10 md:py-32"
+      className="relative bg-brand-graphite px-5 py-24 text-foreground md:px-10 md:py-32"
     >
       <div className="mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="05"
           eyebrow="The Huddle"
           title={
@@ -486,7 +488,7 @@ function TheHuddle() {
 
         <div className="mt-14 grid gap-10 md:grid-cols-[1.15fr_0.85fr] md:gap-16">
           <div>
-            <p className="text-[15px] leading-relaxed text-white/80 md:text-[16px]">
+            <p className="text-[15px] leading-relaxed text-foreground/80 md:text-[16px]">
               The Huddle is the heartbeat of the QB Elite community —
               bringing athletes direct access to coaches, experts, and
               elite performers through live and on-demand video sessions.
@@ -494,7 +496,7 @@ function TheHuddle() {
               covering the mental, physical, and personal sides of
               quarterback development.
             </p>
-            <p className="mt-5 text-[15px] leading-relaxed text-white/80 md:text-[16px]">
+            <p className="mt-5 text-[15px] leading-relaxed text-foreground/80 md:text-[16px]">
               Higher tiers also gain access to group film breakdowns with
               coach-led feedback and Q&amp;A. Together, The Huddle gives
               quarterbacks ongoing access to elite knowledge, mentorship,
@@ -503,7 +505,7 @@ function TheHuddle() {
             </p>
           </div>
 
-          <article className="border border-white/12 bg-white/[0.04] p-8">
+          <article className="border border-brand-navy/12 bg-white p-8 shadow-[0_4px_20px_rgba(0,41,71,0.05)]">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
               Topics May Include
             </p>
@@ -511,7 +513,7 @@ function TheHuddle() {
               {HUDDLE_TOPICS.map((t) => (
                 <li
                   key={t}
-                  className="flex items-start gap-3 border-b border-white/8 pb-3 text-[14px] leading-snug text-white/85 last:border-b-0 last:pb-0"
+                  className="flex items-start gap-3 border-b border-brand-navy/10 pb-3 text-[14px] leading-snug text-foreground/85 last:border-b-0 last:pb-0"
                 >
                   <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-primary" />
                   {t}
@@ -743,9 +745,10 @@ const FAQ = [
 
 function FaqSection() {
   return (
-    <section className="relative bg-brand-graphite px-5 py-24 text-white md:px-10 md:py-32">
+    <section className="relative bg-brand-graphite px-5 py-24 text-foreground md:px-10 md:py-32">
       <div className="mx-auto w-full max-w-[1100px]">
         <SectionHeader
+          surface="light"
           number="09"
           eyebrow="FAQ"
           title={
@@ -759,17 +762,17 @@ function FaqSection() {
           {FAQ.map((item) => (
             <details
               key={item.q}
-              className="group border border-white/12 bg-white/[0.04] p-6 transition-colors hover:border-primary/40"
+              className="group border border-brand-navy/12 bg-white p-6 shadow-[0_4px_20px_rgba(0,41,71,0.05)] transition-colors hover:border-primary/40"
             >
               <summary className="flex cursor-pointer list-none items-start justify-between gap-6">
-                <span className="font-display text-[20px] uppercase leading-tight tracking-tight text-white md:text-[24px]">
+                <span className="font-display text-[20px] uppercase leading-tight tracking-tight text-brand-navy md:text-[24px]">
                   {item.q}
                 </span>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-primary text-white transition-transform group-open:rotate-180">
                   <ChevronDown className="h-4 w-4" strokeWidth={2.5} />
                 </span>
               </summary>
-              <p className="mt-5 text-[15px] leading-relaxed text-white/75">
+              <p className="mt-5 text-[15px] leading-relaxed text-foreground/75">
                 {item.a}
               </p>
             </details>

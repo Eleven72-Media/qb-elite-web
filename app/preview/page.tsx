@@ -163,7 +163,7 @@ function FeaturedOnStrip() {
           {outlets.map((o) => (
             <li
               key={o}
-              className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-white opacity-40 transition-opacity duration-200 hover:opacity-100"
+              className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-brand-navy opacity-50 transition-opacity duration-200 hover:opacity-100"
             >
               {o}
             </li>
@@ -564,22 +564,23 @@ function ByTheNumbers() {
     <section className="relative overflow-hidden bg-brand-graphite px-5 py-24 md:px-10 md:py-32">
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/20 blur-[140px]"
+        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[140px]"
       />
       <div className="relative mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="03"
           eyebrow="By The Numbers"
           title={<span className="text-primary">Elite Results.</span>}
         />
 
-        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden bg-white/10 md:grid-cols-4">
+        <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden bg-brand-navy/10 md:grid-cols-4">
           {STATS.map((s) => (
             <div
               key={s.label}
               className="bg-brand-graphite p-8 md:p-10"
             >
-              <p className="font-display text-5xl leading-none tracking-tight text-white md:text-[72px]">
+              <p className="font-display text-5xl leading-none tracking-tight text-brand-navy md:text-[72px]">
                 {s.value}
               </p>
               <p className="mt-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-primary">
@@ -684,11 +685,11 @@ function PedigreeRow({
   return (
     <div>
       <div className="flex items-center gap-4">
-        <span className="h-px flex-1 bg-white/10" />
-        <span className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-white/55">
+        <span className="h-px flex-1 bg-brand-navy/12" />
+        <span className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-brand-navy/60">
           {label}
         </span>
-        <span className="h-px flex-1 bg-white/10" />
+        <span className="h-px flex-1 bg-brand-navy/12" />
       </div>
       <div className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 md:gap-x-10">
         {orgs.map((org) => (
@@ -702,10 +703,10 @@ function PedigreeRow({
                 alt={org.name}
                 width={120}
                 height={48}
-                className="h-12 w-auto object-contain opacity-40 transition-opacity duration-200 group-hover:opacity-100"
+                className="h-12 w-auto object-contain opacity-60 transition-opacity duration-200 group-hover:opacity-100"
               />
             ) : (
-              <span className="text-[17px] font-black uppercase tracking-[0.1em] text-white opacity-40 transition-opacity duration-200 group-hover:opacity-100">
+              <span className="text-[17px] font-black uppercase tracking-[0.1em] text-brand-navy opacity-55 transition-opacity duration-200 group-hover:opacity-100">
                 {org.name}
               </span>
             )}
@@ -923,15 +924,16 @@ function SocialFollowSection() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-32 top-1/4 h-[420px] w-[420px] rounded-full bg-primary/18 blur-[140px]"
+        className="pointer-events-none absolute -left-32 top-1/4 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[140px]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-32 bottom-0 h-[420px] w-[420px] rounded-full bg-[#0693e3]/15 blur-[140px]"
+        className="pointer-events-none absolute -right-32 bottom-0 h-[420px] w-[420px] rounded-full bg-[#0693e3]/10 blur-[140px]"
       />
 
       <div className="relative mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="06"
           eyebrow="Stay Connected"
           title={
@@ -960,7 +962,7 @@ function SocialCard({ platform }: { platform: SocialPlatform }) {
       href={platform.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex flex-col overflow-hidden border border-white/12 bg-white/[0.04] p-7 transition-all hover:-translate-y-1 hover:border-primary/60 hover:bg-white/[0.08]"
+      className="group relative flex flex-col overflow-hidden border border-brand-navy/12 bg-white p-7 shadow-[0_4px_20px_rgba(0,41,71,0.05)] transition-all hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_rgba(0,41,71,0.10)]"
     >
       <span
         aria-hidden
@@ -971,21 +973,21 @@ function SocialCard({ platform }: { platform: SocialPlatform }) {
         <Icon className="h-7 w-7" strokeWidth={1.75} />
       </div>
 
-      <p className="mt-7 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/55">
+      <p className="mt-7 text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-navy/55">
         {platform.name}
       </p>
-      <p className="mt-1 font-display text-[30px] uppercase tracking-tight text-white md:text-[34px]">
+      <p className="mt-1 font-display text-[30px] uppercase tracking-tight text-brand-navy md:text-[34px]">
         {platform.handle}
       </p>
-      <p className="mt-3 flex-1 text-[14px] leading-relaxed text-white/65">
+      <p className="mt-3 flex-1 text-[14px] leading-relaxed text-foreground/70">
         {platform.blurb}
       </p>
 
-      <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-5">
-        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
+      <div className="mt-7 flex items-center justify-between border-t border-brand-navy/10 pt-5">
+        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-navy">
           Follow
         </span>
-        <span className="flex h-9 w-9 items-center justify-center bg-white/10 text-white transition-colors group-hover:bg-primary">
+        <span className="flex h-9 w-9 items-center justify-center bg-brand-navy/8 text-brand-navy transition-colors group-hover:bg-primary group-hover:text-white">
           <ArrowUpRight className="h-4 w-4" />
         </span>
       </div>

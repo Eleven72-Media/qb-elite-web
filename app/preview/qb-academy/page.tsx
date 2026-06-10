@@ -318,14 +318,15 @@ function FindYourCoach() {
   return (
     <section
       id="find-your-coach"
-      className="relative bg-brand-graphite px-5 py-24 text-white md:px-10 md:py-32"
+      className="relative bg-brand-graphite px-5 py-24 text-foreground md:px-10 md:py-32"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/18 blur-[140px]"
+        className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-primary/10 blur-[140px]"
       />
       <div className="relative mx-auto w-full max-w-[1320px]">
         <SectionHeader
+          surface="light"
           number="02"
           eyebrow="Find Your Coach"
           title={
@@ -355,7 +356,7 @@ function CoachPathCard({ path }: { path: CoachPath }) {
       href={path.href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className="group relative flex flex-col overflow-hidden border border-white/12 bg-white/[0.04] p-7 transition-all hover:-translate-y-1 hover:border-primary/60 hover:bg-white/[0.08]"
+      className="group relative flex flex-col overflow-hidden border border-brand-navy/12 bg-white p-7 shadow-[0_4px_20px_rgba(0,41,71,0.05)] transition-all hover:-translate-y-1 hover:border-primary/60 hover:shadow-[0_18px_40px_rgba(0,41,71,0.10)]"
     >
       <span
         aria-hidden
@@ -364,20 +365,20 @@ function CoachPathCard({ path }: { path: CoachPath }) {
       <div className="flex h-12 w-12 items-center justify-center bg-primary text-white">
         <MapPin className="h-6 w-6" strokeWidth={1.75} />
       </div>
-      <p className="mt-6 text-[10px] font-extrabold uppercase tracking-[0.22em] text-white/55">
+      <p className="mt-6 text-[10px] font-extrabold uppercase tracking-[0.22em] text-brand-navy/55">
         {path.region}
       </p>
-      <p className="mt-2 font-display text-[28px] uppercase tracking-tight text-white md:text-[32px]">
+      <p className="mt-2 font-display text-[28px] uppercase tracking-tight text-brand-navy md:text-[32px]">
         {path.coach}
       </p>
-      <p className="mt-3 flex-1 text-[14px] leading-relaxed text-white/70">
+      <p className="mt-3 flex-1 text-[14px] leading-relaxed text-foreground/70">
         {path.description}
       </p>
-      <div className="mt-7 flex items-center justify-between border-t border-white/10 pt-5">
-        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white">
+      <div className="mt-7 flex items-center justify-between border-t border-brand-navy/10 pt-5">
+        <span className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-brand-navy">
           {path.cta}
         </span>
-        <span className="flex h-9 w-9 items-center justify-center bg-white/10 text-white transition-colors group-hover:bg-primary">
+        <span className="flex h-9 w-9 items-center justify-center bg-brand-navy/8 text-brand-navy transition-colors group-hover:bg-primary group-hover:text-white">
           {external ? <ArrowUpRight className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
         </span>
       </div>
