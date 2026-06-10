@@ -27,7 +27,10 @@ export const metadata = {
     "Train like a pro. Lead like a champion. Play with confidence. The QB Elite app — mechanics, film study, weight room, nutrition, and live coach huddles in your pocket.",
 };
 
-const REGISTER_URL = "/register";
+// Free-trial CTAs deep-link to the existing qbeliteapp.com install
+// page so iPhone / Android / web users land on the install option
+// that fits their device.
+const TRIAL_URL = "https://www.qbeliteapp.com/";
 
 /**
  * /preview/app — App tab on the new marketing site. Mirrors the
@@ -92,7 +95,7 @@ function Hero() {
           </p>
 
           <div className="mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            <Link href={REGISTER_URL}>
+            <Link href={TRIAL_URL}>
               <Button
                 size="lg"
                 className="group h-14 w-full rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.55)] hover:bg-primary/90 sm:w-auto"
@@ -214,7 +217,7 @@ function Mission() {
                 opportunity.
               </p>
             </div>
-            <Link href={REGISTER_URL}>
+            <Link href={TRIAL_URL}>
               <Button
                 size="lg"
                 className="h-14 rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.55)] hover:bg-primary/90"
@@ -810,7 +813,7 @@ function FinalCta() {
             Android, and the web.
           </p>
         </div>
-        <Link href={REGISTER_URL}>
+        <Link href={TRIAL_URL}>
           <Button
             size="lg"
             className="h-14 rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.55)] hover:bg-primary/90"

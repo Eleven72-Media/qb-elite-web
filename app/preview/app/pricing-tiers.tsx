@@ -32,7 +32,7 @@ const TIERS: Tier[] = [
     description:
       "A structured, week-by-week QB development program that builds elite mechanics, mindset, leadership, nutrition, and training habits — with progressive videos, workouts, resources, and monthly expert huddles.",
     cta: "Start Free Trial",
-    ctaHref: "/register",
+    ctaHref: "https://www.qbeliteapp.com/",
     features: [
       { label: "Weekly Training Videos", included: true },
       { label: "Athlete Resources", included: true },
@@ -59,7 +59,7 @@ const TIERS: Tier[] = [
     description:
       "Everything in The Starter, plus weekly structured workout and recipe plans and access to live and recorded group film breakdowns with coach-led Q&A.",
     cta: "Start Free Trial",
-    ctaHref: "/register",
+    ctaHref: "https://www.qbeliteapp.com/",
     featured: true,
     features: [
       { label: "Weekly Training Videos", included: true },
