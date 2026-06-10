@@ -2,13 +2,16 @@ import {
   ArrowRight,
   ArrowUpRight,
   CalendarDays,
+  ClipboardList,
   Dumbbell,
   Facebook,
   Instagram,
   Play,
   Smartphone,
   Star,
+  Target,
   Youtube,
+  Zap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -372,21 +375,46 @@ function PedigreeSection() {
       />
 
       <div className="relative mx-auto w-full max-w-[1320px]">
-        <SectionHeader
-          number="02"
-          eyebrow="Why Work With QB Elite?"
-          title={
-            <>
-              Built By QBs Who&rsquo;ve
-              <br />
-              <span className="text-primary">Been There.</span>
-            </>
-          }
-          subhead="Mechanics, film study, football IQ, and leadership — every cue comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros."
-        />
+        {/* Header row — SectionHeader on the left, "See All" CTA pinned
+            to the bottom-right of the header on desktop. Stacks on mobile. */}
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-12">
+          <div className="flex-1">
+            <SectionHeader
+              number="02"
+              eyebrow="Why Work With QB Elite?"
+              title={
+                <>
+                  Built By QBs Who&rsquo;ve
+                  <br />
+                  <span className="text-primary">Been There.</span>
+                </>
+              }
+              subhead="Mechanics, film study, football IQ, and leadership — every cue comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros."
+            />
+          </div>
+          <div className="flex shrink-0 flex-col items-start gap-3 md:items-end">
+            <Link href="/preview/about">
+              <Button
+                size="lg"
+                className="h-14 rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.45)] hover:bg-primary/90"
+              >
+                See All Coaches + Alumni
+                <ArrowUpRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/45">
+              500+ Alumni · 20+ States
+            </p>
+          </div>
+        </div>
+
+        {/* Philosophy block — north-star goal + the three coaching pillars.
+            Sits between the section header and the coach grids so the
+            reader sees WHAT we teach before WHO teaches it. */}
+        <PhilosophyBlock />
 
         {/* Coaching staff — 3-up, full-time QB Elite coaches */}
-        <div className="mx-auto mt-16 max-w-2xl">
+        <div className="mx-auto mt-20 max-w-2xl">
           <CoachTierHeader title="Coaching Staff" count={COACHING_STAFF.length} />
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-5">
             {COACHING_STAFF.map((c) => (
@@ -404,23 +432,81 @@ function PedigreeSection() {
             ))}
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-16 flex flex-wrap items-center gap-4">
-          <Link href="/preview/about">
-            <Button
-              size="lg"
-              className="h-14 rounded-none bg-primary px-8 text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.45)] hover:bg-primary/90"
-            >
-              See All Coaches + Alumni
-              <ArrowUpRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/45">
-            500+ Alumni · 20+ States
+/* ──────────── Our Philosophy (sub-block within Pedigree section) ──────────── */
+
+const PHILOSOPHY_PILLARS = [
+  {
+    icon: Target,
+    title: "Simple & Repeatable Mechanics",
+    description:
+      "Clean base, efficient drop, on-balance release. We teach a mechanical foundation a 7th-grader and a college starter can both run — because the cues stay the same as the speed of the game rises.",
+  },
+  {
+    icon: Zap,
+    title: "Athleticism",
+    description:
+      "Strength, mobility, and explosiveness built specifically for the position. Weight Room programming is QB-first: extend plays with your feet, deliver from any platform, last all four quarters.",
+  },
+  {
+    icon: ClipboardList,
+    title: "Chalk Talk",
+    description:
+      "Film study, coverage recognition, and football IQ. The throw is half the position — knowing where the throw should go before the snap is the other half. We coach the brain alongside the body.",
+  },
+];
+
+function PhilosophyBlock() {
+  return (
+    <div className="mt-20 border-t border-white/10 pt-16">
+      <div className="grid gap-8 md:grid-cols-[auto_1fr] md:gap-12">
+        <div className="flex items-start gap-5">
+          <span className="font-display text-[60px] leading-none text-white/15 md:text-[84px]">
+            ·
+          </span>
+          <span className="mt-2 h-px w-16 bg-primary md:mt-4 md:w-20" />
+        </div>
+        <div>
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
+            Our Philosophy
+          </p>
+          <h3 className="mt-4 font-display text-[32px] uppercase leading-[1.05] tracking-tight text-white md:text-[48px] lg:text-[56px]">
+            The Goal Is{" "}
+            <span className="text-primary">
+              On-Time, Consistent Throws.
+            </span>
+          </h3>
+          <p className="mt-5 max-w-[680px] text-base leading-relaxed text-white/65 md:text-lg">
+            Every drill, every rep, every film clip at QB Elite is built
+            around one outcome: getting the ball out on time, to the right
+            spot, on every snap. We get there through three pillars.
           </p>
         </div>
       </div>
-    </section>
+
+      <div className="mt-12 grid gap-4 md:grid-cols-3 md:gap-5">
+        {PHILOSOPHY_PILLARS.map((p) => (
+          <div
+            key={p.title}
+            className="group flex flex-col border border-white/10 bg-white/[0.03] p-7 transition-colors hover:border-primary/40"
+          >
+            <div className="flex h-12 w-12 items-center justify-center bg-primary text-white">
+              <p.icon className="h-6 w-6" strokeWidth={2} />
+            </div>
+            <h4 className="mt-6 font-display text-[22px] uppercase leading-tight tracking-tight text-white md:text-[26px]">
+              {p.title}
+            </h4>
+            <p className="mt-3 text-[14px] leading-relaxed text-white/70">
+              {p.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
