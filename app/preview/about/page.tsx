@@ -148,17 +148,17 @@ const COACHING_STAFF: Coach[] = [
   {
     name: "Dustin Smith",
     role: "Owner · QB Elite Coach",
-    photo: "/coaches/dustin_smith.jpg",
+    photo: "/coaches/dustin_smith.png",
   },
   {
     name: "Ty Detmer",
     role: "14-Yr NFL QB · Heisman Trophy Winner",
-    photo: "/coaches/ty_detmer.jpg",
+    photo: "/coaches/ty_detmer.png",
   },
   {
     name: "Justin Miller",
     role: "QB Elite Coach",
-    photo: "/coaches/justin_miller.webp",
+    photo: "/coaches/justin_miller.png",
   },
 ];
 

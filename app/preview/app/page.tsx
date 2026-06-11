@@ -534,19 +534,19 @@ const TEAM = [
     name: "Dustin Smith",
     role: "QB Elite Founder",
     bio: "Founder of QB Elite along with Ty Detmer. Over 15 years teaching and training elite quarterbacks and wide receivers. Considered by many as one of the top QB instructors in the country.",
-    photo: "/coaches/dustin_smith.jpg",
+    photo: "/coaches/dustin_smith.png",
   },
   {
     name: "Ty Detmer",
     role: "QB Elite Co-Founder",
     bio: "Co-Founder of QB Elite. College Football Offensive Coordinator and former NFL QB. Won the Heisman Trophy in 1990 while playing quarterback for Brigham Young University.",
-    photo: "/coaches/ty_detmer.jpg",
+    photo: "/coaches/ty_detmer.png",
   },
   {
     name: "Justin Miller",
     role: "Director of QB Elite App",
     bio: "GFL League MVP 2025 and holds multiple passing and touchdown records playing QB for Southern Utah University. Weightlifting and nutrition coach.",
-    photo: "/coaches/justin_miller.webp",
+    photo: "/coaches/justin_miller.png",
   },
 ] as const;
 
