@@ -407,24 +407,22 @@ function PedigreeSection() {
             pillars set the WHY before the WHO (coaches) below. */}
         <PhilosophyBlock />
 
-        {/* Coaches header row — flows naturally out of the philosophy.
-            Numberless (the "02" badge lives with the philosophy block
-            above). Simple eyebrow + display title on the left, "See
-            All" CTA pinned to the bottom-right on desktop. */}
-        <div className="mt-24 flex flex-col gap-8 border-t border-white/10 pt-16 md:flex-row md:items-end md:justify-between md:gap-12">
+        {/* Coaches header — reads as a continuation of section 02
+            (no divider, no big section-style title), just an eyebrow
+            + tightened sub-heading + the "See All" CTA on the right. */}
+        <div className="mt-16 flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-12">
           <div className="flex-1">
             <div className="flex items-center gap-4">
-              <span className="h-px w-16 bg-primary md:w-20" />
+              <span className="h-px w-10 bg-primary md:w-14" />
               <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
                 Why Work With QB Elite?
               </p>
             </div>
-            <h2 className="mt-5 font-display text-[40px] uppercase leading-[1.02] tracking-tight text-white md:text-[64px] lg:text-[80px]">
-              Built By QBs Who&rsquo;ve
-              <br />
+            <h3 className="mt-4 font-display text-[28px] uppercase leading-[1.05] tracking-tight text-white md:text-[36px] lg:text-[42px]">
+              Built By QBs Who&rsquo;ve{" "}
               <span className="text-primary">Been There.</span>
-            </h2>
-            <p className="mt-5 max-w-[640px] text-base leading-relaxed text-white/65 md:text-lg">
+            </h3>
+            <p className="mt-4 max-w-[640px] text-[15px] leading-relaxed text-white/65 md:text-base">
               Mechanics, film study, football IQ, and leadership — every
               cue comes from coaches who&rsquo;ve lived the position. NFL
               MVPs, Heisman winners, 15-year pros.
