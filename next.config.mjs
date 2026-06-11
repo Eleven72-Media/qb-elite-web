@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    // Marketing logo wall ships a mix of PNG/JPG/WebP and a handful
+    // of SVGs (Hawaii, Texas A&M, Raiders, 49ers). All assets are
+    // ours in /public so allowing SVG is safe; the locked-down CSP
+    // strips scripts and forces image-only rendering.
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       // Supabase Storage public bucket — admin uploads home slides + widget
       // images + recipe photos etc. here. Pattern matches any path under

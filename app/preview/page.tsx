@@ -165,21 +165,46 @@ function Hero() {
 
 /* ───────────────────────────── FEATURED ON ───────────────────────────── */
 
+type FeaturedOutlet = { name: string; logo?: string };
+
+const FEATURED_OUTLETS: FeaturedOutlet[] = [
+  {
+    name: "ESPN",
+    logo: "/logos/fi133espb337-espn-logo-file-espn-logos-png-wikimedia-commons.png",
+  },
+  { name: "247Sports", logo: "/logos/247Sports-Mobile.png" },
+  { name: "Rivals", logo: "/logos/K6YZFSI7MVMWUTHT6WPPD6PUAE.png" },
+  { name: "MaxPreps", logo: "/logos/maxpreps-vector-logo.png" },
+  { name: "On3", logo: "/logos/On3.webp" },
+  { name: "Deseret News" },
+];
+
 function FeaturedOnStrip() {
-  const outlets = ["ESPN", "247Sports", "Rivals", "MaxPreps", "On3", "Deseret News"];
   return (
     <section className="relative bg-brand-graphite">
       <div className="mx-auto flex w-full max-w-[1320px] flex-col items-center gap-10 px-5 pb-20 pt-16 md:px-10 md:pb-24 md:pt-20">
         <h3 className="text-center font-display text-5xl uppercase leading-none tracking-tight text-primary md:text-[72px]">
           Featured On
         </h3>
-        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 md:gap-x-16">
-          {outlets.map((o) => (
-            <li
-              key={o}
-              className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-brand-navy opacity-50 transition-opacity duration-200 hover:opacity-100"
-            >
-              {o}
+        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-16">
+          {FEATURED_OUTLETS.map((o) => (
+            <li key={o.name} className="group flex items-center">
+              {o.logo ? (
+                <Image
+                  src={o.logo}
+                  alt={o.name}
+                  width={140}
+                  height={40}
+                  /* brightness(0) renders the source logo as a solid
+                     dark silhouette — reads as navy against the light
+                     graphite section. */
+                  className="h-9 w-auto object-contain opacity-70 transition-opacity duration-200 group-hover:opacity-100 [filter:brightness(0)] md:h-10"
+                />
+              ) : (
+                <span className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-brand-navy opacity-60 transition-opacity duration-200 group-hover:opacity-100">
+                  {o.name}
+                </span>
+              )}
             </li>
           ))}
         </ul>
@@ -631,44 +656,62 @@ type PedigreeOrg = { name: string; logo?: string };
  * Alouettes for Ben Cahoon's 15-yr CFL career.
  */
 const PEDIGREE_COLLEGES: PedigreeOrg[] = [
-  { name: "Adams State" },
-  { name: "Boise State" },
-  { name: "BYU" },
-  { name: "Hawaii" },
-  { name: "Midland" },
-  { name: "Montana" },
-  { name: "Ole Miss" },
-  { name: "Oklahoma" },
-  { name: "Snow College" },
-  { name: "SUU" },
-  { name: "Texas A&M" },
-  { name: "USC" },
-  { name: "Utah" },
-  { name: "Utah State" },
-  { name: "Utah Tech" },
-  { name: "Weber State" },
-  { name: "Western Kentucky" },
+  { name: "Adams State", logo: "/logos/adams-state-logo-word.png" },
+  { name: "Boise State", logo: "/logos/Boise_State_University.jpg" },
+  { name: "BYU", logo: "/logos/BYU_Stretch_Y_Logo.png" },
+  { name: "Hawaii", logo: "/logos/hawaii.svg" },
+  { name: "Midland", logo: "/logos/MULogo6.png" },
+  {
+    name: "Montana",
+    logo: "/logos/103-1033943_griz-wordmark-university-of-montana-griz-logo.png",
+  },
+  { name: "Ole Miss", logo: "/logos/81El7qVwuML.jpg" },
+  { name: "Oklahoma", logo: "/logos/Oklahoma_Sooners_logo.svg.png" },
+  { name: "Snow College", logo: "/logos/SNOWsBLULogo.png" },
+  { name: "SUU", logo: "/logos/SUU-Thunderbirds-2019.jpg" },
+  { name: "Texas A&M", logo: "/logos/Texas_AM_University_logo.svg" },
+  { name: "USC", logo: "/logos/USC_Trojans_logo.svg.png" },
+  { name: "Utah", logo: "/logos/Utah_Utes_logo.svg.png" },
+  {
+    name: "Utah State",
+    logo: "/logos/92-928701_utah-state-aggies-logo-clipart-utah-state-university-logo.png",
+  },
+  {
+    name: "Utah Tech",
+    logo: "/logos/utah_tech_trailblazers_logo_secondary_2022_sportslogosnet-4796.png",
+  },
+  { name: "Weber State", logo: "/logos/Weber_State_Wildcats_logo.svg.png" },
+  {
+    name: "Western Kentucky",
+    logo: "/logos/0-7409_western-kentucky-university.png",
+  },
 ];
 
 const PEDIGREE_PROS: PedigreeOrg[] = [
-  { name: "Alouettes" },
-  { name: "Broncos" },
-  { name: "Browns" },
-  { name: "Cardinals" },
-  { name: "Commanders" },
-  { name: "Eagles" },
-  { name: "Falcons" },
-  { name: "49ers" },
-  { name: "Giants" },
-  { name: "Jaguars" },
-  { name: "Jets" },
-  { name: "Lions" },
-  { name: "Packers" },
-  { name: "Raiders" },
-  { name: "Rams" },
-  { name: "Saints" },
-  { name: "Seahawks" },
-  { name: "Vikings" },
+  {
+    name: "Alouettes",
+    logo: "/logos/62-625147_montreal-alouettes-logo-alouettes-de-montréal.png",
+  },
+  { name: "Broncos", logo: "/logos/Denver_Broncos_logo.svg.png" },
+  { name: "Browns", logo: "/logos/Cleveland_Browns_B.svg.png" },
+  { name: "Cardinals", logo: "/logos/Arizona-Cardinals-Logo.png" },
+  { name: "Commanders", logo: "/logos/Washington_Commanders_logo.svg.png" },
+  { name: "Eagles", logo: "/logos/Philadelphia_Eagles_logo.svg.png" },
+  { name: "Falcons", logo: "/logos/ATL.webp" },
+  { name: "49ers", logo: "/logos/San_Francisco_49ers_logo.svg" },
+  { name: "Giants", logo: "/logos/New_York_Giants_logo.svg.png" },
+  { name: "Jaguars", logo: "/logos/Jacksonville_Jaguars_logo.svg.png" },
+  { name: "Jets", logo: "/logos/New_York_Jets_2024.svg.png" },
+  { name: "Lions", logo: "/logos/Detroit_Lions_logo.svg.png" },
+  { name: "Packers", logo: "/logos/Green_Bay_Packers_logo.svg.png" },
+  { name: "Raiders", logo: "/logos/Las_Vegas_Raiders_logo.svg" },
+  {
+    name: "Rams",
+    logo: "/logos/los-angeles-rams-logo-primary-2026-594120282026.png",
+  },
+  { name: "Saints", logo: "/logos/New_Orleans_Saints_logo.svg.png" },
+  { name: "Seahawks", logo: "/logos/Seattle_Seahawks_logo.svg.png" },
+  { name: "Vikings", logo: "/logos/Minnesota_Vikings_logo.svg.png" },
 ];
 
 function PedigreeLogoGallery() {
@@ -701,7 +744,7 @@ function PedigreeRow({
     <div>
       <div className="flex items-center gap-4">
         <span className="h-px flex-1 bg-brand-navy/12" />
-        <span className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-brand-navy/60">
+        <span className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-primary">
           {label}
         </span>
         <span className="h-px flex-1 bg-brand-navy/12" />
@@ -718,10 +761,13 @@ function PedigreeRow({
                 alt={org.name}
                 width={120}
                 height={48}
-                className="h-12 w-auto object-contain opacity-60 transition-opacity duration-200 group-hover:opacity-100"
+                /* brightness(0) forces the source logo into a solid
+                   dark silhouette — reads as navy against the light
+                   graphite section without per-asset tuning. */
+                className="h-12 w-auto object-contain opacity-70 transition-opacity duration-200 group-hover:opacity-100 [filter:brightness(0)]"
               />
             ) : (
-              <span className="text-[17px] font-black uppercase tracking-[0.1em] text-brand-navy opacity-55 transition-opacity duration-200 group-hover:opacity-100">
+              <span className="text-[17px] font-black uppercase tracking-[0.1em] text-brand-navy opacity-60 transition-opacity duration-200 group-hover:opacity-100">
                 {org.name}
               </span>
             )}
