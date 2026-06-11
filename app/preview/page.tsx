@@ -185,13 +185,9 @@ function FeaturedOnStrip() {
                   alt={o.name}
                   width={140}
                   height={40}
-                  /* Same navy-duotone treatment as the Schools wall — see
-                     PedigreeRow for the comment. */
+                  /* Real outlet colors; multiply drops baked-in
+                     white backgrounds against the graphite section. */
                   className="h-9 w-auto object-contain opacity-90 mix-blend-multiply transition-opacity duration-200 group-hover:opacity-100 md:h-10"
-                  style={{
-                    filter:
-                      "grayscale(1) sepia(0.85) hue-rotate(185deg) saturate(3) brightness(0.85)",
-                  }}
                 />
               ) : (
                 <span className="text-[15px] font-extrabold uppercase tracking-[0.18em] text-brand-navy opacity-60 transition-opacity duration-200 group-hover:opacity-100">
@@ -754,19 +750,12 @@ function PedigreeRow({
                 alt={org.name}
                 width={120}
                 height={48}
-                /* Navy "duotone" treatment — grayscale flattens team
-                   colors, sepia + hue-rotate retints toward brand
-                   navy, saturate boosts the blue back up. Luminance
-                   contrast survives so logo detail (B inside a disk,
-                   stripes, wordmarks) still reads. `mix-blend-multiply`
-                   makes the white backgrounds in the JPG sources
-                   (Boise State, Ole Miss, SUU, etc.) blend into the
-                   graphite section instead of showing as flat boxes. */
+                /* Real team colors. mix-blend-multiply drops the
+                   white backgrounds baked into the JPG sources
+                   (Boise State, Ole Miss, SUU) against the light
+                   graphite section — same outcome as a transparent
+                   PNG without having to re-cut every asset. */
                 className="h-12 w-auto object-contain opacity-90 mix-blend-multiply transition-opacity duration-200 group-hover:opacity-100"
-                style={{
-                  filter:
-                    "grayscale(1) sepia(0.85) hue-rotate(185deg) saturate(3) brightness(0.85)",
-                }}
               />
             ) : (
               <span className="text-[17px] font-black uppercase tracking-[0.1em] text-brand-navy opacity-60 transition-opacity duration-200 group-hover:opacity-100">
