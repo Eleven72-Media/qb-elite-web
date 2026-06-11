@@ -21,6 +21,8 @@ import {
 } from "@/components/marketing/section-header";
 import { Button } from "@/components/ui/button";
 
+import { ContactForm } from "./contact-form";
+
 export const metadata = {
   title: "QB Elite — Become Elite",
   description:
@@ -889,57 +891,9 @@ function ContactSection() {
           />
         </div>
 
-        <form className="flex flex-col gap-3 border border-white/10 bg-white/[0.03] p-7 backdrop-blur">
-          <FormField label="Name" placeholder="Full name" />
-          <FormField label="Email" type="email" placeholder="you@example.com" />
-          <FormField label="Athlete Class" placeholder="e.g. 2027" />
-          <label className="mt-1 flex flex-col gap-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/55">
-              Message
-            </span>
-            <textarea
-              rows={4}
-              placeholder="Tell us a bit about your goals..."
-              className="border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/35 outline-none ring-primary/50 focus:ring-2"
-            />
-          </label>
-          <Button
-            type="submit"
-            size="lg"
-            className="mt-2 h-14 rounded-none bg-primary text-[13px] font-extrabold uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_rgba(182,32,37,0.45)] hover:bg-primary/90"
-          >
-            Send Message
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-          <p className="mt-2 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-white/40">
-            Or email <a href="mailto:jmiller@qbelite.com" className="text-primary hover:underline">jmiller@qbelite.com</a>
-          </p>
-        </form>
+        <ContactForm />
       </div>
     </section>
-  );
-}
-
-function FormField({
-  label,
-  type = "text",
-  placeholder,
-}: {
-  label: string;
-  type?: string;
-  placeholder?: string;
-}) {
-  return (
-    <label className="flex flex-col gap-2">
-      <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/55">
-        {label}
-      </span>
-      <input
-        type={type}
-        placeholder={placeholder}
-        className="h-11 border border-white/15 bg-white/5 px-4 text-sm text-white placeholder-white/35 outline-none ring-primary/50 focus:ring-2"
-      />
-    </label>
   );
 }
 
