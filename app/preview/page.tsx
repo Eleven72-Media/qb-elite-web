@@ -632,7 +632,13 @@ function ByTheNumbers() {
  * we render the image; otherwise we fall back to a wordmark of the
  * organization's name. Drop SVGs in as you obtain rights to use them.
  */
-type PedigreeOrg = { name: string; logo?: string };
+/**
+ * `darken` opts the org's logo into `mix-blend-mode: darken` instead
+ * of the default `multiply`. Use it on PNGs whose "transparent"
+ * backgrounds are actually a faint off-white fill (Pngwing-style
+ * downloads, etc.) — multiply can't clamp those out, darken can.
+ */
+type PedigreeOrg = { name: string; logo?: string; darken?: boolean };
 
 /**
  * Colleges = every school in Justin's alumni list (2026-06-08),
@@ -653,6 +659,7 @@ const PEDIGREE_COLLEGES: PedigreeOrg[] = [
   {
     name: "Montana",
     logo: "/logos/103-1033943_griz-wordmark-university-of-montana-griz-logo.png",
+    darken: true,
   },
   { name: "Ole Miss", logo: "/logos/81El7qVwuML.jpg" },
   { name: "Oklahoma", logo: "/logos/Oklahoma_Sooners_logo.svg.png" },
@@ -673,6 +680,7 @@ const PEDIGREE_COLLEGES: PedigreeOrg[] = [
   {
     name: "Western Kentucky",
     logo: "/logos/0-7409_western-kentucky-university.png",
+    darken: true,
   },
 ];
 
@@ -680,6 +688,7 @@ const PEDIGREE_PROS: PedigreeOrg[] = [
   {
     name: "Alouettes",
     logo: "/logos/62-625147_montreal-alouettes-logo-alouettes-de-montréal.png",
+    darken: true,
   },
   { name: "Broncos", logo: "/logos/Denver_Broncos_logo.svg.png" },
   { name: "Browns", logo: "/logos/Cleveland_Browns_B.svg.png" },
@@ -750,12 +759,13 @@ function PedigreeRow({
                 alt={org.name}
                 width={120}
                 height={48}
-                /* Real team colors. mix-blend-multiply drops the
-                   white backgrounds baked into the JPG sources
-                   (Boise State, Ole Miss, SUU) against the light
-                   graphite section — same outcome as a transparent
-                   PNG without having to re-cut every asset. */
-                className="h-12 w-auto object-contain opacity-90 mix-blend-multiply transition-opacity duration-200 group-hover:opacity-100"
+                /* Real team colors. multiply drops baked-in white
+                   backgrounds against the graphite section; darken
+                   is the stronger option for PNGs with a faint
+                   off-white fill that multiply alone can't clamp. */
+                className={`h-12 w-auto object-contain opacity-90 transition-opacity duration-200 group-hover:opacity-100 ${
+                  org.darken ? "mix-blend-darken" : "mix-blend-multiply"
+                }`}
               />
             ) : (
               <span className="text-[17px] font-black uppercase tracking-[0.1em] text-brand-navy opacity-60 transition-opacity duration-200 group-hover:opacity-100">
