@@ -692,6 +692,11 @@ const PEDIGREE_PROS: PedigreeOrg[] = [
   { name: "Browns", logo: "/logos/Cleveland_Browns_B.svg.png" },
   { name: "Cardinals", logo: "/logos/Arizona-Cardinals-Logo.png" },
   { name: "Commanders", logo: "/logos/Washington_Commanders_logo.svg.png" },
+  { name: "Dolphins", logo: "/logos/images.png" },
+  {
+    name: "Dresden Monarchs",
+    logo: "/logos/Dresden_Monarchs_logo_3D.svg.png",
+  },
   { name: "Eagles", logo: "/logos/Philadelphia_Eagles_logo.svg.png" },
   { name: "Falcons", logo: "/logos/ATL.webp" },
   { name: "49ers", logo: "/logos/San_Francisco_49ers_logo.svg" },
