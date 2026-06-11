@@ -394,22 +394,27 @@ function PedigreeSection() {
         <PhilosophyBlock />
 
         {/* Coaches header row — flows naturally out of the philosophy.
-            SectionHeader on the left, "See All" CTA pinned to the
-            bottom-right on desktop. Stacks on mobile. */}
+            Numberless (the "02" badge lives with the philosophy block
+            above). Simple eyebrow + display title on the left, "See
+            All" CTA pinned to the bottom-right on desktop. */}
         <div className="mt-24 flex flex-col gap-8 border-t border-white/10 pt-16 md:flex-row md:items-end md:justify-between md:gap-12">
           <div className="flex-1">
-            <SectionHeader
-              number="02"
-              eyebrow="Why Work With QB Elite?"
-              title={
-                <>
-                  Built By QBs Who&rsquo;ve
-                  <br />
-                  <span className="text-primary">Been There.</span>
-                </>
-              }
-              subhead="Mechanics, film study, football IQ, and leadership — every cue comes from coaches who've lived the position. NFL MVPs, Heisman winners, 15-year pros."
-            />
+            <div className="flex items-center gap-4">
+              <span className="h-px w-16 bg-primary md:w-20" />
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
+                Why Work With QB Elite?
+              </p>
+            </div>
+            <h2 className="mt-5 font-display text-[40px] uppercase leading-[1.02] tracking-tight text-white md:text-[64px] lg:text-[80px]">
+              Built By QBs Who&rsquo;ve
+              <br />
+              <span className="text-primary">Been There.</span>
+            </h2>
+            <p className="mt-5 max-w-[640px] text-base leading-relaxed text-white/65 md:text-lg">
+              Mechanics, film study, football IQ, and leadership — every
+              cue comes from coaches who&rsquo;ve lived the position. NFL
+              MVPs, Heisman winners, 15-year pros.
+            </p>
           </div>
           <div className="flex shrink-0 flex-col items-start gap-3 md:items-end">
             <Link href="/preview/about">
@@ -477,21 +482,17 @@ const PHILOSOPHY_PILLARS = [
 function PhilosophyBlock() {
   return (
     <div>
-      <div className="flex items-center gap-4">
-        <span className="h-px w-16 bg-primary md:w-20" />
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-primary">
-          Our Philosophy
-        </p>
-      </div>
-      <h3 className="mt-5 font-display text-[36px] uppercase leading-[1.02] tracking-tight text-white md:text-[56px] lg:text-[68px]">
-        The Goal Is{" "}
-        <span className="text-primary">On-Time, Consistent Throws.</span>
-      </h3>
-      <p className="mt-5 max-w-[720px] text-base leading-relaxed text-white/65 md:text-lg">
-        Every drill, every rep, every film clip at QB Elite is built around
-        one outcome: getting the ball out on time, to the right spot, on
-        every snap. We get there through three pillars.
-      </p>
+      <SectionHeader
+        number="02"
+        eyebrow="Our Philosophy"
+        title={
+          <>
+            The Goal Is{" "}
+            <span className="text-primary">On-Time, Consistent Throws.</span>
+          </>
+        }
+        subhead="Every drill, every rep, every film clip at QB Elite is built around one outcome: getting the ball out on time, to the right spot, on every snap. We get there through three pillars."
+      />
 
       <div className="mt-12 grid gap-4 md:grid-cols-3 md:gap-5">
         {PHILOSOPHY_PILLARS.map((p) => (
