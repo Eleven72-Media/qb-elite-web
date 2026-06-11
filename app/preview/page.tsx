@@ -6,7 +6,6 @@ import {
   Dumbbell,
   Facebook,
   Instagram,
-  Play,
   Smartphone,
   Star,
   Target,
@@ -88,22 +87,7 @@ function Hero() {
         className="absolute inset-0 bg-gradient-to-t from-brand-navyDeep/85 via-brand-navy/40 to-transparent"
       />
 
-      {/* Centered play affordance for the intro video. Floats over the
-          backdrop so the user knows the hero is the video. */}
-      <button
-        type="button"
-        aria-label="Play intro video"
-        className="group absolute left-1/2 top-[42%] z-10 -translate-x-1/2 -translate-y-1/2 md:top-[44%]"
-      >
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white shadow-[0_20px_60px_rgba(182,32,37,0.65)] transition-transform group-hover:scale-105 md:h-24 md:w-24">
-          <Play className="h-7 w-7 translate-x-0.5 fill-current md:h-9 md:w-9" />
-        </span>
-        <span className="mt-4 block text-center text-[11px] font-extrabold uppercase tracking-[0.24em] text-white/80">
-          Watch The Story
-        </span>
-      </button>
-
-      <div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 pb-20 pt-40 md:px-10 md:pb-28 md:pt-48">
+<div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 pb-20 pt-40 md:px-10 md:pb-28 md:pt-48">
         <div className="flex flex-col">
           <div className="flex items-center gap-3">
             <span className="h-px w-10 bg-primary" />
