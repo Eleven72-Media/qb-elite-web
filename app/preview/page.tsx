@@ -68,11 +68,25 @@ function Hero() {
       id="top"
       className="relative isolate flex min-h-[760px] w-full items-end overflow-hidden bg-brand-navy md:min-h-[860px] lg:min-h-[920px]"
     >
-      {/* Solid brand-navy placeholder. When ready, swap the section
-          background for a full-bleed <video poster=... autoplay muted
-          loop playsinline> or an <Image fill> of camp/drone footage —
-          Justin's brief calls for a drone-zoom intro animation as v2
-          motion treatment. */}
+      {/* Backdrop — full-bleed camp photo, desaturated and pushed back
+          with a navy gradient so the foreground type stays legible.
+          Swap to a looping <video> when the drone-zoom intro is cut. */}
+      <Image
+        src="/QBE_Gilbert002.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center grayscale"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-r from-brand-navy/95 via-brand-navy/75 to-brand-navy/40"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-brand-navyDeep/85 via-brand-navy/40 to-transparent"
+      />
 
       {/* Centered play affordance for the intro video. Floats over the
           backdrop so the user knows the hero is the video. */}
