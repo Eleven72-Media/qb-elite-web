@@ -25,6 +25,19 @@ import { createClient } from "@/lib/supabase/server";
  * was set at product creation time per the Sprint 4 checklist).
  */
 export async function POST(req: NextRequest) {
+  // Subscription pivot 2026-07: new sign-ups are paused while we
+  // redesign the product. Flag flip via Vercel env; no redeploy needed
+  // to re-enable — just remove the env var and redeploy.
+  if (process.env.NEXT_PUBLIC_SUBSCRIPTIONS_PAUSED === "true") {
+    return NextResponse.json(
+      {
+        error:
+          "We've paused new subscriptions while we redesign the app. Check back soon.",
+      },
+      { status: 503 }
+    );
+  }
+
   const supabase = createClient();
   const {
     data: { user },
@@ -88,7 +101,7 @@ export async function POST(req: NextRequest) {
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL ??
     req.headers.get("origin") ??
-    `https://${req.headers.get("host") ?? "qb-elite-web.vercel.app"}`;
+    `https://${req.headers.get("host") ?? "app.quarterbackelite.app"}`;
 
   const session = await stripe.checkout.sessions.create({
     customer: customerId,

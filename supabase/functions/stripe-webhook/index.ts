@@ -1,10 +1,15 @@
 // Supabase Edge Function: stripe-webhook
 //
 // Receives Stripe webhook events and updates profiles.subscription_tier
-// + timestamp columns. Mirrors the iOS SuperwallTierSync._persistTier
-// logic (qb_elite_source/lib/src/core/superwall/superwall_tier_sync.dart)
-// so the data shape on the user's row looks identical regardless of
-// whether they subscribed via Apple IAP or Stripe.
+// + timestamp columns via the SECURITY-DEFINER helpers in the
+// add_subscription_freeze_status_and_helpers.sql migration:
+//   - resume_or_start_subscription() handles new subs AND resubs (back-dates
+//     tier_upgraded_at / qb_training_started_at from frozen_* if present).
+//   - freeze_user_subscription() captures current plan_week + qb_week and
+//     demotes tier to 'free' on cancel/expire.
+//
+// Mirrors the iOS SuperwallTierSync._persistTier shape so the data on a
+// user's row looks identical regardless of Apple IAP vs Stripe origin.
 //
 // Deploy:
 //   supabase functions deploy stripe-webhook --no-verify-jwt
@@ -45,13 +50,38 @@ function tierForPriceId(
   return null;
 }
 
+type SubscriptionStatus =
+  | "pending"
+  | "trialing"
+  | "active"
+  | "past_due"
+  | "canceled"
+  | "expired";
+
+// Map Stripe's subscription.status to our six-value enum that powers the
+// admin chart. Stripe's `paused` is rare on our setup — falls through to
+// null which the caller treats as a no-op write.
+function statusForStripeStatus(
+  status: Stripe.Subscription.Status
+): SubscriptionStatus | null {
+  switch (status) {
+    case "trialing":      return "trialing";
+    case "active":        return "active";
+    case "past_due":      return "past_due";
+    case "unpaid":        return "past_due"; // grace period
+    case "canceled":      return "canceled";
+    case "incomplete":    return "pending";
+    case "incomplete_expired": return "expired";
+    default:              return null;
+  }
+}
+
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2024-12-18.acacia",
   httpClient: Stripe.createFetchHttpClient(),
 });
 
 // Service-role client — bypasses RLS so we can update any user's row.
-// Only used here; not exposed to the client.
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -69,13 +99,27 @@ async function findUserIdByStripeCustomer(customerId: string): Promise<string | 
   return (data as { id: string } | null)?.id ?? null;
 }
 
+// Comp-paused users are hand-curated during the 2026-07 subscription
+// pivot. Stripe webhook events (subscription.updated on the pause,
+// subscription.deleted if the user or admin cancels, etc.) must NOT
+// overwrite their subscription_status. Access stays unlocked via the
+// back-dated anchors, so skipping the write is safe.
+async function isCompPaused(userId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from("profiles")
+    .select("subscription_status")
+    .eq("id", userId)
+    .maybeSingle();
+  return (data as { subscription_status: string } | null)?.subscription_status
+    === "comp_paused";
+}
+
 async function alreadyProcessed(eventId: string, eventType: string): Promise<boolean> {
   const { error } = await supabase
     .from("stripe_events")
     .insert({ id: eventId, type: eventType });
   if (!error) return false; // first insert wins
-  // 23505 = unique_violation = already processed
-  return error.code === "23505";
+  return error.code === "23505"; // unique_violation
 }
 
 async function applySubscriptionToProfile(
@@ -83,20 +127,23 @@ async function applySubscriptionToProfile(
   subscription: Stripe.Subscription
 ): Promise<void> {
   const status = subscription.status;
+  const mappedStatus = statusForStripeStatus(status);
   const isActiveLike =
     status === "active" || status === "trialing" || status === "past_due";
 
   if (!isActiveLike) {
-    // Cancelled / unpaid / incomplete → revert to free, keep timestamps
-    // for analytics (mobile pattern leaves tier_upgraded_at populated).
-    await supabase
-      .from("profiles")
-      .update({
-        subscription_tier: "free",
-        stripe_subscription_id: null,
-        subscription_source: null,
-      })
-      .eq("id", userId);
+    // Cancelled / unpaid / incomplete → freeze plan_week + qb_week into
+    // frozen_* columns, demote tier to free, but keep subscription_source
+    // populated for analytics. subscription_status reflects the true
+    // Stripe state so the admin chart can distinguish recent churn from
+    // never-subscribed.
+    const { error } = await supabase.rpc("freeze_user_subscription", {
+      p_user: userId,
+      p_status: mappedStatus ?? "canceled",
+    });
+    if (error) console.error("freeze_user_subscription failed", error);
+    // stripe_subscription_id is still useful on the row for support /
+    // reactivation — leave it. (Previously we nulled it; F-006 keeps it.)
     return;
   }
 
@@ -107,26 +154,24 @@ async function applySubscriptionToProfile(
     return;
   }
 
-  const nowIso = new Date().toISOString();
+  // resume_or_start_subscription handles BOTH first-time activation AND
+  // resubscribe-from-frozen. It back-dates tier_upgraded_at /
+  // qb_training_started_at from frozen_* when present so user_plan_week()
+  // and user_qb_training_week() pick up at the cancellation week, then
+  // clears the frozen_* columns.
+  const { error: rpcErr } = await supabase.rpc("resume_or_start_subscription", {
+    p_user: userId,
+    p_tier: mapped.tier,
+    p_status: mappedStatus ?? "active",
+    p_source: "stripe",
+  });
+  if (rpcErr) console.error("resume_or_start_subscription failed", rpcErr);
 
-  // Read current profile so we can preserve qb_training_started_at when
-  // it's already set. Mirrors SuperwallTierSync._persistTier exactly.
-  const { data: current } = await supabase
-    .from("profiles")
-    .select("qb_training_started_at")
-    .eq("id", userId)
-    .maybeSingle();
-  const curRow = current as { qb_training_started_at: string | null } | null;
-
+  // Stamp the Stripe subscription ID separately — the RPC doesn't know
+  // about provider-specific columns.
   await supabase
     .from("profiles")
-    .update({
-      subscription_tier: mapped.tier,
-      subscription_source: "stripe",
-      stripe_subscription_id: subscription.id,
-      tier_upgraded_at: nowIso,
-      qb_training_started_at: curRow?.qb_training_started_at ?? nowIso,
-    })
+    .update({ stripe_subscription_id: subscription.id })
     .eq("id", userId);
 }
 
@@ -168,16 +213,13 @@ Deno.serve(async (req) => {
             ? session.customer
             : session.customer?.id ?? null;
         if (userId && customerId) {
-          // Backfill stripe_customer_id in case the lazy-create on the
-          // route handler raced ahead of the webhook (unlikely but
-          // possible if Stripe fires before our local update lands).
           await supabase
             .from("profiles")
             .update({ stripe_customer_id: customerId })
             .eq("id", userId);
         }
-        // The actual tier write happens via the subsequent
-        // customer.subscription.created event, so nothing else to do here.
+        // Tier write happens on the subsequent customer.subscription.created
+        // event — nothing else to do here.
         break;
       }
 
@@ -195,6 +237,10 @@ Deno.serve(async (req) => {
           console.warn(`stripe-webhook: no user for customer ${customerId}`);
           break;
         }
+        if (await isCompPaused(userId)) {
+          console.log(`stripe-webhook: ${event.type} skipped — user ${userId} is comp_paused`);
+          break;
+        }
         await applySubscriptionToProfile(userId, subscription);
         break;
       }
@@ -209,14 +255,15 @@ Deno.serve(async (req) => {
           (subscription.metadata?.supabase_user_id as string | undefined) ??
           (await findUserIdByStripeCustomer(customerId));
         if (!userId) break;
-        await supabase
-          .from("profiles")
-          .update({
-            subscription_tier: "free",
-            stripe_subscription_id: null,
-            subscription_source: null,
-          })
-          .eq("id", userId);
+        if (await isCompPaused(userId)) {
+          console.log(`stripe-webhook: subscription.deleted skipped — user ${userId} is comp_paused`);
+          break;
+        }
+        const { error } = await supabase.rpc("freeze_user_subscription", {
+          p_user: userId,
+          p_status: "canceled",
+        });
+        if (error) console.error("freeze_user_subscription failed", error);
         break;
       }
 
@@ -227,7 +274,6 @@ Deno.serve(async (req) => {
     }
   } catch (err) {
     console.error("stripe-webhook: handler error", err);
-    // Return 500 so Stripe retries.
     return new Response("handler error", { status: 500 });
   }
 

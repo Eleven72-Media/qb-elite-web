@@ -56,7 +56,11 @@ export default async function QbTrainingVideoPage({
       <PageHeader title={training.week_of_release} backHref="/classroom" />
       <div className="mx-auto w-full max-w-[820px] space-y-5 px-5 pb-6 md:px-6">
         <div className="overflow-hidden rounded-3xl bg-black shadow-[0_10px_28px_rgba(0,0,0,0.18)]">
-          <VideoPlayer src={training.video_link} autoplay />
+          <VideoPlayer
+            src={training.video_link}
+            autoplay
+            tracking={{ videoType: "qb_training", videoId: training.id }}
+          />
         </div>
 
         <header className="flex items-start justify-between gap-3">

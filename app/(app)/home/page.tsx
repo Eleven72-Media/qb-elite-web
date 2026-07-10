@@ -1,3 +1,4 @@
+import { CheckoutSuccessTrack } from "@/components/checkout-success-track";
 import { IosA2HSPrompt } from "@/components/ios-a2hs-prompt";
 import { HomeSlider } from "@/features/home/components/home-slider";
 import { QuickActions } from "@/features/home/components/quick-actions";
@@ -49,6 +50,7 @@ export default async function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] space-y-7 pb-2 pt-3 md:px-6">
+      <CheckoutSuccessTrack />
       <IosA2HSPrompt />
       <HomeSlider slides={slides} />
 

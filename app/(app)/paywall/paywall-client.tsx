@@ -2,10 +2,11 @@
 
 import { Check, Crown, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { track } from "@/lib/analytics";
 import { TIER_PRICING, type SubscriptionInterval } from "@/lib/stripe/prices";
 import { cn } from "@/lib/utils";
 
@@ -36,8 +37,13 @@ export function PaywallClient({
   const [interval, setInterval] = useState<SubscriptionInterval>("monthly");
   const [busy, setBusy] = useState<null | "starter" | "legend">(null);
 
+  useEffect(() => {
+    track("paywall_viewed", { currentTier });
+  }, [currentTier]);
+
   async function startCheckout(tier: "starter" | "legend") {
     setBusy(tier);
+    track("checkout_started", { tier, interval });
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",

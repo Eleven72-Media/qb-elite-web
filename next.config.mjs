@@ -1,3 +1,16 @@
+import withSerwistInit from "@serwist/next";
+
+// Service worker generated from app/sw.ts via Serwist (modern, maintained
+// next-pwa replacement). Source file pattern + swDest path means the
+// compiled SW lands at /sw.js and is auto-registered by @serwist/next's
+// runtime. Disabled in dev so we don't have to manually clear the SW cache
+// every time we change a route.
+const withSerwist = withSerwistInit({
+  swSrc: "app/sw.ts",
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development",
+});
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -36,4 +49,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);

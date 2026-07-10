@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 import { PaywallClient } from "./paywall-client";
+import { PaywallPausedNotice } from "./paywall-paused-notice";
 
 export const metadata = { title: "Start your free trial — QB Elite" };
 export const dynamic = "force-dynamic";
@@ -12,6 +13,12 @@ export default async function PaywallPage({
 }: {
   searchParams: { canceled?: string };
 }) {
+  // Subscription pivot 2026-07: paywall replaced with a "we're rebuilding"
+  // notice. Flip NEXT_PUBLIC_SUBSCRIPTIONS_PAUSED off in Vercel to restore.
+  if (process.env.NEXT_PUBLIC_SUBSCRIPTIONS_PAUSED === "true") {
+    return <PaywallPausedNotice />;
+  }
+
   const supabase = createClient();
   const {
     data: { user },

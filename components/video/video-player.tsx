@@ -1,8 +1,15 @@
-import { parseVideoUrl, vimeoEmbedUrl, youtubeEmbedUrl } from "@/lib/video";
+import { VimeoPlayer } from "@/components/video/vimeo-player";
+import type { VideoTrackingType } from "@/features/video-tracking/use-video-tracking";
+import { parseVideoUrl, youtubeEmbedUrl } from "@/lib/video";
 
 /**
  * Shared video player. Supports Vimeo (incl. privacy-hash links) +
  * YouTube. Renders a 16:9 responsive iframe sized to the parent.
+ *
+ * Vimeo videos go through <VimeoPlayer />, which uses the Player.js SDK
+ * so we can hook playback events for tracking. YouTube stays as a plain
+ * iframe — YouTube is legacy on this app and not worth the IFrame API
+ * integration cost for the engagement signal we're after.
  *
  * Autoplay note: iOS Safari blocks autoplay unless the video is muted.
  * When autoplay is requested we force muted=1 on the embed URL so the
@@ -15,11 +22,13 @@ export function VideoPlayer({
   autoplay = false,
   loop = false,
   className,
+  tracking,
 }: {
   src: string;
   autoplay?: boolean;
   loop?: boolean;
   className?: string;
+  tracking?: { videoType: VideoTrackingType; videoId?: string };
 }) {
   const parsed = parseVideoUrl(src);
 
@@ -36,10 +45,24 @@ export function VideoPlayer({
     );
   }
 
-  const embedUrl =
-    parsed.source === "vimeo"
-      ? vimeoEmbedUrl(parsed.id, parsed.hash, { autoplay, loop, muted: autoplay })
-      : youtubeEmbedUrl(parsed.id, { autoplay, loop, muted: autoplay });
+  if (parsed.source === "vimeo") {
+    return (
+      <VimeoPlayer
+        id={parsed.id}
+        hash={parsed.hash}
+        autoplay={autoplay}
+        loop={loop}
+        className={className}
+        tracking={tracking}
+      />
+    );
+  }
+
+  const embedUrl = youtubeEmbedUrl(parsed.id, {
+    autoplay,
+    loop,
+    muted: autoplay,
+  });
 
   return (
     <div

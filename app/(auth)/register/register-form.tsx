@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { track } from "@/lib/analytics";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -53,6 +54,7 @@ export function RegisterForm() {
     }
 
     setBusy(true);
+    track("signup_started");
 
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: email.trim(),
@@ -93,6 +95,7 @@ export function RegisterForm() {
     }
 
     setBusy(false);
+    track("signup_completed", { verifyRequired: !data.session });
 
     if (data.session) {
       // No email verification required — sign-in is immediate.

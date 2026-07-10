@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { track } from "@/lib/analytics";
 import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm({ next, error }: { next: string; error?: string }) {
@@ -34,6 +35,7 @@ export function LoginForm({ next, error }: { next: string; error?: string }) {
       });
       return;
     }
+    track("login_completed", { method: "password" });
     router.replace(next);
     router.refresh();
   }

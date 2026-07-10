@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL ??
     req.headers.get("origin") ??
-    `https://${req.headers.get("host") ?? "qb-elite-web.vercel.app"}`;
+    `https://${req.headers.get("host") ?? "app.quarterbackelite.app"}`;
 
   const stripe = getStripe();
   const session = await stripe.billingPortal.sessions.create({

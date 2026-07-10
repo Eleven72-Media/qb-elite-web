@@ -41,6 +41,8 @@
     "@supabase/supabase-js": "^2.106.1",
     "@tanstack/react-query": "^5.100.11",
     "@tanstack/react-query-devtools": "^5.100.11",
+    "@vercel/analytics": "^2.0.1",
+    "@vimeo/player": "^2.30.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -59,6 +61,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@serwist/next": "^9.5.11",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -66,6 +69,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "postcss": "^8",
+    "serwist": "^9.5.11",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

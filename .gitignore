@@ -31,6 +31,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated service worker (built from app/sw.ts via @serwist/next on each build)
+/public/sw.js
+/public/sw.js.map
+/public/swe-worker-*.js
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Outfit } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 import { Providers } from "@/components/providers";
 import { SplashOverlay } from "@/components/splash-overlay";
+import { SWRegister } from "@/components/sw-register";
 
 // Outfit matches the QB Elite mobile app's bundled font family (see
 // qb_elite_source/pubspec.yaml). Google Fonts → CSS variable consumed
@@ -70,6 +72,8 @@ export default function RootLayout({
       <body className="min-h-screen antialiased">
         <Providers>{children}</Providers>
         <SplashOverlay />
+        <SWRegister />
+        <Analytics />
       </body>
     </html>
   );
